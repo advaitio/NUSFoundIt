@@ -1,4 +1,26 @@
-import { StyleSheet, Text, View } from "react-native";
+import { useCallback, useEffect, useState } from "react";
+import { ActivityIndicator,
+    FlatList,
+    RefreshControl,
+    StyleSheet, 
+    Text, 
+    View 
+} from "react-native";
+import { collection, getDocs, orderBy, query } from "firebase/firestore";
+import { db } from "../firebase/firebaseConfig";
+
+// create found item typep for better type safety
+type FoundItem = {
+    id: string;
+    itemName: string;
+    category: string;
+    description: string;
+    locationFound: string;
+    dateFound: string;
+    contactInfo: string;
+    imageUrl?: string; // Optional field for future use
+    createdAt: any; // Firestore timestamp
+};
 
 const styles = StyleSheet.create({
     container: {
