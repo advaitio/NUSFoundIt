@@ -1,6 +1,6 @@
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { Alert, Button, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { Alert, Button, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 
 //Importing of Firebase tools and firebaseConfig file.
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
@@ -17,13 +17,14 @@ export default function SubmitFoundItemScreen() {
     const [description, setDescription] = useState("");
     const [locationFound, setLocationFound] = useState("");
     const [dateFound, setDateFound] = useState("");
-    const [contactInfo, setContactInfo] = useState("");
+    const [email, setEmail] = useState("");
+    const [phoneNumber, setPhoneNumber] = useState("");
     const [imageUrl, setImageUrl] = useState(""); //Optional field, might not implement yet. 
 
     // function to handle form submission
     const handleSubmit = async () => {
         //validation for non-empty fields
-        if (!itemName || !category || !description || !locationFound || !dateFound || !contactInfo) {
+        if (!itemName || !category || !description || !locationFound || !dateFound || !email || !phoneNumber) {
             Alert.alert("Error\n", "Please fill in all required fields.");
             return;
         }
@@ -36,7 +37,8 @@ export default function SubmitFoundItemScreen() {
                 description,
                 locationFound,
                 dateFound,
-                contactInfo,
+                contactEmail: email,
+                contactPhoneNumber: phoneNumber,
                 imageUrl,  
                 createdAt: serverTimestamp(),
             });
@@ -50,7 +52,8 @@ export default function SubmitFoundItemScreen() {
             setDescription("");
             setLocationFound("");
             setDateFound("");
-            setContactInfo("");
+            setEmail("");
+            setPhoneNumber("");
             setImageUrl("");
 
             // navigate to listings page in case user wants to view their report immediately after submission
@@ -64,66 +67,92 @@ export default function SubmitFoundItemScreen() {
     };
 
     return (
-        // form layout uses ScrollView instead of normal Viewto ensure accessibility when using keyboard.
-        <ScrollView contentContainerStyle={styles.container}>
-            <Text style={styles.title}>Submit Found Item</Text>
-            <Text style={styles.subtitle}>Please fill in the details of the item you found.</Text>
-            <TextInput
-                style={styles.input}
-                placeholder="Item Name"
-                value={itemName}
-                onChangeText={setItemName}
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="Category"
-                value={category}
-                onChangeText={setCategory}
-            />
-            <TextInput
-            // multiline input to allow for more detailed descriptions of found items.
-                style={[styles.input, styles.multilineInput]}
-                placeholder="Description"
-                value={description}
-                onChangeText={setDescription}
-                multiline
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="Location Found"
-                value={locationFound}
-                onChangeText={setLocationFound}
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="Date Found"
-                value={dateFound}
-                onChangeText={setDateFound}
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="Contact Information"
-                value={contactInfo}
-                onChangeText={setContactInfo}
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="Image URL (optional)"
-                value={imageUrl}
-                onChangeText={setImageUrl}
-            />
+        <KeyboardAvoidingView
+            style={styles.keyboardContainer}
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0} 
+        >
+            {/* form layout uses ScrollView instead of normal Viewto ensure accessibility when using keyboard. */}
+            <ScrollView contentContainerStyle={styles.container}>
+                <Text style={styles.title}>Submit Found Item</Text>
+                <Text style={styles.subtitle}>Please fill in the details of the item you found.</Text>
+                <TextInput
+                    style={styles.input}
+                    placeholder="Item Name (Max 30 char.)"
+                    value={itemName}
+                    onChangeText={setItemName}
+                    maxLength={30} // limit item name to 30 characters to prevent excessively long entries.
+                    multiline
+                />
+                <TextInput
+                    style={styles.input}
+                    placeholder="Category"
+                    value={category}
+                    onChangeText={setCategory}
+                    multiline
+                />
+                <TextInput
+                // multiline input to allow for more detailed descriptions of found items.
+                    style={[styles.input, styles.multilineInput]}
+                    placeholder="Description"
+                    value={description}
+                    onChangeText={setDescription}
+                    multiline
+                />
+                <TextInput
+                    style={styles.input}
+                    placeholder="Location Found"
+                    value={locationFound}
+                    onChangeText={setLocationFound}
+                    multiline
+                />
+                <TextInput
+                    style={styles.input}
+                    placeholder="Date Found"
+                    value={dateFound}
+                    onChangeText={setDateFound}
+                    multiline
+                />
+                <TextInput
+                    style={styles.input}
+                    placeholder="Contact Email"
+                    value={email}
+                    onChangeText={setEmail}
+                    multiline
+                    keyboardType="email-address"
+                />
+                <TextInput
+                    style={styles.input}
+                    placeholder="Contact Phone Number"
+                    value={phoneNumber}
+                    onChangeText={setPhoneNumber}
+                    keyboardType="phone-pad"
+                />
+                <TextInput
+                    style={styles.input}
+                    placeholder="Image URL (optional)"
+                    value={imageUrl}
+                    onChangeText={setImageUrl}
+                    multiline
+                />
 
-            <View style={styles.buttonContainer}>
-                <Button title="Submit" onPress={handleSubmit} color="#007BFF" />
-            </View>
-        </ScrollView>
+                <View style={styles.buttonContainer}>
+                    <Button title="Submit" onPress={handleSubmit} color="#007BFF" />
+                </View>
+            </ScrollView>
+        </KeyboardAvoidingView>
     );
 }
 
 const styles = StyleSheet.create({
+    keyboardContainer: {
+        flex: 1,
+        backgroundColor: "#fff",
+    },
     container: {
         flexGrow: 1,
         padding: 24,
+        paddingBottom: 60,
         justifyContent: "center",
         alignItems: "center",
         backgroundColor: "#fff",
@@ -141,6 +170,7 @@ const styles = StyleSheet.create({
         color: "#666",
     },
     input: {
+        width: "100%",
         borderWidth: 1,
         borderColor: "#ccc",
         borderRadius: 8,
@@ -154,6 +184,7 @@ const styles = StyleSheet.create({
         textAlignVertical: "top",
     },
     buttonContainer: {
+        width: "100%",
         marginTop: 8,
         borderRadius: 8,
         overflow: "hidden",
