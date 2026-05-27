@@ -1,6 +1,7 @@
+import DateTimePicker from "@react-native-community/datetimepicker";
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { Alert, Button, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { Alert, Button, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 
 //Importing of Firebase tools and firebaseConfig file.
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
@@ -16,11 +17,27 @@ export default function SubmitFoundItemScreen() {
     const [category, setCategory] = useState("");
     const [description, setDescription] = useState("");
     const [locationFound, setLocationFound] = useState("");
-    const [dateFound, setDateFound] = useState("");
+    const [dateFound, setDateFound] = useState(new Date());
+    const [showCalendar, setShowCalendar] = useState(false); // control of calendar popup visibility
     const [email, setEmail] = useState("");
     const [phoneNumber, setPhoneNumber] = useState("");
     const [imageUrl, setImageUrl] = useState(""); //Optional field, might not implement yet. 
 
+    // helper function to format date into dd/mm/yyyy format in input field. 
+    const formatDateLabel = (date) => {
+        return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+    };
+
+    // helper function for date selection. 
+    const pickDate = (event, selectedDate) => {
+        if (Platform.OS === "android") {
+            setShowCalendar(false);
+        }
+
+        if (selectedDate) {
+            setDateFound(selectedDate);
+        }
+    };
     // function to handle form submission
     const handleSubmit = async () => {
         //validation for non-empty fields
@@ -36,7 +53,7 @@ export default function SubmitFoundItemScreen() {
                 category,
                 description,
                 locationFound,
-                dateFound,
+                dateFound: formatDateLabel(dateFound), // convert date to string format
                 contactEmail: email,
                 contactPhoneNumber: phoneNumber,
                 imageUrl,  
@@ -51,7 +68,7 @@ export default function SubmitFoundItemScreen() {
             setCategory("");
             setDescription("");
             setLocationFound("");
-            setDateFound("");
+            setDateFound(new Date());
             setEmail("");
             setPhoneNumber("");
             setImageUrl("");
@@ -82,14 +99,12 @@ export default function SubmitFoundItemScreen() {
                     value={itemName}
                     onChangeText={setItemName}
                     maxLength={30} // limit item name to 30 characters to prevent excessively long entries.
-                    multiline
                 />
                 <TextInput
                     style={styles.input}
                     placeholder="Category"
                     value={category}
                     onChangeText={setCategory}
-                    multiline
                 />
                 <TextInput
                 // multiline input to allow for more detailed descriptions of found items.
@@ -106,13 +121,25 @@ export default function SubmitFoundItemScreen() {
                     onChangeText={setLocationFound}
                     multiline
                 />
-                <TextInput
-                    style={styles.input}
-                    placeholder="Date Found"
-                    value={dateFound}
-                    onChangeText={setDateFound}
-                    multiline
-                />
+
+                <Pressable style={styles.datePickerBox} onPress={() => setShowCalendar(true)}>
+                    <Text style={styles.datePickerText}>
+                        Date Found: {formatDateLabel(dateFound)} (Tap to change)
+                    </Text>
+                </Pressable>
+                {showCalendar && (
+                    <DateTimePicker
+                        value={dateFound}
+                        mode="date"
+                        display="default"
+                        onChange={pickDate}
+                        maximumDate={new Date()} // prevent selection of future dates
+                    />
+                )}
+
+                {showCalendar && Platform.OS === 'ios' && (
+                    <Button title="Confirm Date" onPress={() => setShowCalendar(false)} />
+                )}
                 <TextInput
                     style={styles.input}
                     placeholder="Contact Email"
@@ -182,6 +209,20 @@ const styles = StyleSheet.create({
     multilineInput: {
         height: 80,
         textAlignVertical: "top",
+    },
+    datePickerBox: {
+        width: "100%",
+        borderWidth: 1,
+        borderColor: "#ccc",
+        borderRadius: 8,
+        padding: 14,
+        marginBottom: 16,
+        backgroundColor: "#f9f9f9",
+        justifyContent: "center",
+    },
+    datePickerText: {
+        fontSize: 16,
+        color: "#333",
     },
     buttonContainer: {
         width: "100%",
