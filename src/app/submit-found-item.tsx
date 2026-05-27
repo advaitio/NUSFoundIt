@@ -2,6 +2,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Alert, Button, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { Dropdown } from "react-native-element-dropdown";
 
 //Importing of Firebase tools and firebaseConfig file.
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
@@ -14,14 +15,26 @@ export default function SubmitFoundItemScreen() {
 
     // state variables for the form fields
     const [itemName, setItemName] = useState("");
-    const [category, setCategory] = useState("");
+    const [category, setCategory] = useState(null);
     const [description, setDescription] = useState("");
     const [locationFound, setLocationFound] = useState("");
-    const [dateFound, setDateFound] = useState(new Date());
+    const [dateFound, setDateFound] = useState(null); // initialise with null to force user to select a date, preventing possible user error.
     const [showCalendar, setShowCalendar] = useState(false); // control of calendar popup visibility
     const [email, setEmail] = useState("");
     const [phoneNumber, setPhoneNumber] = useState("");
-    const [imageUrl, setImageUrl] = useState(""); //Optional field, might not implement yet. 
+    const [imageUrl, setImageUrl] = useState(""); //Optional field, might not implement yet.
+
+    const categoryData = [
+        { label: "ID Card / Matric Card", value: "ID card" },
+        { label: "Wallet / Purse", value: "wallet" },
+        { label: "Water Bottle", value: "bottle" },
+        { label: "Phone", value: "phone" },
+        { label: "Laptop", value: "laptop" },
+        { label: "Keys", value: "keys" },
+        { label: "Electronics", value: "electronics" },
+        { label: "Clothing / Accessories", value: "clothing" },
+        { label: "Other", value: "other" },
+    ];
 
     // helper function to format date into dd/mm/yyyy format in input field. 
     const formatDateLabel = (date) => {
@@ -65,10 +78,10 @@ export default function SubmitFoundItemScreen() {
 
             // reset form fields
             setItemName("");
-            setCategory("");
+            setCategory(null);
             setDescription("");
             setLocationFound("");
-            setDateFound(new Date());
+            setDateFound(null);
             setEmail("");
             setPhoneNumber("");
             setImageUrl("");
@@ -96,20 +109,33 @@ export default function SubmitFoundItemScreen() {
                 <TextInput
                     style={styles.input}
                     placeholder="Item Name (Max 30 char.)"
+                    placeholderTextColor="#999"
                     value={itemName}
                     onChangeText={setItemName}
                     maxLength={30} // limit item name to 30 characters to prevent excessively long entries.
                 />
-                <TextInput
-                    style={styles.input}
-                    placeholder="Category"
+                <Dropdown
+                    style={styles.dropdown}
+                    placeholderStyle={styles.placeholderStyle}
+                    selectedTextStyle={[
+                        styles.selectedTextStyle,
+                        { color: category ? "#333" : "#999"} // implement placeholder similar to other input fields.
+                    ]}
+                    itemTextStyle={styles.itemTextStyle}
+                    data={categoryData}
+                    labelField="label"
+                    valueField="value"
+                    placeholder="Category (select)"
                     value={category}
-                    onChangeText={setCategory}
+                    onChange={item => {
+                        setCategory(item.value);
+                    }}
                 />
                 <TextInput
                 // multiline input to allow for more detailed descriptions of found items.
                     style={[styles.input, styles.multilineInput]}
                     placeholder="Description"
+                    placeholderTextColor="#999"
                     value={description}
                     onChangeText={setDescription}
                     multiline
@@ -117,19 +143,24 @@ export default function SubmitFoundItemScreen() {
                 <TextInput
                     style={styles.input}
                     placeholder="Location Found"
+                    placeholderTextColor="#999"
                     value={locationFound}
                     onChangeText={setLocationFound}
                     multiline
                 />
 
                 <Pressable style={styles.datePickerBox} onPress={() => setShowCalendar(true)}>
-                    <Text style={styles.datePickerText}>
-                        Date Found: {formatDateLabel(dateFound)} (Tap to change)
+                    <Text style={[
+                        styles.datePickerText,
+                        {color: dateFound ? "#333" : "#999"} // implement placeholder similar to other input fields. 
+                    ]}>
+                        {dateFound ? `Date Found: ${formatDateLabel(dateFound)}` : "Date Found (select date)"}
                     </Text>
                 </Pressable>
                 {showCalendar && (
                     <DateTimePicker
-                        value={dateFound}
+                        // default to current date as placeholder.
+                        value={dateFound || new Date()}
                         mode="date"
                         display="default"
                         onChange={pickDate}
@@ -143,6 +174,7 @@ export default function SubmitFoundItemScreen() {
                 <TextInput
                     style={styles.input}
                     placeholder="Contact Email"
+                    placeholderTextColor="#999"
                     value={email}
                     onChangeText={setEmail}
                     multiline
@@ -151,6 +183,7 @@ export default function SubmitFoundItemScreen() {
                 <TextInput
                     style={styles.input}
                     placeholder="Contact Phone Number"
+                    placeholderTextColor="#999"
                     value={phoneNumber}
                     onChangeText={setPhoneNumber}
                     keyboardType="phone-pad"
@@ -158,6 +191,7 @@ export default function SubmitFoundItemScreen() {
                 <TextInput
                     style={styles.input}
                     placeholder="Image URL (optional)"
+                    placeholderTextColor="#999"
                     value={imageUrl}
                     onChangeText={setImageUrl}
                     multiline
@@ -205,10 +239,26 @@ const styles = StyleSheet.create({
         marginBottom: 16,
         fontSize: 16,
         backgroundColor: "#f9f9f9",
+        color: "#333",
     },
     multilineInput: {
         height: 80,
         textAlignVertical: "top",
+        color: "#333",
+    },
+    dropdown: {
+        width: "100%",
+        height: 50,
+        borderWidth: 1,
+        borderColor: "#ccc",
+        borderRadius: 8,
+        paddingHorizontal: 12,
+        marginBottom: 16,
+        backgroundColor: "#f9f9f9",
+    },
+    placeholderStyle: {
+        fontSize: 16,
+        color: "#999",
     },
     datePickerBox: {
         width: "100%",
