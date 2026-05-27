@@ -72,6 +72,23 @@ export default function ListingsScreen() {
         fetchFoundItems();
     }, []);
 
+    function DetailRow({
+        label,
+        value,
+    }: {
+        label: string;
+        value?: string;
+    }) {
+        if (!value) return null;
+
+        return (
+            <View style={styles.detailRow}>
+                <Text style={styles.detailLabel}>{label}</Text>
+                <Text style={styles.detailValue}>{value}</Text>
+            </View>
+        );
+    }
+
     if (loading) {
         return (
             <View style={styles.centerContainer}>
@@ -103,28 +120,24 @@ export default function ListingsScreen() {
                     renderItem={({ item }) => (
                         <View style={styles.card}>
                             <Text style={styles.itemName}>{item.itemName}</Text>
-                            <Text style={styles.label}>Category:</Text>
-                            <Text style={styles.value}>{item.category}</Text>
-                            <Text style={styles.label}>Location Found:</Text>
-                            <Text style={styles.value}>{item.locationFound}</Text>
-                            <Text style={styles.label}>Date Found:</Text>
-                            <Text style={styles.value}>{item.dateFound}</Text>
-                            {item.description ? (
-                                <>
-                                    <Text style={styles.label}>Description:</Text>
-                                    <Text style={styles.description}>{item.description}</Text>
-                                </>
-                            ) : null}
-                            {item.contactEmail || item.contactPhoneNumber ? (
-                                <View style={styles.contactContainer}>
-                                    <Text style={styles.label}>Contact:</Text>
+
+                            <View style={styles.detailsContainer}>
+                                <DetailRow label="Category" value={item.category} />
+                                <DetailRow label="Location" value={item.locationFound} />
+                                <DetailRow label="Date found" value={item.dateFound} />
+                                <DetailRow label="Description" value={item.description} />
+                            </View>
+
+                            {(item.contactEmail || item.contactPhoneNumber) ? (
+                                <View style={styles.contactBox}>
+                                    <Text style={styles.contactLabel}>Contact</Text>
 
                                     {item.contactEmail ? (
-                                        <Text style={styles.contactText}>{item.contactEmail}</Text>
+                                        <Text style={styles.contactValue}>{item.contactEmail}</Text>
                                     ) : null}
 
                                     {item.contactPhoneNumber ? (
-                                        <Text style={styles.contactText}>{item.contactPhoneNumber}</Text>
+                                        <Text style={styles.contactValue}>{item.contactPhoneNumber}</Text>
                                     ) : null}
                                 </View>
                             ) : null}
@@ -158,11 +171,13 @@ const styles = StyleSheet.create({
         fontSize: 28,
         fontWeight: "bold",
         marginBottom: 8,
+        color: "#111827",
     },
     subtitle: {
         fontSize: 15,
-        color: "#666",
+        color: "#6b7280",
         marginBottom: 16,
+        lineHeight: 21,
     },
     errorText: {
         color: "#d32f2f",
@@ -185,46 +200,62 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: "bold",
         marginBottom: 8,
+        color: "#111827",
     },
     emptyText: {
         fontSize: 15,
-        color: "#666",
+        color: "#6b7280",
         textAlign: "center",
+        lineHeight: 21,
     },
     card: {
-        backgroundColor: "#f8f9fb",
-        borderRadius: 12,
-        padding: 16,
+        backgroundColor: "#f9fafb",
+        borderRadius: 16,
+        padding: 18,
         marginBottom: 14,
         borderWidth: 1,
         borderColor: "#e5e7eb",
     },
     itemName: {
-        fontSize: 20,
+        fontSize: 22,
         fontWeight: "bold",
-        marginBottom: 8,
+        marginBottom: 14,
+        color: "#111827",
     },
-    label: {
+    detailsContainer: {
+        gap: 10,
+    },
+    detailRow: {
+        flexDirection: "row",
+        alignItems: "flex-start",
+    },
+    detailLabel: {
+        fontWeight: "700",
+        color: "#4b5563",
+        width: 95,
         fontSize: 14,
-        fontWeight: "600",
-        marginBottom: 4,
     },
-    value: {
-        fontWeight: "400",
-        color: "#333",
-    },
-    description: {
+    detailValue: {
+        color: "#111827",
+        flex: 1,
         fontSize: 14,
-        color: "#444",
         lineHeight: 20,
     },
-    contactContainer: {
-        marginTop: 10,
+    contactBox: {
+        marginTop: 16,
+        paddingTop: 14,
+        borderTopWidth: 1,
+        borderTopColor: "#e5e7eb",
     },
-    contactText: {
+    contactLabel: {
+        fontWeight: "700",
+        color: "#4b5563",
+        marginBottom: 6,
         fontSize: 14,
-        color: "#007AFF",
-        fontWeight: "600",
-        marginTop: 2,
+    },
+    contactValue: {
+        color: "#111827",
+        fontSize: 14,
+        lineHeight: 22,
     },
 });
