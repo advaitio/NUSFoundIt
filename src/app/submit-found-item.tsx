@@ -1,4 +1,4 @@
-import DateTimePicker from "@react-native-community/datetimepicker";
+import DateTimePicker, { DateTimePickerEvent } from "@react-native-community/datetimepicker";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Alert, Button, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
@@ -15,10 +15,10 @@ export default function SubmitFoundItemScreen() {
 
     // state variables for the form fields
     const [itemName, setItemName] = useState("");
-    const [category, setCategory] = useState(null);
+    const [category, setCategory] = useState<string | null>(null);
     const [description, setDescription] = useState("");
     const [locationFound, setLocationFound] = useState("");
-    const [dateFound, setDateFound] = useState(null); // initialise with null to force user to select a date, preventing possible user error.
+    const [dateFound, setDateFound] = useState<Date | null>(null); // initialise with null to force user to select a date, preventing possible user error.
     const [showCalendar, setShowCalendar] = useState(false); // control of calendar popup visibility
     const [email, setEmail] = useState("");
     const [phoneNumber, setPhoneNumber] = useState("");
@@ -37,12 +37,12 @@ export default function SubmitFoundItemScreen() {
     ];
 
     // helper function to format date into dd/mm/yyyy format in input field. 
-    const formatDateLabel = (date) => {
+    const formatDateLabel = (date: Date) => {
         return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
     };
 
     // helper function for date selection. 
-    const pickDate = (event, selectedDate) => {
+    const pickDate = (event: DateTimePickerEvent, selectedDate?: Date) => {
         if (Platform.OS === "android") {
             setShowCalendar(false);
         }
@@ -255,6 +255,13 @@ const styles = StyleSheet.create({
         paddingHorizontal: 12,
         marginBottom: 16,
         backgroundColor: "#f9f9f9",
+    },
+    selectedTextStyle: {
+        fontSize: 16,
+    },
+    itemTextStyle: {
+        fontSize: 16,
+        color: "#333",
     },
     placeholderStyle: {
         fontSize: 16,
