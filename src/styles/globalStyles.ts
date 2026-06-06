@@ -83,8 +83,8 @@ export const globalStyles = StyleSheet.create({
     },
 
     primaryButton: {
-        backgroundColor: colors.background,
-        color: colors.primary,
+        backgroundColor: colors.primary,
+        color: "#fff",
         padding: 14,
         borderRadius: 8,
         textAlign: "center",
