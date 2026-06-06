@@ -39,16 +39,16 @@ export const globalStyles = StyleSheet.create({
     centeredScreen: {
         flex: 1,
         backgroundColor: colors.background,
-        padding: spacing.xl,
+        padding: spacing.xxxl,
         alignItems: "center",
         justifyContent: "center",
     },
 
     formContainer: {
         flexGrow: 1,
-        padding: spacing.xxl,
-        paddingBottom: 60,
-        justifyContent: "center",
+        padding: spacing.xl,
+        //paddingBottom: 60,
+        //justifyContent: "center",
         alignItems: "center",
         backgroundColor: colors.background,
     },
@@ -88,13 +88,13 @@ export const globalStyles = StyleSheet.create({
     primaryButton: {
         backgroundColor: colors.primary,
         color: "#fff",
-        padding: 14,
-        borderRadius: 8,
+        paddingVertical: 16,
+        borderRadius: 14,
         textAlign: "center",
         fontSize: 16,
         fontWeight: "bold",
         width: "100%",
-        marginBottom: spacing.md,
+        marginBottom: spacing.lg,
         overflow: "hidden"
     },
 

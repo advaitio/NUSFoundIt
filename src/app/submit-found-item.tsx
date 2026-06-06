@@ -199,7 +199,7 @@ export default function SubmitFoundItemScreen() {
                 />
 
                 <View style={styles.buttonContainer}>
-                    <Button title="Submit" onPress={handleSubmit} color={colors.primary} />
+                    <Button title="Submit" onPress={handleSubmit} color={styles.buttonText.color} />
                 </View>
             </ScrollView>
         </KeyboardAvoidingView>
@@ -222,9 +222,14 @@ const styles = StyleSheet.create({
         justifyContent: "center",
     },
     buttonContainer: {
-        width: "100%",
-        marginTop: 8,
-        borderRadius: 8,
+        backgroundColor: colors.primary,
+        //padding: 10,
+        width: "30%",
+        marginTop: 10,
+        borderRadius: 14,
         overflow: "hidden",
+    },
+    buttonText: {
+        color: "#ffffff",
     },
 });
