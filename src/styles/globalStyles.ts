@@ -73,6 +73,7 @@ export const globalStyles = StyleSheet.create({
         marginBottom: spacing.xxxl,
         color: colors.textMuted,
         lineHeight: 22,
+        textAlign: "center",
     },
 
     pageSubtitle: {
