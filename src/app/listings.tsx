@@ -101,8 +101,8 @@ export default function ListingsScreen() {
 
     return (
         <View style={globalStyles.screen}>
-            <Text style={globalStyles.pageTitle}>Public Listings</Text>
-            <Text style={globalStyles.pageSubtitle}>Browse recently found items reported by the NUS community.</Text>
+            <Text style={globalStyles.pageTitle}>Found Items</Text>
+            <Text style={globalStyles.pageSubtitle}>Browse recently reported items.</Text>
 
             {errorMessage ? (
                 <Text style={globalStyles.errorText}>{errorMessage}</Text>
