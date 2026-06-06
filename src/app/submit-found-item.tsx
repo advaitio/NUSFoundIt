@@ -2,6 +2,7 @@ import DateTimePicker, { DateTimePickerEvent } from "@react-native-community/dat
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Alert, Button, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { colors, globalStyles } from "../styles/globalStyles";
 import { Dropdown } from "react-native-element-dropdown";
 
 //Importing of Firebase tools and firebaseConfig file.
@@ -103,25 +104,25 @@ export default function SubmitFoundItemScreen() {
             keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0} 
         >
             {/* form layout uses ScrollView instead of normal Viewto ensure accessibility when using keyboard. */}
-            <ScrollView contentContainerStyle={styles.container}>
-                <Text style={styles.title}>Submit Found Item</Text>
-                <Text style={styles.subtitle}>Please fill in the details of the item you found.</Text>
+            <ScrollView contentContainerStyle={globalStyles.formContainer}>
+                <Text style={globalStyles.title}>Submit Found Item</Text>
+                <Text style={globalStyles.subtitle}>Please fill in the details of the item you found.</Text>
                 <TextInput
-                    style={styles.input}
+                    style={globalStyles.input}
                     placeholder="Item Name (Max 30 char.)"
-                    placeholderTextColor="#999"
+                    placeholderTextColor={colors.placeholder}
                     value={itemName}
                     onChangeText={setItemName}
                     maxLength={30} // limit item name to 30 characters to prevent excessively long entries.
                 />
                 <Dropdown
-                    style={styles.dropdown}
-                    placeholderStyle={styles.placeholderStyle}
+                    style={globalStyles.dropdown}
+                    placeholderStyle={globalStyles.placeholderText}
                     selectedTextStyle={[
-                        styles.selectedTextStyle,
-                        { color: category ? "#333" : "#999"} // implement placeholder similar to other input fields.
+                        globalStyles.inputText,
+                        { color: category ? colors.textInput : colors.placeholder} // implement placeholder similar to other input fields.
                     ]}
-                    itemTextStyle={styles.itemTextStyle}
+                    itemTextStyle={globalStyles.inputText}
                     data={categoryData}
                     labelField="label"
                     valueField="value"
@@ -133,17 +134,17 @@ export default function SubmitFoundItemScreen() {
                 />
                 <TextInput
                 // multiline input to allow for more detailed descriptions of found items.
-                    style={[styles.input, styles.multilineInput]}
+                    style={[globalStyles.input, globalStyles.multilineInput]}
                     placeholder="Description"
-                    placeholderTextColor="#999"
+                    placeholderTextColor={colors.placeholder}
                     value={description}
                     onChangeText={setDescription}
                     multiline
                 />
                 <TextInput
-                    style={styles.input}
+                    style={globalStyles.input}
                     placeholder="Location Found"
-                    placeholderTextColor="#999"
+                    placeholderTextColor={colors.placeholder}
                     value={locationFound}
                     onChangeText={setLocationFound}
                     multiline
@@ -151,8 +152,8 @@ export default function SubmitFoundItemScreen() {
 
                 <Pressable style={styles.datePickerBox} onPress={() => setShowCalendar(true)}>
                     <Text style={[
-                        styles.datePickerText,
-                        {color: dateFound ? "#333" : "#999"} // implement placeholder similar to other input fields. 
+                        globalStyles.inputText,
+                        {color: dateFound ? colors.textInput : colors.placeholder} // implement placeholder similar to other input fields. 
                     ]}>
                         {dateFound ? `Date Found: ${formatDateLabel(dateFound)}` : "Date Found (select date)"}
                     </Text>
@@ -172,33 +173,33 @@ export default function SubmitFoundItemScreen() {
                     <Button title="Confirm Date" onPress={() => setShowCalendar(false)} />
                 )}
                 <TextInput
-                    style={styles.input}
+                    style={globalStyles.input}
                     placeholder="Contact Email"
-                    placeholderTextColor="#999"
+                    placeholderTextColor={colors.placeholder}
                     value={email}
                     onChangeText={setEmail}
                     multiline
                     keyboardType="email-address"
                 />
                 <TextInput
-                    style={styles.input}
+                    style={globalStyles.input}
                     placeholder="Contact Phone Number"
-                    placeholderTextColor="#999"
+                    placeholderTextColor={colors.placeholder}
                     value={phoneNumber}
                     onChangeText={setPhoneNumber}
                     keyboardType="phone-pad"
                 />
                 <TextInput
-                    style={styles.input}
+                    style={globalStyles.input}
                     placeholder="Image URL (optional)"
-                    placeholderTextColor="#999"
+                    placeholderTextColor={colors.placeholder}
                     value={imageUrl}
                     onChangeText={setImageUrl}
                     multiline
                 />
 
                 <View style={styles.buttonContainer}>
-                    <Button title="Submit" onPress={handleSubmit} color="#007BFF" />
+                    <Button title="Submit" onPress={handleSubmit} color={colors.primary} />
                 </View>
             </ScrollView>
         </KeyboardAvoidingView>
@@ -210,63 +211,6 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: "#fff",
     },
-    container: {
-        flexGrow: 1,
-        padding: 24,
-        paddingBottom: 60,
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "#fff",
-    },
-    title: {
-        fontSize: 32,
-        fontWeight: "bold",
-        marginBottom: 12,
-        textAlign: "center",
-    },
-    subtitle: {
-        fontSize: 16,
-        marginBottom: 32,
-        textAlign: "center",
-        color: "#666",
-    },
-    input: {
-        width: "100%",
-        borderWidth: 1,
-        borderColor: "#ccc",
-        borderRadius: 8,
-        padding: 12,
-        marginBottom: 16,
-        fontSize: 16,
-        backgroundColor: "#f9f9f9",
-        color: "#333",
-    },
-    multilineInput: {
-        height: 80,
-        textAlignVertical: "top",
-        color: "#333",
-    },
-    dropdown: {
-        width: "100%",
-        height: 50,
-        borderWidth: 1,
-        borderColor: "#ccc",
-        borderRadius: 8,
-        paddingHorizontal: 12,
-        marginBottom: 16,
-        backgroundColor: "#f9f9f9",
-    },
-    selectedTextStyle: {
-        fontSize: 16,
-    },
-    itemTextStyle: {
-        fontSize: 16,
-        color: "#333",
-    },
-    placeholderStyle: {
-        fontSize: 16,
-        color: "#999",
-    },
     datePickerBox: {
         width: "100%",
         borderWidth: 1,
@@ -276,10 +220,6 @@ const styles = StyleSheet.create({
         marginBottom: 16,
         backgroundColor: "#f9f9f9",
         justifyContent: "center",
-    },
-    datePickerText: {
-        fontSize: 16,
-        color: "#333",
     },
     buttonContainer: {
         width: "100%",
