@@ -151,3 +151,19 @@ export const globalStyles = StyleSheet.create({
         fontWeight: "600",
     },
 });
+
+export const screenOptions = {
+    headerTitleAlign: "center",
+    headerShadowVisible: true,
+    headerStyle: {
+        backgroundColor: colors.background,
+    },
+    headerTitleStyle: {
+        fontSize: 18,
+        fontWeight: "bold",
+        color: colors.textPrimary,
+    },
+    contentStyle: {
+        backgroundColor: colors.background,
+    },
+};
