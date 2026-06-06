@@ -1,5 +1,6 @@
 import { StyleSheet } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
+import { NativeStackNavigationOptions } from "@react-navigation/native-stack";
 
 export const colors = {
     background: "#ffffff",
@@ -152,7 +153,7 @@ export const globalStyles = StyleSheet.create({
     },
 });
 
-export const screenOptions = {
+export const screenOptions: NativeStackNavigationOptions = {
     headerTitleAlign: "center",
     headerShadowVisible: true,
     headerStyle: {
