@@ -8,6 +8,7 @@ import {
     Text,
     View
 } from "react-native";
+import { colors, globalStyles } from "../styles/globalStyles";
 import { db } from "../firebase/firebaseConfig";
 
 // create found item type for better type safety
@@ -91,20 +92,20 @@ export default function ListingsScreen() {
 
     if (loading) {
         return (
-            <View style={styles.centerContainer}>
-                <ActivityIndicator size="large" color="#007AFF" />
+            <View style={globalStyles.centeredScreen}>
+                <ActivityIndicator size="large" color={colors.primary} />
                 <Text style={styles.loadingText}>Loading listings...</Text>
             </View>
         );
     }
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>Public Listings</Text>
-            <Text style={styles.subtitle}>Browse recently found items reported by the NUS community.</Text>
+        <View style={globalStyles.screen}>
+            <Text style={globalStyles.pageTitle}>Public Listings</Text>
+            <Text style={globalStyles.pageSubtitle}>Browse recently found items reported by the NUS community.</Text>
 
             {errorMessage ? (
-                <Text style={styles.errorText}>{errorMessage}</Text>
+                <Text style={globalStyles.errorText}>{errorMessage}</Text>
             ) : (
                 <FlatList
                     data={items}
@@ -118,7 +119,7 @@ export default function ListingsScreen() {
                         </View>
                     }
                     renderItem={({ item }) => (
-                        <View style={styles.card}>
+                        <View style={globalStyles.card}>
                             <Text style={styles.itemName}>{item.itemName}</Text>
 
                             <View style={styles.detailsContainer}>
@@ -150,40 +151,10 @@ export default function ListingsScreen() {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 20,
-        backgroundColor: "#fff",
-    },
-    centerContainer: {
-        flex: 1,
-        padding: 20,
-        backgroundColor: "#fff",
-        alignItems: "center",
-        justifyContent: "center",
-    },
     loadingText: {
         marginTop: 12,
         fontSize: 15,
-        color: "#666",
-    },
-    title: {
-        fontSize: 28,
-        fontWeight: "bold",
-        marginBottom: 8,
-        color: "#111827",
-    },
-    subtitle: {
-        fontSize: 15,
-        color: "#6b7280",
-        marginBottom: 16,
-        lineHeight: 21,
-    },
-    errorText: {
-        color: "#d32f2f",
-        marginBottom: 12,
-        fontSize: 14,
-        fontWeight: "600",
+        color: colors.textMuted,
     },
     listContent: {
         paddingBottom: 24,
@@ -200,27 +171,19 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: "bold",
         marginBottom: 8,
-        color: "#111827",
+        color: colors.textPrimary,
     },
     emptyText: {
         fontSize: 15,
-        color: "#6b7280",
+        color: colors.textSecondary,
         textAlign: "center",
         lineHeight: 21,
-    },
-    card: {
-        backgroundColor: "#f9fafb",
-        borderRadius: 16,
-        padding: 18,
-        marginBottom: 14,
-        borderWidth: 1,
-        borderColor: "#e5e7eb",
     },
     itemName: {
         fontSize: 22,
         fontWeight: "bold",
         marginBottom: 14,
-        color: "#111827",
+        color: colors.textPrimary,
     },
     detailsContainer: {
         gap: 10,
@@ -236,7 +199,7 @@ const styles = StyleSheet.create({
         fontSize: 14,
     },
     detailValue: {
-        color: "#111827",
+        color: colors.textPrimary,
         flex: 1,
         fontSize: 14,
         lineHeight: 20,
@@ -245,7 +208,7 @@ const styles = StyleSheet.create({
         marginTop: 16,
         paddingTop: 14,
         borderTopWidth: 1,
-        borderTopColor: "#e5e7eb",
+        borderTopColor: colors.border,
     },
     contactLabel: {
         fontWeight: "700",
@@ -254,7 +217,7 @@ const styles = StyleSheet.create({
         fontSize: 14,
     },
     contactValue: {
-        color: "#111827",
+        color: colors.textPrimary,
         fontSize: 14,
         lineHeight: 22,
     },
