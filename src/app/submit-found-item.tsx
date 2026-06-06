@@ -199,7 +199,7 @@ export default function SubmitFoundItemScreen() {
                 />
 
                 <View style={styles.buttonContainer}>
-                    <Button title="Submit" onPress={handleSubmit} color={colors.primaryAlt} />
+                    <Button title="Submit" onPress={handleSubmit} color={colors.primary} />
                 </View>
             </ScrollView>
         </KeyboardAvoidingView>

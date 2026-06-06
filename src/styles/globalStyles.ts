@@ -5,7 +5,6 @@ export const colors = {
     background: "#ffffff",
     surface: "#f9fafb",
     primary: "#007AFF",
-    primaryAlt: "#007BFF",
 
     textPrimary: "#111827",
     textSecondary: "#6b7280",
