@@ -105,8 +105,8 @@ export default function SubmitFoundItemScreen() {
         >
             {/* form layout uses ScrollView instead of normal Viewto ensure accessibility when using keyboard. */}
             <ScrollView contentContainerStyle={globalStyles.formContainer}>
-                <Text style={globalStyles.title}>Submit Found Item</Text>
-                <Text style={globalStyles.subtitle}>Please fill in the details of the item you found.</Text>
+                <Text style={globalStyles.pageTitle}>Item Details</Text>
+                <Text style={globalStyles.pageSubtitle}>Tell us what you found so the owner can identify it.</Text>
                 <TextInput
                     style={globalStyles.input}
                     placeholder="Item Name (Max 30 char.)"

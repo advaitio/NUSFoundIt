@@ -61,10 +61,11 @@ export const globalStyles = StyleSheet.create({
     },
 
     pageTitle: {
-        fontSize: 28,
+        fontSize: 24,
         fontWeight: "bold",
         marginBottom: spacing.sm,
         color: colors.textPrimary,
+        textAlign: "center",
     },
 
     subtitle: {
@@ -78,8 +79,9 @@ export const globalStyles = StyleSheet.create({
     pageSubtitle: {
         fontSize: 15,
         color: colors.textSecondary,
-        marginBottom: spacing.lg,
+        marginBottom: spacing.xl,
         lineHeight: 21,
+        textAlign: "center",
     },
 
     primaryButton: {
