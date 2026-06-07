@@ -6,7 +6,10 @@ import {
     RefreshControl,
     StyleSheet,
     Text,
-    View
+    View,
+    Linking,
+    Pressable,
+    Alert
 } from "react-native";
 import { colors, globalStyles } from "../styles/globalStyles";
 import { db } from "../firebase/firebaseConfig";
@@ -25,12 +28,15 @@ type FoundItem = {
     createdAt: any; // Firestore timestamp
 };
 
+// screen component for listings page
 export default function ListingsScreen() {
+    // state variables for found items, loading state, refreshing state and error message
     const [items, setItems] = useState<FoundItem[]>([]);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
 
+    // function to fetch found items from Firestore
     async function fetchFoundItems() {
         try {
             setErrorMessage("");
@@ -64,15 +70,18 @@ export default function ListingsScreen() {
         }
     }
 
+    // useEffect to fetch items on component mount
     useEffect(() => {
         fetchFoundItems();
     }, []);
 
+    // function to handle pull-to-refresh action
     const onRefresh = useCallback(() => {
         setRefreshing(true);
         fetchFoundItems();
     }, []);
 
+    // sub-component for displaying individual detail rows in the listing cards
     function DetailRow({
         label,
         value,
@@ -90,6 +99,50 @@ export default function ListingsScreen() {
         );
     }
 
+    // sub-component for displaying link rows (e.g. image URL) in the listing cards
+    function LinkDetailRow({
+        label,
+        url,
+    }: {
+        label: string;
+        url?: string
+    }) {
+        if (!url) return null;
+
+        const validURL = url;
+
+        // helper function to open the URL in the device's default browser
+        async function openLink() {
+            try {
+                if (!validURL.startsWith("http://") && !validURL.startsWith("https://")) {
+                    Alert.alert("Invalid URL");
+                    return;
+                }
+
+                const supported = await Linking.canOpenURL(validURL);
+
+                if (supported) {
+                    await Linking.openURL(validURL);
+                } else {
+                    Alert.alert("Cannot open image", "This image URL could not be opened.");
+                }
+            } catch (error) {
+                console.error("Error opening image URL:", error);
+                Alert.alert("Error", "Something went wrong while opening the image URL.");
+            }
+        }
+
+        return (
+            <View style={styles.detailRow}>
+                <Text style={styles.detailLabel}>{label}</Text>
+                <Pressable onPress={openLink} style={{ flex: 1 }}>
+                    <Text style={styles.linkValue}>Open image</Text>
+                </Pressable>
+            </View>
+        )
+    }
+
+    // conditional rendering based on loading state, error state and data availability
     if (loading) {
         return (
             <View style={globalStyles.centeredScreen}>
@@ -99,6 +152,7 @@ export default function ListingsScreen() {
         );
     }
 
+    // main render for listings page with FlatList to display found items
     return (
         <View style={globalStyles.screen}>
             <Text style={globalStyles.pageTitle}>Found Items</Text>
@@ -127,9 +181,7 @@ export default function ListingsScreen() {
                                 <DetailRow label="Location" value={item.locationFound} />
                                 <DetailRow label="Date found" value={item.dateFound} />
                                 <DetailRow label="Description" value={item.description} />
-                                {(item.imageUrl) ? (
-                                    <DetailRow label="Image URL" value={item.imageUrl} />
-                                ) : null}
+                                <LinkDetailRow label="Image" url={item.imageUrl} />
                             </View>
 
                             {(item.contactEmail || item.contactPhoneNumber) ? (
@@ -223,5 +275,12 @@ const styles = StyleSheet.create({
         color: colors.textPrimary,
         fontSize: 14,
         lineHeight: 22,
+    },
+    linkValue: {
+        color: colors.primary,
+        flex: 1,
+        fontSize: 14,
+        lineHeight: 20,
+        textDecorationLine: "underline",
     },
 });
