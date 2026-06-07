@@ -178,8 +178,8 @@ export default function ListingsScreen() {
 
                             <View style={styles.detailsContainer}>
                                 <DetailRow label="Category" value={item.category} />
-                                <DetailRow label="Location" value={item.locationFound} />
-                                <DetailRow label="Date found" value={item.dateFound} />
+                                <DetailRow label="Location Found" value={item.locationFound} />
+                                <DetailRow label="Date Found" value={item.dateFound} />
                                 <DetailRow label="Description" value={item.description} />
                                 <LinkDetailRow label="Image" url={item.imageUrl} />
                             </View>
