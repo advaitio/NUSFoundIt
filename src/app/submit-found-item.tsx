@@ -1,9 +1,9 @@
 import DateTimePicker, { DateTimePickerEvent } from "@react-native-community/datetimepicker";
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { Alert, Button, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
-import { colors, globalStyles } from "../styles/globalStyles";
+import { Alert, Button, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
+import { colors, globalStyles } from "../styles/globalStyles";
 
 //Importing of Firebase tools and firebaseConfig file.
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
@@ -198,9 +198,9 @@ export default function SubmitFoundItemScreen() {
                     multiline
                 />
 
-                <View style={styles.buttonContainer}>
-                    <Button title="Submit" onPress={handleSubmit} color={styles.buttonText.color} />
-                </View>
+                <Pressable style={styles.buttonContainer} onPress={handleSubmit}>
+                    <Text style={styles.buttonText}>Submit</Text>
+                </Pressable>
             </ScrollView>
         </KeyboardAvoidingView>
     );
@@ -223,13 +223,17 @@ const styles = StyleSheet.create({
     },
     buttonContainer: {
         backgroundColor: colors.primary,
-        //padding: 10,
+        paddingVertical: 14,
+        paddingHorizontal: 16,
         width: "30%",
         marginTop: 10,
         borderRadius: 14,
-        overflow: "hidden",
+        alignItems: "center",
+        justifyContent: "center",
     },
     buttonText: {
         color: "#ffffff",
+        fontSize: 16,
+        fontWeight: "bold",
     },
 });
