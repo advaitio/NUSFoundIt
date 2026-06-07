@@ -127,6 +127,9 @@ export default function ListingsScreen() {
                                 <DetailRow label="Location" value={item.locationFound} />
                                 <DetailRow label="Date found" value={item.dateFound} />
                                 <DetailRow label="Description" value={item.description} />
+                                {(item.imageUrl) ? (
+                                    <DetailRow label="Image URL" value={item.imageUrl} />
+                                ) : null}
                             </View>
 
                             {(item.contactEmail || item.contactPhoneNumber) ? (
