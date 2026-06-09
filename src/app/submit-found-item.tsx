@@ -1,13 +1,15 @@
 import DateTimePicker, { DateTimePickerEvent } from "@react-native-community/datetimepicker";
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { Alert, Button, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput } from "react-native";
+import { Alert, Button, Keyboard, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
-import { colors, globalStyles } from "../styles/globalStyles";
+import { colors, globalStyles, Layout } from "../styles/globalStyles";
 
 //Importing of Firebase tools and firebaseConfig file.
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { db } from "../firebase/firebaseConfig";
+
+import venuesData from "../constants/venues.json";
 
 //navigation functions
 export default function SubmitFoundItemScreen() {
@@ -19,6 +21,8 @@ export default function SubmitFoundItemScreen() {
     const [category, setCategory] = useState<string | null>(null);
     const [description, setDescription] = useState("");
     const [locationFound, setLocationFound] = useState("");
+    const [filteredVenues, setFilteredVenues] = useState<string[]>([]);
+    const [showSuggestions, setShowSuggestions] = useState(false);
     const [dateFound, setDateFound] = useState<Date | null>(null); // initialise with null to force user to select a date, preventing possible user error.
     const [showCalendar, setShowCalendar] = useState(false); // control of calendar popup visibility
     const [email, setEmail] = useState("");
@@ -52,6 +56,34 @@ export default function SubmitFoundItemScreen() {
             setDateFound(selectedDate);
         }
     };
+
+    const handleLocationSelect = (text: string) => {
+        setLocationFound(text);
+
+        if (text.trim().length > 0) {
+            const query = text.toUpperCase();
+
+            const venueKeys = Object.keys(venuesData);
+
+            const matches = venueKeys.filter((venue: string) =>
+                venue.toUpperCase().includes(query)
+            );
+
+            setFilteredVenues(matches.slice(0, 5));
+            setShowSuggestions(true);
+        } else {
+            setFilteredVenues([]);
+            setShowSuggestions(false);
+        }
+    };
+
+    const selectVenue = (venue: string) => {
+        setLocationFound(venue);
+        setFilteredVenues([]);
+        setShowSuggestions(false);
+        Keyboard.dismiss();
+    };
+
     // function to handle form submission
     const handleSubmit = async () => {
         //validation for non-empty fields
@@ -104,7 +136,9 @@ export default function SubmitFoundItemScreen() {
             keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0} 
         >
             {/* form layout uses ScrollView instead of normal Viewto ensure accessibility when using keyboard. */}
-            <ScrollView contentContainerStyle={globalStyles.formContainer}>
+            <ScrollView contentContainerStyle={globalStyles.formContainer}
+                keyboardShouldPersistTaps="handled"
+            >
                 <Text style={globalStyles.pageTitle}>Item Details</Text>
                 <Text style={globalStyles.pageSubtitle}>Tell us what you found so the owner can identify it.</Text>
                 <TextInput
@@ -114,6 +148,7 @@ export default function SubmitFoundItemScreen() {
                     value={itemName}
                     onChangeText={setItemName}
                     maxLength={30} // limit item name to 30 characters to prevent excessively long entries.
+                    onFocus={() => setShowSuggestions(false)}
                 />
                 <Dropdown
                     style={globalStyles.dropdown}
@@ -130,6 +165,7 @@ export default function SubmitFoundItemScreen() {
                     value={category}
                     onChange={item => {
                         setCategory(item.value);
+                        setShowSuggestions(false);
                     }}
                 />
                 <TextInput
@@ -140,17 +176,43 @@ export default function SubmitFoundItemScreen() {
                     value={description}
                     onChangeText={setDescription}
                     multiline
+                    onFocus={() => setShowSuggestions(false)}
                 />
-                <TextInput
-                    style={globalStyles.input}
-                    placeholder="Location Found"
-                    placeholderTextColor={colors.placeholder}
-                    value={locationFound}
-                    onChangeText={setLocationFound}
-                    multiline
-                />
+                <View style={Layout.searchContainer}>
+                    <TextInput
+                        style={globalStyles.input}
+                        placeholder="Location Found (e.g. LT17, COM1)"
+                        placeholderTextColor={colors.placeholder}
+                        value={locationFound}
 
-                <Pressable style={styles.datePickerBox} onPress={() => setShowCalendar(true)}>
+                        onChangeText={handleLocationSelect}
+                        onFocus={() => { if(locationFound) setShowSuggestions(true); }}
+                        onSubmitEditing={() => setShowSuggestions(false)}
+                        returnKeyType="done"
+                    />
+
+                    {showSuggestions && filteredVenues.length > 0 && (
+                        <View style={[Layout.dropdownPopover, { backgroundColor: colors.background }]}>
+                            {filteredVenues.map((item) => (
+                                <Pressable
+                                    key={item}
+                                    style={styles.suggestionRow}
+                                    onPress={() => selectVenue(item)}
+                                >
+                                    <Text style={styles.suggestionText}>{item}</Text>
+                                </Pressable>
+                            ))}
+                        </View>
+                    )}
+                </View>
+
+                <Pressable
+                    style={styles.datePickerBox}
+                    onPress={() => {
+                        setShowCalendar(true);
+                        setShowSuggestions(false);
+                    }}
+                >
                     <Text style={[
                         globalStyles.inputText,
                         {color: dateFound ? colors.textInput : colors.placeholder} // implement placeholder similar to other input fields. 
@@ -180,6 +242,7 @@ export default function SubmitFoundItemScreen() {
                     onChangeText={setEmail}
                     multiline
                     keyboardType="email-address"
+                    onFocus={() => setShowSuggestions(false)}
                 />
                 <TextInput
                     style={globalStyles.input}
@@ -189,6 +252,7 @@ export default function SubmitFoundItemScreen() {
                     onChangeText={setPhoneNumber}
                     keyboardType="phone-pad"
                     maxLength={8}
+                    onFocus={() => setShowSuggestions(false)}
                 />
                 <TextInput
                     style={globalStyles.input}
@@ -197,6 +261,7 @@ export default function SubmitFoundItemScreen() {
                     value={imageUrl}
                     onChangeText={setImageUrl}
                     multiline
+                    onFocus={() => setShowSuggestions(false)}
                 />
 
                 <Pressable style={styles.buttonContainer} onPress={handleSubmit}>
@@ -221,6 +286,15 @@ const styles = StyleSheet.create({
         marginBottom: 16,
         backgroundColor: "#f9f9f9",
         justifyContent: "center",
+    },
+    suggestionRow: {
+        padding: 14,
+        borderBottomWidth: 1,
+        borderBottomColor: "#eee",
+    },
+    suggestionText: {
+        fontSize: 16,
+        color: colors.textInput,
     },
     buttonContainer: {
         backgroundColor: colors.primary,
