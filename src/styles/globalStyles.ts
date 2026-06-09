@@ -1,6 +1,5 @@
-import { StyleSheet } from "react-native";
-import { Dropdown } from "react-native-element-dropdown";
 import { NativeStackNavigationOptions } from "@react-navigation/native-stack";
+import { Platform, StyleSheet } from "react-native";
 
 export const colors = {
     background: "#ffffff",
@@ -164,6 +163,34 @@ export const globalStyles = StyleSheet.create({
         marginBottom: spacing.sm,
     }
 });
+
+export const Layout = {
+    searchContainer: {
+        width: "100%" as const,
+        zIndex: 10,
+        position: "relative" as const,
+    },
+
+    dropdownPopover: {
+        borderColor: 'transparent',
+        borderWidth: 1,
+        borderRadius: 8,
+        marginTop: -12,
+        marginBottom: 16,
+        width: "100%" as const,
+        ...Platform.select({
+          ios: {
+            shadowColor: colors.textPrimary,
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.1,
+            shadowRadius: 4,
+          },
+          android: {
+            elevation: 3,
+          },
+        }),
+    },
+};
 
 export const screenOptions: NativeStackNavigationOptions = {
     headerTitleAlign: "center",
