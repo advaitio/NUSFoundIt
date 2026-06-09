@@ -188,6 +188,7 @@ export default function SubmitFoundItemScreen() {
                     value={phoneNumber}
                     onChangeText={setPhoneNumber}
                     keyboardType="phone-pad"
+                    maxLength={8}
                 />
                 <TextInput
                     style={globalStyles.input}
