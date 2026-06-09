@@ -16,6 +16,11 @@ export const colors = {
     border: "#e5e7eb",
     inputBorder: "#cccccc",
 
+    // NUSFoundIt logo colors
+    main: "#043366",
+    secondary: "#059190",
+    accent: "#EE7B12",
+
     error: "#d32f2f",
 };
 
