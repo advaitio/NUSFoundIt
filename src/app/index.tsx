@@ -14,7 +14,9 @@ export default function HomeScreen() {
       </Text>
       <Text style={globalStyles.subtitle}>A student-friendly lost-and-found app for the NUS community.</Text>
       <Link href="/submit-found-item" style={globalStyles.primaryButton}>Submit Found Item</Link>
-      <Link href="/listings" style={globalStyles.primaryButton}>View Public Listings</Link>
+      <Link href="/found-item-listings" style={globalStyles.primaryButton}>View Found Items</Link>
+      <Link href="/submit-lost-item" style={globalStyles.primaryButton}>Submit Lost Item</Link>
+      <Link href="/lost-item-listings" style={globalStyles.primaryButton}>View Lost Items</Link>
     </View>
   )
 }
