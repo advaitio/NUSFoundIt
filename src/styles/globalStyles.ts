@@ -17,9 +17,9 @@ export const colors = {
     inputBorder: "#cccccc",
 
     // NUSFoundIt logo colors
-    main: "#043366",
-    secondary: "#059190",
-    accent: "#EE7B12",
+    logoMain: "#043366",
+    logoSecondary: "#059190",
+    logoAccent: "#EE7B12",
 
     error: "#d32f2f",
 };
@@ -156,6 +156,13 @@ export const globalStyles = StyleSheet.create({
         fontSize: 14,
         fontWeight: "600",
     },
+
+    logo: {
+        width: 120,
+        height: 120,
+        resizeMode: "contain",
+        marginBottom: spacing.sm,
+    }
 });
 
 export const screenOptions: NativeStackNavigationOptions = {
