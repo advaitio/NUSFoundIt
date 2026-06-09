@@ -120,7 +120,7 @@ export default function SubmitFoundItemScreen() {
             setImageUrl("");
 
             // navigate to listings page in case user wants to view their report immediately after submission
-            router.push("/found-item-listings");
+            router.push("/listings");
         
         // general error handling for issues during submission process.
         } catch (error) {
