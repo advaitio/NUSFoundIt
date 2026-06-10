@@ -3,7 +3,7 @@ import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Alert, Button, Keyboard, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
-import { colors, globalStyles, Layout } from "../styles/globalStyles";
+import { colors, globalStyles, Suggestions } from "../styles/globalStyles";
 
 //Importing of Firebase tools and firebaseConfig file.
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
@@ -178,7 +178,7 @@ export default function SubmitFoundItemScreen() {
                     multiline
                     onFocus={() => setShowSuggestions(false)}
                 />
-                <View style={Layout.searchContainer}>
+                <View style={Suggestions.searchContainer}>
                     <TextInput
                         style={globalStyles.input}
                         placeholder="Location Found (e.g. LT17, COM1)"
@@ -192,14 +192,14 @@ export default function SubmitFoundItemScreen() {
                     />
 
                     {showSuggestions && filteredVenues.length > 0 && (
-                        <View style={[Layout.dropdownPopover, { backgroundColor: colors.background }]}>
+                        <View style={[Suggestions.dropdownPopover, { backgroundColor: colors.background }]}>
                             {filteredVenues.map((item) => (
                                 <Pressable
                                     key={item}
-                                    style={styles.suggestionRow}
+                                    style={Suggestions.suggestionRow}
                                     onPress={() => selectVenue(item)}
                                 >
-                                    <Text style={styles.suggestionText}>{item}</Text>
+                                    <Text style={Suggestions.suggestionText}>{item}</Text>
                                 </Pressable>
                             ))}
                         </View>
@@ -286,15 +286,6 @@ const styles = StyleSheet.create({
         marginBottom: 16,
         backgroundColor: "#f9f9f9",
         justifyContent: "center",
-    },
-    suggestionRow: {
-        padding: 14,
-        borderBottomWidth: 1,
-        borderBottomColor: "#eee",
-    },
-    suggestionText: {
-        fontSize: 16,
-        color: colors.textInput,
     },
     buttonContainer: {
         backgroundColor: colors.primary,

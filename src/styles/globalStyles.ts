@@ -164,13 +164,21 @@ export const globalStyles = StyleSheet.create({
     }
 });
 
-export const Layout = {
+export const Suggestions = {
     searchContainer: {
         width: "100%" as const,
         zIndex: 10,
         position: "relative" as const,
     },
-
+    suggestionRow: {
+        padding: 14,
+        borderBottomWidth: 1,
+        borderBottomColor: "#eee",
+    },
+    suggestionText: {
+        fontSize: 16,
+        color: colors.textInput,
+    },
     dropdownPopover: {
         borderColor: 'transparent',
         borderWidth: 1,
