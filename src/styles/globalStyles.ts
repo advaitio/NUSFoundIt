@@ -55,6 +55,7 @@ export const globalStyles = StyleSheet.create({
         //justifyContent: "center",
         alignItems: "center",
         backgroundColor: colors.background,
+        width: "100%",
     },
 
     title: {
