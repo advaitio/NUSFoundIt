@@ -6,6 +6,7 @@ import { colors, globalStyles } from "../../styles/globalStyles";
 export default function HomeScreen() {
   return (
     <View style={globalStyles.centeredScreen}>
+      {/* logo and app name */}
       <Image source={require("../../../assets/images/NUSFoundIt logo 1 no text no bg.png")} style={globalStyles.logo} />
       <Text style={globalStyles.title}>
         <Text style={{ color: colors.logoMain }}>NUS</Text>
@@ -13,10 +14,10 @@ export default function HomeScreen() {
         <Text style={{ color: colors.logoAccent }}>It</Text>
       </Text>
       <Text style={globalStyles.subtitle}>A student-friendly lost-and-found app for the NUS community.</Text>
-      <Link href="/report" style={globalStyles.primaryButton}>Submit Found Item</Link>
-      <Link href="/listings" style={globalStyles.primaryButton}>View Found Items</Link>
-      <Link href="/report" style={globalStyles.primaryButton}>Submit Lost Item</Link>
-      <Link href="/listings" style={globalStyles.primaryButton}>View Lost Items</Link>
+
+      {/* navigation links to main pages */}
+      <Link href="/report" style={globalStyles.primaryButton}>Report an Item</Link>
+      <Link href="/listings" style={globalStyles.primaryButton}>View Item Listings</Link>
     </View>
   )
 }
