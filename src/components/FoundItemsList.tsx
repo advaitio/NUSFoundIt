@@ -29,7 +29,7 @@ type FoundItem = {
 };
 
 // screen component for listings page
-export default function ListingsScreen() {
+export default function FoundItemsList() {
     // state variables for found items, loading state, refreshing state and error message
     const [items, setItems] = useState<FoundItem[]>([]);
     const [loading, setLoading] = useState(true);

@@ -29,7 +29,7 @@ type LostItem = {
 };
 
 // screen component for listings page
-export default function ListingsScreen() {
+export default function LostItemsList() {
     // state variables for lost items, loading state, refreshing state and error message
     const [items, setItems] = useState<LostItem[]>([]);
     const [loading, setLoading] = useState(true);

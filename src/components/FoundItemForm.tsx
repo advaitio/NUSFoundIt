@@ -1,5 +1,4 @@
 import DateTimePicker, { DateTimePickerEvent } from "@react-native-community/datetimepicker";
-import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Alert, Button, Keyboard, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
@@ -12,9 +11,7 @@ import { db } from "../firebase/firebaseConfig";
 import venuesData from "../constants/venues.json";
 
 //navigation functions
-export default function SubmitFoundItemScreen() {
-    // initialise the router for navigation
-    const router = useRouter();
+export default function FoundItemForm() {
 
     // state variables for the form fields
     const [itemName, setItemName] = useState("");
@@ -120,7 +117,7 @@ export default function SubmitFoundItemScreen() {
             setImageUrl("");
 
             // navigate to listings page in case user wants to view their report immediately after submission
-            router.push("/found-item-listings");
+            // router.push("/found-item-listings");
         
         // general error handling for issues during submission process.
         } catch (error) {
