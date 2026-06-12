@@ -50,7 +50,7 @@ export const globalStyles = StyleSheet.create({
 
     formContainer: {
         flexGrow: 1,
-        padding: spacing.xl,
+        padding: spacing.lg,
         //paddingBottom: 60,
         //justifyContent: "center",
         alignItems: "center",

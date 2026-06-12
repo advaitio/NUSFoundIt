@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useFocusEffect } from "expo-router";
+import { useCallback, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import FoundItemsList from "../../components/FoundItemsList";
 import LostItemsList from "../../components/LostItemsList";
@@ -7,7 +8,16 @@ import { colors, globalStyles, spacing } from "../../styles/globalStyles";
 export default function ListingsScreen() {
     // state variable to track which tab is currently selected (found or lost)
     const [selectedTab, setSelectedTab] = useState<"found" | "lost">("found");
+    const [resetKey, setResetKey] = useState(0);
 
+    useFocusEffect(
+        useCallback(() => {
+            return () => {
+                setResetKey(prev => prev + 1);
+                setSelectedTab("found");
+            };
+        }, [])
+    );
     return (
         <View style={ styles.container }>
             <View style={ styles.content }>
@@ -33,7 +43,11 @@ export default function ListingsScreen() {
                 <Text style={globalStyles.pageSubtitle}>Browse recently reported items.</Text>
                 
                 {/* render the appropriate form based on which tab is selected */}
-                {selectedTab === "found" ? <FoundItemsList /> : <LostItemsList />}
+                {selectedTab === "found" ? (
+                    <FoundItemsList key={`listings-found-${resetKey}`} />
+                ) : (
+                    <LostItemsList key={`listings-lost-${resetKey}`} />
+                )}
             </View>
         </View>
     )
