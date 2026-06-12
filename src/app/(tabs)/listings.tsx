@@ -1,9 +1,8 @@
-import { Pressable, View, ScrollView, StyleSheet, Text } from "react-native";
 import { useState } from "react";
-import { useRouter } from "expo-router";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import FoundItemsList from "../../components/FoundItemsList";
 import LostItemsList from "../../components/LostItemsList";
-import { colors, spacing, globalStyles } from "../../styles/globalStyles";
+import { colors, globalStyles, spacing } from "../../styles/globalStyles";
 
 export default function ListingsScreen() {
     // state variable to track which tab is currently selected (found or lost)
@@ -12,10 +11,6 @@ export default function ListingsScreen() {
     return (
         <View style={ styles.container }>
             <View style={ styles.content }>
-                {/* page title and subtitle */}
-                <Text style={globalStyles.pageTitle}>Public Listings</Text>
-                <Text style={globalStyles.pageSubtitle}>Browse recently reported items.</Text>
-
                 {/* tab buttons to switch between found and lost item forms */}
                 <View style={styles.tabContainer}>
                     {/* tab button for found item form */}
@@ -23,17 +18,20 @@ export default function ListingsScreen() {
                         style={[styles.tabButton, selectedTab === "found" && styles.activeTabButton]}
                         onPress={() => setSelectedTab("found")}
                     >
-                        <Text style={[styles.tabText, selectedTab === "found" && styles.activeTabText]}>Found Item</Text>
+                        <Text style={[styles.tabText, selectedTab === "found" && styles.activeTabText]}>Found Items</Text>
                     </Pressable>
                     {/* tab button for lost item form */}
                     <Pressable
                         style={[styles.tabButton, selectedTab === "lost" && styles.activeTabButton]}
                         onPress={() => setSelectedTab("lost")}
                     >
-                        <Text style={[styles.tabText, selectedTab === "lost" && styles.activeTabText]}>Lost Item</Text>
+                        <Text style={[styles.tabText, selectedTab === "lost" && styles.activeTabText]}>Lost Items</Text>
                     </Pressable>
                 </View>
 
+                {/* page subtitle */}
+                <Text style={globalStyles.pageSubtitle}>Browse recently reported items.</Text>
+                
                 {/* render the appropriate form based on which tab is selected */}
                 {selectedTab === "found" ? <FoundItemsList /> : <LostItemsList />}
             </View>

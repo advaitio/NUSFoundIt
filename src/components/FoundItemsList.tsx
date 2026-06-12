@@ -2,17 +2,17 @@ import { collection, getDocs, orderBy, query } from "firebase/firestore";
 import { useCallback, useEffect, useState } from "react";
 import {
     ActivityIndicator,
+    Alert,
     FlatList,
+    Linking,
+    Pressable,
     RefreshControl,
     StyleSheet,
     Text,
-    View,
-    Linking,
-    Pressable,
-    Alert
+    View
 } from "react-native";
-import { colors, globalStyles } from "../styles/globalStyles";
 import { db } from "../firebase/firebaseConfig";
+import { colors, globalStyles } from "../styles/globalStyles";
 
 // create found item type for better type safety
 type FoundItem = {
@@ -155,9 +155,6 @@ export default function FoundItemsList() {
     // main render for listings page with FlatList to display found items
     return (
         <View style={globalStyles.screen}>
-            <Text style={globalStyles.pageTitle}>Found Items</Text>
-            <Text style={globalStyles.pageSubtitle}>Browse recently reported items.</Text>
-
             {errorMessage ? (
                 <Text style={globalStyles.errorText}>{errorMessage}</Text>
             ) : (
