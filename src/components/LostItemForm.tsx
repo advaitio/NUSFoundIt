@@ -164,8 +164,14 @@ export default function LostItemForm() {
                 placeholder="Description"
                 placeholderTextColor={colors.placeholder}
                 value={description}
-                onChangeText={setDescription}
+                onChangeText={(text) => {
+                    const lines = text.split('\n');
+                    if (lines.length <= 3) {
+                        setDescription(text);
+                    }
+                }}
                 multiline
+                numberOfLines={3}
                 onFocus={() => setShowSuggestions(false)}
             />
             <View style={Suggestions.searchContainer}>
@@ -239,7 +245,7 @@ export default function LostItemForm() {
                 placeholder="Contact Phone Number"
                 placeholderTextColor={colors.placeholder}
                 value={phoneNumber}
-                onChangeText={setPhoneNumber}
+                onChangeText={(text) => setPhoneNumber(text.replace(/[^0-9]/g, ""))}
                 keyboardType="phone-pad"
                 maxLength={8}
                 onFocus={() => setShowSuggestions(false)}
