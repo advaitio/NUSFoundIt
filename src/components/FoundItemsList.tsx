@@ -29,7 +29,7 @@ type FoundItem = {
 };
 
 // screen component for listings page
-export default function FoundItemsList() {
+export default function FoundItemsList({ searchQuery }: { searchQuery: string }) {
     // state variables for found items, loading state, refreshing state and error message
     const [items, setItems] = useState<FoundItem[]>([]);
     const [loading, setLoading] = useState(true);
@@ -80,6 +80,13 @@ export default function FoundItemsList() {
         setRefreshing(true);
         fetchFoundItems();
     }, []);
+
+    const filteredItems = items.filter(item =>
+        item.itemName.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
+        item.category.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
+        item.description.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
+        item.locationFound.toLowerCase().includes(searchQuery.toLowerCase().trim())
+    );
 
     // sub-component for displaying individual detail rows in the listing cards
     function DetailRow({
@@ -159,14 +166,19 @@ export default function FoundItemsList() {
                 <Text style={globalStyles.errorText}>{errorMessage}</Text>
             ) : (
                 <FlatList
-                    data={items}
+                    data={filteredItems}
                     keyExtractor={(item) => item.id}
-                    contentContainerStyle={[styles.listContent, items.length === 0 && styles.emptyListContent]}
+                    contentContainerStyle={[styles.listContent, filteredItems.length === 0 && styles.emptyListContent]}
                     refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
                     ListEmptyComponent={
                         <View style={styles.emptyContainer}>
                             <Text style={styles.emptyTitle}>No listings found</Text>
-                            <Text style={styles.emptyText}>It seems there are no found items reported yet. Check back later or submit a report if you've found something!</Text>
+                            <Text style={styles.emptyText}>
+                                {searchQuery.trim().length > 0 
+                                    ? "We couldn't find anything matching your keywords. Check spelling or try a broader search phrase!" 
+                                    : "It seems there are no found items reported yet. Check back later!"}
+                            </Text>
+
                         </View>
                     }
                     renderItem={({ item }) => (
