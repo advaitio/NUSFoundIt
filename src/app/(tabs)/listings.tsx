@@ -1,15 +1,16 @@
 import { useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
-import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { Modal, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import FoundItemsList from "../../components/FoundItemsList";
 import LostItemsList from "../../components/LostItemsList";
-import { colors, globalStyles, spacing } from "../../styles/globalStyles";
+import { colors, globalStyles, PopupStyles, spacing } from "../../styles/globalStyles";
 
 export default function ListingsScreen() {
     // state variable to track which tab is currently selected (found or lost)
     const [selectedTab, setSelectedTab] = useState<"found" | "lost">("found");
     const [resetKey, setResetKey] = useState(0);
     const [searchQuery, setSearchQuery] = useState("");
+    const [filterModalVisible, setFilterModalVisible] = useState(false);
 
     useFocusEffect(
         useCallback(() => {
@@ -17,6 +18,7 @@ export default function ListingsScreen() {
                 setResetKey(prev => prev + 1);
                 setSelectedTab("found");
                 setSearchQuery("");
+                setFilterModalVisible(false);
             };
         }, [])
     );
@@ -50,18 +52,27 @@ export default function ListingsScreen() {
                 {/* page subtitle */}
                 <Text style={globalStyles.pageSubtitle}>Browse recently reported items.</Text>
 
-                <View style={styles.searchBarContainer}>
-                    <TextInput
-                        style={globalStyles.input}
-                        placeholder={selectedTab === "found" ? "Search found items..." : "Search lost items..."}
-                        placeholderTextColor={colors.placeholder}
-                        value={searchQuery}
-                        onChangeText={setSearchQuery}
-                        clearButtonMode="while-editing"
-                        returnKeyType="search"
-                    />
+                <View style={styles.searchRowContainer}>
+                    <View style={styles.searchBarContainer}>
+                        <TextInput
+                            style={[globalStyles.input, { width: 'auto', flex: 1, marginBottom: 0 }]}
+                            placeholder={selectedTab === "found" ? "Search found items..." : "Search lost items..."}
+                            placeholderTextColor={colors.placeholder}
+                            value={searchQuery}
+                            onChangeText={setSearchQuery}
+                            clearButtonMode="while-editing"
+                            returnKeyType="search"
+                        />
+                    </View>
+
+                    <Pressable
+                        style={PopupStyles.buttonContainer}
+                        onPress={() => setFilterModalVisible(true)}
+                    >
+                        <Text style={PopupStyles.buttonText}>Filter</Text>
+                    </Pressable>
                 </View>
-                
+
                 {/* render the appropriate form based on which tab is selected */}
                 {selectedTab === "found" ? (
                     <FoundItemsList key={`listings-found-${resetKey}`} searchQuery={searchQuery} />
@@ -69,6 +80,56 @@ export default function ListingsScreen() {
                     <LostItemsList key={`listings-lost-${resetKey}`} searchQuery={searchQuery} />
                 )}
             </View>
+
+            <Modal
+                visible={filterModalVisible}
+                animationType="fade"
+                transparent={true}
+                onRequestClose={() => setFilterModalVisible(false)}
+            >
+                <View style={PopupStyles.modalBackdrop}>
+                    <Modal
+                        visible={filterModalVisible}
+                        animationType="slide"
+                        transparent={true}
+                        onRequestClose={() => setFilterModalVisible(false)}
+                    >
+                        <Pressable
+                            style={PopupStyles.dismissLayer}
+                            onPress={() => setFilterModalVisible(false)}
+                        />
+                        <View style={PopupStyles.modalContainer}>
+                            <View style={PopupStyles.modalHeaderRow}>
+                                <Text style={PopupStyles.modalTitle}>Filter Options</Text>
+                                <Pressable onPress={() => setFilterModalVisible(false)}>
+                                    <Text style={PopupStyles.modalCloseButton}>Close</Text>
+                                </Pressable>
+                            </View>
+
+                            <View style={PopupStyles.modalPlaceholder}>
+                                <Text style={PopupStyles.modalPlaceholderText}>
+                                    Filter options will go here.
+                                </Text>
+                            </View>
+
+                            <View style={PopupStyles.modalFooter}>
+                                <Pressable 
+                                    style={[PopupStyles.actionButton, PopupStyles.resetButton]}
+                                    onPress={() => { /* test */ }}
+                                >
+                                    <Text style={PopupStyles.resetButtonText}>Reset All</Text>
+                                </Pressable>
+                                <Pressable 
+                                    style={[PopupStyles.actionButton, PopupStyles.applyButton]}
+                                    onPress={() => setFilterModalVisible(false)}
+                                >
+                                    <Text style={PopupStyles.applyButtonText}>Apply Filters</Text>
+                                </Pressable>
+                            </View>
+                        </View>
+                    </Modal>
+                </View>
+            </Modal>
         </View>
     )
 }
@@ -111,7 +172,13 @@ const styles = StyleSheet.create({
         color: colors.background,
     },
     searchBarContainer: {
+        flex: 1,
+    },
+    searchRowContainer: {
+        flexDirection: "row",
         width: "100%",
-        marginBottom: spacing.xs,
+        alignItems: "center",
+        marginBottom: spacing.md,
+        gap: spacing.sm,
     },
 })

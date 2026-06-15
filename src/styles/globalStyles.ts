@@ -102,7 +102,21 @@ export const globalStyles = StyleSheet.create({
         marginBottom: spacing.lg,
         overflow: "hidden"
     },
-
+    buttonContainer: {
+        backgroundColor: colors.primary,
+        paddingVertical: 14,
+        paddingHorizontal: 16,
+        width: "30%",
+        marginTop: 10,
+        borderRadius: 14,
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    buttonText: {
+        color: "#ffffff",
+        fontSize: 16,
+        fontWeight: "bold",
+    },
     input: {
         width: "100%",
         borderWidth: 1,
@@ -216,3 +230,97 @@ export const screenOptions: NativeStackNavigationOptions = {
         backgroundColor: colors.background,
     },
 };
+
+export const PopupStyles = StyleSheet.create({
+    buttonContainer: {
+        backgroundColor: colors.surface,
+        borderWidth: 1,
+        borderColor: colors.inputBorder,
+        borderRadius: 8,
+        paddingHorizontal: spacing.lg,
+        height: 50,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    buttonText: {
+        fontSize: 15,
+        fontWeight: "600",
+        color: colors.textPrimary,
+    },
+    modalBackdrop: {
+        flex: 1,
+        backgroundColor: "rgba(0,0,0,0.4)",
+        justifyContent: "flex-end",
+    },
+    modalContainer: {
+        backgroundColor: colors.background,
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
+        padding: spacing.xl,
+        paddingBottom: Platform.OS === "ios" ? 40 : spacing.xl,
+        maxHeight: "80%",
+    },
+    modalHeaderRow: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginBottom: spacing.xl,
+        borderBottomWidth: 1,
+        borderBottomColor: colors.border,
+        paddingBottom: spacing.sm,
+    },
+    modalTitle: {
+        fontSize: 20,
+        fontWeight: "bold",
+        color: colors.textPrimary,
+    },
+    modalCloseButton: {
+        fontSize: 20,
+        color: colors.textSecondary,
+        padding: spacing.xs,
+    },
+    modalPlaceholder: {
+        paddingVertical: spacing.xl,
+        alignItems: "center",
+    },
+    modalPlaceholderText: {
+        fontSize: 14,
+        color: colors.textSecondary,
+        textAlign: "center",
+        lineHeight: 20,
+    },
+    modalFooter: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        gap: spacing.md,
+        marginTop: spacing.xl,
+    },
+    actionButton: {
+        flex: 1,
+        paddingVertical: 14,
+        borderRadius: 10,
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    resetButton: {
+        backgroundColor: colors.surface,
+        borderWidth: 1,
+        borderColor: colors.border,
+    },
+    resetButtonText: {
+        color: colors.textSecondary,
+        fontSize: 15,
+        fontWeight: "600",
+    },
+    applyButton: {
+        backgroundColor: colors.primary,
+    },
+    applyButtonText: {
+        color: "#fff",
+        fontSize: 15,
+        fontWeight: "600",
+    },
+    dismissLayer: {
+        flex: 1,
+    }
+});
