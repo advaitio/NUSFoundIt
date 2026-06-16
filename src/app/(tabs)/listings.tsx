@@ -1,6 +1,6 @@
 import { useFocusEffect } from "expo-router";
-import { useCallback, useState } from "react";
-import { Modal, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Animated, Modal, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import FoundItemsList from "../../components/FoundItemsList";
 import LostItemsList from "../../components/LostItemsList";
@@ -15,6 +15,8 @@ export default function ListingsScreen() {
     const [activeCategory, setActiveCategory] = useState<string | null>(null);
     const [tempCategory, setTempCategory] = useState<string | null>(null);
 
+    const slideAnim = useRef(new Animated.Value(600)).current;
+
     const categoryData = [
         { label: "ID Card / Matric Card", value: "ID card" },
         { label: "Wallet / Purse", value: "wallet" },
@@ -26,6 +28,28 @@ export default function ListingsScreen() {
         { label: "Clothing / Accessories", value: "clothing" },
         { label: "Other", value: "other" },
     ];
+
+    useEffect(() => {
+        if (filterModalVisible) {
+            Animated.timing(slideAnim, {
+                toValue: 0,
+                duration: 300,
+                useNativeDriver: true,
+            }).start();
+        } else {
+            slideAnim.setValue(600);
+        }
+    }, [filterModalVisible]);
+
+    const closeModal = () => {
+        Animated.timing(slideAnim, {
+            toValue: 600,
+            duration: 300,
+            useNativeDriver: true,
+        }).start(() => {
+            setFilterModalVisible(false);
+        });
+    };
 
     useFocusEffect(
         useCallback(() => {
@@ -39,14 +63,26 @@ export default function ListingsScreen() {
     );
 
     const handleApplyFilters = () => {
-        setActiveCategory(tempCategory === "All" ? null : tempCategory);
-        setFilterModalVisible(false);
+        Animated.timing(slideAnim, {
+            toValue: 600,
+            duration: 250,
+            useNativeDriver: true,
+        }).start(() => {
+            setActiveCategory(tempCategory === "All" ? null : tempCategory);
+            setFilterModalVisible(false);
+        });
     };
 
     const handleResetFilters = () => {
-        setTempCategory(null);
-        setActiveCategory(null);
-        setFilterModalVisible(false);
+        Animated.timing(slideAnim, {
+            toValue: 600,
+            duration: 250,
+            useNativeDriver: true,
+        }).start(() => {
+            setTempCategory(null);
+            setActiveCategory(null);
+            setFilterModalVisible(false);
+        });
     };
     return (
         <View style={ styles.container }>
@@ -93,7 +129,10 @@ export default function ListingsScreen() {
 
                     <Pressable
                         style={PopupStyles.buttonContainer}
-                        onPress={() => setFilterModalVisible(true)}
+                        onPress={() => {
+                            setTempCategory(activeCategory); 
+                            setFilterModalVisible(true);
+                        }}
                     >
                         <Text style={PopupStyles.buttonText}>Filter</Text>
                     </Pressable>
@@ -111,29 +150,21 @@ export default function ListingsScreen() {
                 visible={filterModalVisible}
                 animationType="fade"
                 transparent={true}
-                onRequestClose={() => setFilterModalVisible(false)}
+                onRequestClose={closeModal}
             >
-                <Pressable
-                    style={PopupStyles.modalBackdrop}
-                    onPress={() => setFilterModalVisible(false)}
-                />
-            </Modal>
-
-            <Modal
-                visible={filterModalVisible}
-                animationType="slide"
-                transparent={true}
-                onRequestClose={() => setFilterModalVisible(false)}
-            >
-                <View style={PopupStyles.slideWrapper}>
+                <View style={PopupStyles.modalBackdrop}>
                     <Pressable
                         style={PopupStyles.dismissLayer}
-                        onPress={() => setFilterModalVisible(false)}
+                        onPress={closeModal}
                     />
-                    <View style={PopupStyles.modalContainer}>
+                    <Animated.View style={[
+                            PopupStyles.modalContainer,
+                            { transform: [{ translateY: slideAnim }] }
+                        ]}
+                    >
                         <View style={PopupStyles.modalHeaderRow}>
                             <Text style={PopupStyles.modalTitle}>Filter Options</Text>
-                            <Pressable onPress={() => setFilterModalVisible(false)}>
+                            <Pressable onPress={closeModal}>
                                 <Text style={PopupStyles.modalCloseButton}>Close</Text>
                             </Pressable>
                         </View>
@@ -171,7 +202,7 @@ export default function ListingsScreen() {
                                 <Text style={PopupStyles.applyButtonText}>Apply Filters</Text>
                             </Pressable>
                         </View>
-                    </View>
+                    </Animated.View>
                 </View>
             </Modal>
         </View>
