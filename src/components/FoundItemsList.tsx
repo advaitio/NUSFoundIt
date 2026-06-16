@@ -29,7 +29,12 @@ type FoundItem = {
 };
 
 // screen component for listings page
-export default function FoundItemsList({ searchQuery }: { searchQuery: string }) {
+export default function FoundItemsList({
+    searchQuery,
+    categoryFilter
+}: { searchQuery: string; 
+    categoryFilter: string | null;
+}) {
     // state variables for found items, loading state, refreshing state and error message
     const [items, setItems] = useState<FoundItem[]>([]);
     const [loading, setLoading] = useState(true);
@@ -81,12 +86,16 @@ export default function FoundItemsList({ searchQuery }: { searchQuery: string })
         fetchFoundItems();
     }, []);
 
-    const filteredItems = items.filter(item =>
-        item.itemName.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
-        item.category.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
-        item.description.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
-        item.locationFound.toLowerCase().includes(searchQuery.toLowerCase().trim())
-    );
+    const filteredItems = items.filter((item) => {
+        const matchesSearch = item.itemName.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
+            item.category.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
+            item.description.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
+            item.locationFound.toLowerCase().includes(searchQuery.toLowerCase().trim());
+
+        const matchesCategory = !categoryFilter || item.category === categoryFilter;
+
+        return matchesSearch && matchesCategory;
+    });
 
     // sub-component for displaying individual detail rows in the listing cards
     function DetailRow({

@@ -322,5 +322,19 @@ export const PopupStyles = StyleSheet.create({
     },
     dismissLayer: {
         flex: 1,
+    },
+    slideWrapper: {
+        flex: 1,
+        justifyContent: "flex-end",
+    },
+    filterFormContainer: {
+        width: "100%",
+        paddingVertical: spacing.sm,
+    },
+    filterLabelText: {
+        fontSize: 14,
+        fontWeight: "700",
+        color: colors.textSecondary,
+        marginBottom: spacing.sm,
     }
 });
