@@ -1,6 +1,7 @@
 import { useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
 import { Modal, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { Dropdown } from "react-native-element-dropdown";
 import FoundItemsList from "../../components/FoundItemsList";
 import LostItemsList from "../../components/LostItemsList";
 import { colors, globalStyles, PopupStyles, spacing } from "../../styles/globalStyles";
@@ -11,6 +12,20 @@ export default function ListingsScreen() {
     const [resetKey, setResetKey] = useState(0);
     const [searchQuery, setSearchQuery] = useState("");
     const [filterModalVisible, setFilterModalVisible] = useState(false);
+    const [activeCategory, setActiveCategory] = useState<string | null>(null);
+    const [tempCategory, setTempCategory] = useState<string | null>(null);
+
+    const categoryData = [
+        { label: "ID Card / Matric Card", value: "ID card" },
+        { label: "Wallet / Purse", value: "wallet" },
+        { label: "Water Bottle", value: "bottle" },
+        { label: "Phone", value: "phone" },
+        { label: "Laptop", value: "laptop" },
+        { label: "Keys", value: "keys" },
+        { label: "Electronics", value: "electronics" },
+        { label: "Clothing / Accessories", value: "clothing" },
+        { label: "Other", value: "other" },
+    ];
 
     useFocusEffect(
         useCallback(() => {
@@ -22,6 +37,17 @@ export default function ListingsScreen() {
             };
         }, [])
     );
+
+    const handleApplyFilters = () => {
+        setActiveCategory(tempCategory === "All" ? null : tempCategory);
+        setFilterModalVisible(false);
+    };
+
+    const handleResetFilters = () => {
+        setTempCategory(null);
+        setActiveCategory(null);
+        setFilterModalVisible(false);
+    };
     return (
         <View style={ styles.container }>
             <View style={ styles.content }>
@@ -75,9 +101,9 @@ export default function ListingsScreen() {
 
                 {/* render the appropriate form based on which tab is selected */}
                 {selectedTab === "found" ? (
-                    <FoundItemsList key={`listings-found-${resetKey}`} searchQuery={searchQuery} />
+                    <FoundItemsList key={`listings-found-${resetKey}`} searchQuery={searchQuery} categoryFilter={activeCategory} />
                 ) : (
-                    <LostItemsList key={`listings-lost-${resetKey}`} searchQuery={searchQuery} />
+                    <LostItemsList key={`listings-lost-${resetKey}`} searchQuery={searchQuery} categoryFilter={activeCategory} />
                 )}
             </View>
 
@@ -87,47 +113,65 @@ export default function ListingsScreen() {
                 transparent={true}
                 onRequestClose={() => setFilterModalVisible(false)}
             >
-                <View style={PopupStyles.modalBackdrop}>
-                    <Modal
-                        visible={filterModalVisible}
-                        animationType="slide"
-                        transparent={true}
-                        onRequestClose={() => setFilterModalVisible(false)}
-                    >
-                        <Pressable
-                            style={PopupStyles.dismissLayer}
-                            onPress={() => setFilterModalVisible(false)}
-                        />
-                        <View style={PopupStyles.modalContainer}>
-                            <View style={PopupStyles.modalHeaderRow}>
-                                <Text style={PopupStyles.modalTitle}>Filter Options</Text>
-                                <Pressable onPress={() => setFilterModalVisible(false)}>
-                                    <Text style={PopupStyles.modalCloseButton}>Close</Text>
-                                </Pressable>
-                            </View>
+                <Pressable
+                    style={PopupStyles.modalBackdrop}
+                    onPress={() => setFilterModalVisible(false)}
+                />
+            </Modal>
 
-                            <View style={PopupStyles.modalPlaceholder}>
-                                <Text style={PopupStyles.modalPlaceholderText}>
-                                    Filter options will go here.
-                                </Text>
-                            </View>
-
-                            <View style={PopupStyles.modalFooter}>
-                                <Pressable 
-                                    style={[PopupStyles.actionButton, PopupStyles.resetButton]}
-                                    onPress={() => { /* test */ }}
-                                >
-                                    <Text style={PopupStyles.resetButtonText}>Reset All</Text>
-                                </Pressable>
-                                <Pressable 
-                                    style={[PopupStyles.actionButton, PopupStyles.applyButton]}
-                                    onPress={() => setFilterModalVisible(false)}
-                                >
-                                    <Text style={PopupStyles.applyButtonText}>Apply Filters</Text>
-                                </Pressable>
-                            </View>
+            <Modal
+                visible={filterModalVisible}
+                animationType="slide"
+                transparent={true}
+                onRequestClose={() => setFilterModalVisible(false)}
+            >
+                <View style={PopupStyles.slideWrapper}>
+                    <Pressable
+                        style={PopupStyles.dismissLayer}
+                        onPress={() => setFilterModalVisible(false)}
+                    />
+                    <View style={PopupStyles.modalContainer}>
+                        <View style={PopupStyles.modalHeaderRow}>
+                            <Text style={PopupStyles.modalTitle}>Filter Options</Text>
+                            <Pressable onPress={() => setFilterModalVisible(false)}>
+                                <Text style={PopupStyles.modalCloseButton}>Close</Text>
+                            </Pressable>
                         </View>
-                    </Modal>
+
+                        <View style={PopupStyles.filterFormContainer}>
+                            <Text style={PopupStyles.filterLabelText}>Item Category</Text>
+                            <Dropdown
+                                style={globalStyles.dropdown}
+                                placeholderStyle={globalStyles.placeholderText}
+                                selectedTextStyle={[
+                                    globalStyles.inputText,
+                                    { color: tempCategory ? colors.textInput : colors.placeholder }
+                                ]}
+                                itemTextStyle={globalStyles.inputText}
+                                data={categoryData}
+                                labelField="label"
+                                valueField="value"
+                                placeholder="All Categories"
+                                value={tempCategory}
+                                onChange={item => setTempCategory(item.value)}
+                            />
+                        </View>
+
+                        <View style={PopupStyles.modalFooter}>
+                            <Pressable 
+                                style={[PopupStyles.actionButton, PopupStyles.resetButton]}
+                                onPress={handleResetFilters}
+                            >
+                                <Text style={PopupStyles.resetButtonText}>Reset All</Text>
+                            </Pressable>
+                            <Pressable 
+                                style={[PopupStyles.actionButton, PopupStyles.applyButton]}
+                                onPress={handleApplyFilters}
+                            >
+                                <Text style={PopupStyles.applyButtonText}>Apply Filters</Text>
+                            </Pressable>
+                        </View>
+                    </View>
                 </View>
             </Modal>
         </View>
