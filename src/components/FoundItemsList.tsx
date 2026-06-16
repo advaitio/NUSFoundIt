@@ -14,6 +14,8 @@ import {
 import { db } from "../firebase/firebaseConfig";
 import { colors, globalStyles } from "../styles/globalStyles";
 
+import venuesData from "../constants/venues.json";
+
 // create found item type for better type safety
 type FoundItem = {
     id: string;
@@ -31,9 +33,11 @@ type FoundItem = {
 // screen component for listings page
 export default function FoundItemsList({
     searchQuery,
-    categoryFilter
+    categoryFilter,
+    locationFilter
 }: { searchQuery: string; 
     categoryFilter: string | null;
+    locationFilter: string | null;
 }) {
     // state variables for found items, loading state, refreshing state and error message
     const [items, setItems] = useState<FoundItem[]>([]);
@@ -94,7 +98,11 @@ export default function FoundItemsList({
 
         const matchesCategory = !categoryFilter || item.category === categoryFilter;
 
-        return matchesSearch && matchesCategory;
+        const targetVenueObj = venuesData[item.locationFound as keyof typeof venuesData];
+        const venueCategory = targetVenueObj ? (targetVenueObj as any).category : "Others";
+        const matchesLocation = !locationFilter || venueCategory === locationFilter;
+
+        return matchesSearch && matchesCategory && matchesLocation;
     });
 
     // sub-component for displaying individual detail rows in the listing cards
