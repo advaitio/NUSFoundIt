@@ -14,6 +14,8 @@ export default function ListingsScreen() {
     const [filterModalVisible, setFilterModalVisible] = useState(false);
     const [activeCategory, setActiveCategory] = useState<string | null>(null);
     const [tempCategory, setTempCategory] = useState<string | null>(null);
+    const [activeLocation, setActiveLocation] = useState<string | null>(null);
+    const [tempLocation, setTempLocation] = useState<string | null>(null);
 
     const slideAnim = useRef(new Animated.Value(600)).current;
 
@@ -27,6 +29,21 @@ export default function ListingsScreen() {
         { label: "Electronics", value: "electronics" },
         { label: "Clothing / Accessories", value: "clothing" },
         { label: "Other", value: "other" },
+    ];
+
+    const locationData = [
+        { label: "Computing", value: "Computing" },
+        { label: "UTown", value: "UTown" },
+        { label: "Central Library", value: "Central Library" },
+        { label: "Engineering", value: "Engineering" },
+        { label: "Science", value: "Science" },
+        { label: "FASS", value: "FASS" },
+        { label: "Music", value: "Music" },
+        { label: "Medicine", value: "Medicine" },
+        { label: "Business", value: "Business" },
+        { label: "Law", value: "Law" },
+        { label: "Residential Colleges", value: "Residential Colleges" },
+        { label: "Others", value: "Others" },
     ];
 
     useEffect(() => {
@@ -58,6 +75,10 @@ export default function ListingsScreen() {
                 setSelectedTab("found");
                 setSearchQuery("");
                 setFilterModalVisible(false);
+                setActiveCategory(null);
+                setActiveLocation(null);
+                setTempCategory(null);
+                setTempLocation(null);
             };
         }, [])
     );
@@ -69,6 +90,7 @@ export default function ListingsScreen() {
             useNativeDriver: true,
         }).start(() => {
             setActiveCategory(tempCategory === "All" ? null : tempCategory);
+            setActiveLocation(tempLocation === "All" ? null : tempLocation);
             setFilterModalVisible(false);
         });
     };
@@ -81,6 +103,8 @@ export default function ListingsScreen() {
         }).start(() => {
             setTempCategory(null);
             setActiveCategory(null);
+            setTempLocation(null);
+            setActiveLocation(null);
             setFilterModalVisible(false);
         });
     };
@@ -95,6 +119,8 @@ export default function ListingsScreen() {
                         onPress={() => {
                             setSelectedTab("found");
                             setSearchQuery("");
+                            setActiveCategory(null);
+                            setActiveLocation(null);
                         }}
                     >
                         <Text style={[styles.tabText, selectedTab === "found" && styles.activeTabText]}>Found Items</Text>
@@ -105,6 +131,8 @@ export default function ListingsScreen() {
                         onPress={() => {
                             setSelectedTab("lost");
                             setSearchQuery("");
+                            setActiveCategory(null);
+                            setActiveLocation(null);
                         }}
                     >
                         <Text style={[styles.tabText, selectedTab === "lost" && styles.activeTabText]}>Lost Items</Text>
@@ -130,7 +158,8 @@ export default function ListingsScreen() {
                     <Pressable
                         style={PopupStyles.buttonContainer}
                         onPress={() => {
-                            setTempCategory(activeCategory); 
+                            setTempCategory(activeCategory);
+                            setTempLocation(activeLocation);
                             setFilterModalVisible(true);
                         }}
                     >
@@ -140,9 +169,9 @@ export default function ListingsScreen() {
 
                 {/* render the appropriate form based on which tab is selected */}
                 {selectedTab === "found" ? (
-                    <FoundItemsList key={`listings-found-${resetKey}`} searchQuery={searchQuery} categoryFilter={activeCategory} />
+                    <FoundItemsList key={`listings-found-${resetKey}`} searchQuery={searchQuery} categoryFilter={activeCategory} locationFilter={activeLocation} />
                 ) : (
-                    <LostItemsList key={`listings-lost-${resetKey}`} searchQuery={searchQuery} categoryFilter={activeCategory} />
+                    <LostItemsList key={`listings-lost-${resetKey}`} searchQuery={searchQuery} categoryFilter={activeCategory} locationFilter={activeLocation}/>
                 )}
             </View>
 
@@ -185,6 +214,25 @@ export default function ListingsScreen() {
                                 placeholder="All Categories"
                                 value={tempCategory}
                                 onChange={item => setTempCategory(item.value)}
+                            />
+                        </View>
+
+                        <View style={PopupStyles.filterFormContainer}>
+                            <Text style={PopupStyles.filterLabelText}>Location</Text>
+                            <Dropdown
+                                style={globalStyles.dropdown}
+                                placeholderStyle={globalStyles.placeholderText}
+                                selectedTextStyle={[
+                                    globalStyles.inputText,
+                                    { color: tempLocation ? colors.textInput : colors.placeholder }
+                                ]}
+                                itemTextStyle={globalStyles.inputText}
+                                data={locationData}
+                                labelField="label"
+                                valueField="value"
+                                placeholder="All Locations"
+                                value={tempLocation}
+                                onChange={item => setTempLocation(item.value)}
                             />
                         </View>
 

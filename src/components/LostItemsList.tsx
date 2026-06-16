@@ -14,6 +14,7 @@ import {
 import { db } from "../firebase/firebaseConfig";
 import { colors, globalStyles } from "../styles/globalStyles";
 
+import venuesData from "../constants/venues.json";
 // create lost item type for better type safety
 type LostItem = {
     id: string;
@@ -31,9 +32,11 @@ type LostItem = {
 // screen component for listings page
 export default function LostItemsList({
     searchQuery,
-    categoryFilter
+    categoryFilter,
+    locationFilter
 }: { searchQuery: string; 
     categoryFilter: string | null;
+    locationFilter: string | null;
 }) {
     // state variables for lost items, loading state, refreshing state and error message
     const [items, setItems] = useState<LostItem[]>([]);
@@ -94,7 +97,11 @@ export default function LostItemsList({
 
         const matchesCategory = !categoryFilter || item.category === categoryFilter;
 
-        return matchesSearch && matchesCategory;
+        const targetVenueObj = venuesData[item.locationLost as keyof typeof venuesData];
+        const venueCategory = targetVenueObj ? (targetVenueObj as any).category : "Others";
+        const matchesLocation = !locationFilter || venueCategory === locationFilter;
+
+        return matchesSearch && matchesCategory && matchesLocation;
     });
 
     // sub-component for displaying individual detail rows in the listing cards
