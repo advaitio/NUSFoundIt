@@ -176,7 +176,32 @@ export const globalStyles = StyleSheet.create({
         height: 120,
         resizeMode: "contain",
         marginBottom: spacing.sm,
-    }
+    },
+    detailsContainer: {
+        gap: 10,
+    },
+    detailRow: {
+        flexDirection: "row",
+        alignItems: "flex-start",
+    },
+    detailLabel: {
+        fontWeight: "700",
+        color: "#4b5563",
+        width: 135,
+        fontSize: 16,
+        lineHeight: 30,
+    },
+    detailValue: {
+        color: colors.textPrimary,
+        flex: 1,
+        fontSize: 16,
+        lineHeight: 30,
+    },
+    linkDetailValue: {
+        color: colors.primary,
+        flex: 1,
+        fontSize: 16,
+    },
 });
 
 export const Suggestions = {

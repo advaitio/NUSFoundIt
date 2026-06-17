@@ -13,21 +13,11 @@ import {
 } from "react-native";
 import { db } from "../firebase/firebaseConfig";
 import { colors, globalStyles } from "../styles/globalStyles";
+import { Link } from "expo-router";
 
 import venuesData from "../constants/venues.json";
-// create lost item type for better type safety
-type LostItem = {
-    id: string;
-    itemName: string;
-    category: string;
-    description: string;
-    locationLost: string;
-    dateLost: string;
-    contactEmail: string;
-    contactPhoneNumber: string;
-    imageUrl?: string; // Optional field for future use
-    createdAt: any; // Firestore timestamp
-};
+
+import { LostItem } from "../types/items";
 
 // screen component for listings page
 export default function LostItemsList({
@@ -140,9 +130,9 @@ export default function LostItemsList({
         if (!value) return null;
 
         return (
-            <View style={styles.detailRow}>
-                <Text style={styles.detailLabel}>{label}</Text>
-                <Text style={styles.detailValue}>{value}</Text>
+            <View style={globalStyles.detailRow}>
+                <Text style={globalStyles.detailLabel}>{label}</Text>
+                <Text style={globalStyles.detailValue}>{value}</Text>
             </View>
         );
     }
@@ -181,8 +171,8 @@ export default function LostItemsList({
         }
 
         return (
-            <View style={styles.detailRow}>
-                <Text style={styles.detailLabel}>{label}</Text>
+            <View style={globalStyles.detailRow}>
+                <Text style={globalStyles.detailLabel}>{label}</Text>
                 <Pressable onPress={openLink} style={{ flex: 1 }}>
                     <Text style={styles.linkValue}>Open image</Text>
                 </Pressable>
@@ -222,31 +212,22 @@ export default function LostItemsList({
                         </View>
                     }
                     renderItem={({ item }) => (
-                        <View style={globalStyles.card}>
-                            <Text style={styles.itemName}>{item.itemName}</Text>
+                        <Link href={{
+                            pathname: "/item-details",
+                            params: { id: item.id, type: "lost" },
+                        }} asChild>
+                            <Pressable style={StyleSheet.flatten([globalStyles.card, styles.itemCard])}>
+                                <Text style={styles.itemName}>{item.itemName}</Text>
 
-                            <View style={styles.detailsContainer}>
-                                <DetailRow label="Category" value={item.category} />
-                                <DetailRow label="Location Lost" value={item.locationLost} />
-                                <DetailRow label="Date Lost" value={item.dateLost} />
-                                <DetailRow label="Description" value={item.description} />
-                                <LinkDetailRow label="Image" url={item.imageUrl} />
-                            </View>
-
-                            {(item.contactEmail || item.contactPhoneNumber) ? (
-                                <View style={styles.contactBox}>
-                                    <Text style={styles.contactLabel}>Contact</Text>
-
-                                    {item.contactEmail ? (
-                                        <Text style={styles.contactValue}>{item.contactEmail}</Text>
-                                    ) : null}
-
-                                    {item.contactPhoneNumber ? (
-                                        <Text style={styles.contactValue}>{item.contactPhoneNumber}</Text>
-                                    ) : null}
+                                <View style={globalStyles.detailsContainer}>
+                                    <DetailRow label="Description" value={item.description} />
+                                    <DetailRow label="Contact" value={item.contactPhoneNumber} />
+                                    <LinkDetailRow label="Image" url={item.imageUrl} />
                                 </View>
-                            ) : null}
-                        </View>
+
+                                <Text style={styles.viewDetailsText}>Tap to view details</Text>
+                            </Pressable>
+                        </Link>
                     )}
                 />
             )}
@@ -289,25 +270,6 @@ const styles = StyleSheet.create({
         marginBottom: 14,
         color: colors.textPrimary,
     },
-    detailsContainer: {
-        gap: 10,
-    },
-    detailRow: {
-        flexDirection: "row",
-        alignItems: "flex-start",
-    },
-    detailLabel: {
-        fontWeight: "700",
-        color: "#4b5563",
-        width: 95,
-        fontSize: 14,
-    },
-    detailValue: {
-        color: colors.textPrimary,
-        flex: 1,
-        fontSize: 14,
-        lineHeight: 20,
-    },
     contactBox: {
         marginTop: 16,
         paddingTop: 14,
@@ -331,5 +293,14 @@ const styles = StyleSheet.create({
         fontSize: 14,
         lineHeight: 20,
         textDecorationLine: "underline",
+    },
+    viewDetailsText: {
+        color: colors.primary,
+        fontWeight: "600",
+        marginTop: 12,
+    },
+    itemCard: {
+        width: "100%",
+        alignSelf: "stretch",
     },
 });
