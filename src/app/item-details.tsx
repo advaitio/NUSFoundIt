@@ -1,4 +1,4 @@
-import { useLocalSearchParams, Link } from "expo-router";
+import { Link, useLocalSearchParams } from "expo-router";
 import { collection, doc, getDoc, getDocs, orderBy, query } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, Alert, Linking, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
@@ -151,7 +151,9 @@ export default function ItemDetails() {
                                     <Text style={styles.matchText}>Category: {match.category}</Text>
                                     <Text style={styles.matchText}>Location Found: {match.locationFound}</Text>
                                     <Text style={styles.matchText}>Date Found: {match.dateFound}</Text>
-                                    <Text style={styles.matchText}>Match Score: {match.matchScore}</Text>
+                                    <Text style={styles.matchText}>
+                                        Match Score: <Text style={styles.matchScore}>{match.matchScore}</Text>
+                                    </Text>
                                 </Pressable>
                             </Link>
                         ))
@@ -163,7 +165,7 @@ export default function ItemDetails() {
 }
 
 // Reusable component to display a label and value for item details
-function DetailRow({ label, value } : { label: string; value?: string }) {
+function DetailRow({ label, value }: { label: string; value?: string }) {
     if (!value) return null;
     return (
         <View style={globalStyles.detailRow}>
@@ -231,6 +233,8 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         borderWidth: 1,
         borderColor: colors.border,
+        borderLeftWidth: 4,
+        borderLeftColor: colors.logoAccent,
     },
     matchName: {
         fontSize: 18,
@@ -242,8 +246,12 @@ const styles = StyleSheet.create({
         lineHeight: 20,
         color: colors.textSecondary,
     },
+    matchScore: {
+        color: colors.logoAccent,
+        fontWeight: "700",
+    },
     linkValue: {
-        color: colors.primary,
+        color: colors.logoSecondary,
         flex: 1,
         fontSize: 14,
         lineHeight: 20,
