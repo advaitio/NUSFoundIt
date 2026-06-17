@@ -1,7 +1,7 @@
 import { useLocalSearchParams, Link } from "expo-router";
 import { collection, doc, getDoc, getDocs, orderBy, query } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Alert, Linking, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { db } from "../firebase/firebaseConfig";
 import { colors, globalStyles, spacing } from "../styles/globalStyles";
 import { FoundItem, LostItem, MatchedFoundItem } from "../types/items";
@@ -127,7 +127,7 @@ export default function ItemDetails() {
                 <DetailRow label="Description" value={item.description} />
                 <DetailRow label="Contact Email" value={item.contactEmail} />
                 <DetailRow label="Contact Phone" value={item.contactPhoneNumber} />
-                <DetailRow label="Image URL" value={item.imageUrl || "N/A"} />
+                <LinkDetailRow label="Image" url={item.imageUrl} />
             </View>
 
             {/* If it's a lost item, render the possible matches section */}
@@ -173,6 +173,49 @@ function DetailRow({ label, value } : { label: string; value?: string }) {
     )
 }
 
+// sub-component for displaying link rows (e.g. image URL) in the listing cards
+function LinkDetailRow({
+    label,
+    url,
+}: {
+    label: string;
+    url?: string
+}) {
+    if (!url) return null;
+
+    const validURL = url;
+
+    // helper function to open the URL in the device's default browser
+    async function openLink() {
+        try {
+            if (!validURL.startsWith("http://") && !validURL.startsWith("https://")) {
+                Alert.alert("Invalid URL");
+                return;
+            }
+
+            const supported = await Linking.canOpenURL(validURL);
+
+            if (supported) {
+                await Linking.openURL(validURL);
+            } else {
+                Alert.alert("Cannot open image", "This image URL could not be opened.");
+            }
+        } catch (error) {
+            console.error("Error opening image URL:", error);
+            Alert.alert("Error", "Something went wrong while opening the image URL.");
+        }
+    }
+
+    return (
+        <View style={globalStyles.detailRow}>
+            <Text style={globalStyles.detailLabel}>{label}</Text>
+            <Pressable onPress={openLink} style={{ flex: 1 }}>
+                <Text style={styles.linkValue}>Open image</Text>
+            </Pressable>
+        </View>
+    )
+}
+
 const styles = StyleSheet.create({
     loadingText: {
         marginTop: spacing.md,
@@ -198,5 +241,12 @@ const styles = StyleSheet.create({
     matchText: {
         lineHeight: 20,
         color: colors.textSecondary,
-    }
+    },
+    linkValue: {
+        color: colors.primary,
+        flex: 1,
+        fontSize: 14,
+        lineHeight: 20,
+        textDecorationLine: "underline",
+    },
 })
