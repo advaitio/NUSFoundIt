@@ -215,8 +215,8 @@ export default function LostItemsList({
                         <Link href={{
                             pathname: "/item-details",
                             params: { id: item.id, type: "lost" },
-                        }}>
-                            <Pressable style={globalStyles.card}>
+                        }} asChild>
+                            <Pressable style={StyleSheet.flatten([globalStyles.card, styles.itemCard])}>
                                 <Text style={styles.itemName}>{item.itemName}</Text>
 
                                 <View style={globalStyles.detailsContainer}>
@@ -314,5 +314,9 @@ const styles = StyleSheet.create({
         color: colors.primary,
         fontWeight: "600",
         marginTop: 12,
+    },
+    itemCard: {
+        width: "100%",
+        alignSelf: "stretch",
     },
 });
