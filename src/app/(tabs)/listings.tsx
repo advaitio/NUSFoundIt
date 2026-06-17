@@ -6,6 +6,7 @@ import { Dropdown } from "react-native-element-dropdown";
 import FoundItemsList from "../../components/FoundItemsList";
 import LostItemsList from "../../components/LostItemsList";
 import { colors, DateStyles, globalStyles, PopupStyles, spacing } from "../../styles/globalStyles";
+import { Ionicons } from "@expo/vector-icons"
 
 export default function ListingsScreen() {
     // state variable to track which tab is currently selected (found or lost)
@@ -215,7 +216,7 @@ export default function ListingsScreen() {
                             setTempEndDate(activeEndDate);
                         }}
                     >
-                        <Text style={PopupStyles.buttonText}>Filter</Text>
+                        <Ionicons name="options-outline" size={24} color={colors.primary} />
                     </Pressable>
                 </View>
 
