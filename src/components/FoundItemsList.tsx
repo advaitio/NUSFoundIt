@@ -104,9 +104,9 @@ export default function FoundItemsList({
         if (!value) return null;
 
         return (
-            <View style={styles.detailRow}>
-                <Text style={styles.detailLabel}>{label}</Text>
-                <Text style={styles.detailValue}>{value}</Text>
+            <View style={globalStyles.detailRow}>
+                <Text style={globalStyles.detailLabel}>{label}</Text>
+                <Text style={globalStyles.detailValue}>{value}</Text>
             </View>
         );
     }
@@ -145,8 +145,8 @@ export default function FoundItemsList({
         }
 
         return (
-            <View style={styles.detailRow}>
-                <Text style={styles.detailLabel}>{label}</Text>
+            <View style={globalStyles.detailRow}>
+                <Text style={globalStyles.detailLabel}>{label}</Text>
                 <Pressable onPress={openLink} style={{ flex: 1 }}>
                     <Text style={styles.linkValue}>Open image</Text>
                 </Pressable>
@@ -190,7 +190,7 @@ export default function FoundItemsList({
                         <View style={globalStyles.card}>
                             <Text style={styles.itemName}>{item.itemName}</Text>
 
-                            <View style={styles.detailsContainer}>
+                            <View style={globalStyles.detailsContainer}>
                                 <DetailRow label="Category" value={item.category} />
                                 <DetailRow label="Location Found" value={item.locationFound} />
                                 <DetailRow label="Date Found" value={item.dateFound} />
@@ -256,22 +256,6 @@ const styles = StyleSheet.create({
     },
     detailsContainer: {
         gap: 10,
-    },
-    detailRow: {
-        flexDirection: "row",
-        alignItems: "flex-start",
-    },
-    detailLabel: {
-        fontWeight: "700",
-        color: "#4b5563",
-        width: 95,
-        fontSize: 14,
-    },
-    detailValue: {
-        color: colors.textPrimary,
-        flex: 1,
-        fontSize: 14,
-        lineHeight: 20,
     },
     contactBox: {
         marginTop: 16,
