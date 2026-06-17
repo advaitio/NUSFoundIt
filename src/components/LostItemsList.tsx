@@ -220,26 +220,10 @@ export default function LostItemsList({
                                 <Text style={styles.itemName}>{item.itemName}</Text>
 
                                 <View style={globalStyles.detailsContainer}>
-                                    <DetailRow label="Category" value={item.category} />
-                                    <DetailRow label="Location Lost" value={item.locationLost} />
-                                    <DetailRow label="Date Lost" value={item.dateLost} />
                                     <DetailRow label="Description" value={item.description} />
+                                    <DetailRow label="Contact" value={item.contactPhoneNumber} />
                                     <LinkDetailRow label="Image" url={item.imageUrl} />
                                 </View>
-
-                                {(item.contactEmail || item.contactPhoneNumber) ? (
-                                    <View style={styles.contactBox}>
-                                        <Text style={styles.contactLabel}>Contact</Text>
-
-                                        {item.contactEmail ? (
-                                            <Text style={styles.contactValue}>{item.contactEmail}</Text>
-                                        ) : null}
-
-                                        {item.contactPhoneNumber ? (
-                                            <Text style={styles.contactValue}>{item.contactPhoneNumber}</Text>
-                                        ) : null}
-                                    </View>
-                                ) : null}
 
                                 <Text style={styles.viewDetailsText}>Tap to view details</Text>
                             </Pressable>

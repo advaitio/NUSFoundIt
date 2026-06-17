@@ -126,7 +126,7 @@ export default function ItemDetails() {
                 <DetailRow label={isLostItem ? "Date Lost" : "Date Found"} value={date} />
                 <DetailRow label="Description" value={item.description} />
                 <DetailRow label="Contact Email" value={item.contactEmail} />
-                <DetailRow label="Contact Phone" value={item.contactPhoneNumber} />
+                <DetailRow label="Phone Number" value={item.contactPhoneNumber} />
                 <LinkDetailRow label="Image" url={item.imageUrl} />
             </View>
 

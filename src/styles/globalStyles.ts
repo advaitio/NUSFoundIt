@@ -197,6 +197,11 @@ export const globalStyles = StyleSheet.create({
         fontSize: 16,
         lineHeight: 30,
     },
+    linkDetailValue: {
+        color: colors.primary,
+        flex: 1,
+        fontSize: 16,
+    },
 });
 
 export const Suggestions = {
