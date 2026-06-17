@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import { db } from "../firebase/firebaseConfig";
 import { colors, globalStyles } from "../styles/globalStyles";
+import { Link } from "expo-router";
 
 import venuesData from "../constants/venues.json";
 
@@ -211,31 +212,38 @@ export default function FoundItemsList({
                         </View>
                     }
                     renderItem={({ item }) => (
-                        <View style={globalStyles.card}>
-                            <Text style={styles.itemName}>{item.itemName}</Text>
+                        <Link href={{
+                            pathname: "/item-details",
+                            params: { id: item.id, type: "found" },
+                        }}>
+                            <Pressable style={globalStyles.card}>
+                                <Text style={styles.itemName}>{item.itemName}</Text>
 
-                            <View style={globalStyles.detailsContainer}>
-                                <DetailRow label="Category" value={item.category} />
-                                <DetailRow label="Location Found" value={item.locationFound} />
-                                <DetailRow label="Date Found" value={item.dateFound} />
-                                <DetailRow label="Description" value={item.description} />
-                                <LinkDetailRow label="Image" url={item.imageUrl} />
-                            </View>
-
-                            {(item.contactEmail || item.contactPhoneNumber) ? (
-                                <View style={styles.contactBox}>
-                                    <Text style={styles.contactLabel}>Contact</Text>
-
-                                    {item.contactEmail ? (
-                                        <Text style={styles.contactValue}>{item.contactEmail}</Text>
-                                    ) : null}
-
-                                    {item.contactPhoneNumber ? (
-                                        <Text style={styles.contactValue}>{item.contactPhoneNumber}</Text>
-                                    ) : null}
+                                <View style={globalStyles.detailsContainer}>
+                                    <DetailRow label="Category" value={item.category} />
+                                    <DetailRow label="Location Found" value={item.locationFound} />
+                                    <DetailRow label="Date Found" value={item.dateFound} />
+                                    <DetailRow label="Description" value={item.description} />
+                                    <LinkDetailRow label="Image" url={item.imageUrl} />
                                 </View>
-                            ) : null}
-                        </View>
+
+                                {(item.contactEmail || item.contactPhoneNumber) ? (
+                                    <View style={styles.contactBox}>
+                                        <Text style={styles.contactLabel}>Contact</Text>
+
+                                        {item.contactEmail ? (
+                                            <Text style={styles.contactValue}>{item.contactEmail}</Text>
+                                        ) : null}
+
+                                        {item.contactPhoneNumber ? (
+                                            <Text style={styles.contactValue}>{item.contactPhoneNumber}</Text>
+                                        ) : null}
+                                    </View>
+                                ) : null}
+
+                                <Text style={styles.viewDetailsText}>Tap to view details</Text>
+                            </Pressable>
+                        </Link>
                     )}
                 />
             )}
@@ -304,5 +312,10 @@ const styles = StyleSheet.create({
         fontSize: 14,
         lineHeight: 20,
         textDecorationLine: "underline",
+    },
+    viewDetailsText: {
+        color: colors.primary,
+        fontWeight: "600",
+        marginTop: 12,
     },
 });

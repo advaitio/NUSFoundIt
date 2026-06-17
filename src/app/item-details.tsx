@@ -130,7 +130,7 @@ export default function ItemDetails() {
                 <DetailRow label="Image URL" value={item.imageUrl || "N/A"} />
             </View>
 
-            // If it's a lost item, render the possible matches section
+            {/* If it's a lost item, render the possible matches section */}
             {isLostItem ? (
                 <View style={globalStyles.card}>
                     <Text style={globalStyles.title}>Possible Matches</Text>
