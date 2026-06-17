@@ -2,7 +2,7 @@ import DateTimePicker, { DateTimePickerEvent } from "@react-native-community/dat
 import { useState } from "react";
 import { Alert, Button, Keyboard, Platform, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
-import { colors, globalStyles, Suggestions } from "../styles/globalStyles";
+import { colors, DateStyles, globalStyles, Suggestions } from "../styles/globalStyles";
 
 import { useRouter } from "expo-router";
 
@@ -204,7 +204,7 @@ export default function FoundItemForm() {
             </View>
 
             <Pressable
-                style={styles.datePickerBox}
+                style={DateStyles.datePickerBox}
                 onPress={() => {
                     setShowCalendar(true);
                     setShowSuggestions(false);
@@ -271,16 +271,6 @@ const styles = StyleSheet.create({
     keyboardContainer: {
         flex: 1,
         backgroundColor: "#fff",
-    },
-    datePickerBox: {
-        width: "100%",
-        borderWidth: 1,
-        borderColor: "#ccc",
-        borderRadius: 8,
-        padding: 14,
-        marginBottom: 16,
-        backgroundColor: "#f9f9f9",
-        justifyContent: "center",
     },
     buttonContainer: {
         backgroundColor: colors.primary,

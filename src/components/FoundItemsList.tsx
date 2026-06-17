@@ -34,10 +34,14 @@ type FoundItem = {
 export default function FoundItemsList({
     searchQuery,
     categoryFilter,
-    locationFilter
+    locationFilter,
+    startDateFilter,
+    endDateFilter
 }: { searchQuery: string; 
     categoryFilter: string | null;
     locationFilter: string | null;
+    startDateFilter: Date | null;
+    endDateFilter: Date | null;
 }) {
     // state variables for found items, loading state, refreshing state and error message
     const [items, setItems] = useState<FoundItem[]>([]);
@@ -90,6 +94,11 @@ export default function FoundItemsList({
         fetchFoundItems();
     }, []);
 
+    const parseDate = (dateStr: string): Date => {
+        const parts = dateStr.split("/");
+        return new Date(parseInt(parts[2], 10), parseInt(parts[1], 10) - 1, parseInt(parts[0], 10));
+    };
+
     const filteredItems = items.filter((item) => {
         const matchesSearch = item.itemName.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
             item.category.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
@@ -101,8 +110,23 @@ export default function FoundItemsList({
         const targetVenueObj = venuesData[item.locationFound as keyof typeof venuesData];
         const venueCategory = targetVenueObj ? (targetVenueObj as any).category : "Others";
         const matchesLocation = !locationFilter || venueCategory === locationFilter;
+        let matchesDate = true;
+        if (item.dateFound) {
+            const itemDate = parseDate(item.dateFound);
+            
+            if (startDateFilter) {
+                const start = new Date(startDateFilter);
+                start.setHours(0, 0, 0, 0);
+                if (itemDate < start) matchesDate = false;
+            }
+            if (endDateFilter) {
+                const end = new Date(endDateFilter);
+                end.setHours(23, 59, 59, 999);
+                if (itemDate > end) matchesDate = false;
+            }
+        }
 
-        return matchesSearch && matchesCategory && matchesLocation;
+        return matchesSearch && matchesCategory && matchesLocation && matchesDate;
     });
 
     // sub-component for displaying individual detail rows in the listing cards
