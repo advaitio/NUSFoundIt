@@ -119,7 +119,7 @@ export default function ItemDetails() {
     return (
         <ScrollView style={globalStyles.screen} contentContainerStyle={styles.content}>
             <View style={globalStyles.card}>
-                <Text style={globalStyles.title}>{item.itemName}</Text>
+                <Text style={styles.heading}>{item.itemName}</Text>
 
                 <DetailRow label="Category" value={item.category} />
                 <DetailRow label={isLostItem ? "Location Lost" : "Location Found"} value={location} />
@@ -133,7 +133,7 @@ export default function ItemDetails() {
             {/* If it's a lost item, render the possible matches section */}
             {isLostItem ? (
                 <View style={globalStyles.card}>
-                    <Text style={globalStyles.title}>Possible Matches</Text>
+                    <Text style={styles.heading}>Possible Matches</Text>
                     {matches.length === 0 ? (
                         <Text style={globalStyles.placeholderText}>No matches found. Try updating the item details or check back later!</Text>
                     ) : (
@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
         borderColor: colors.border,
     },
     matchName: {
-        fontSize: 16,
+        fontSize: 18,
         fontWeight: "bold",
         marginBottom: spacing.xs,
         color: colors.textPrimary,
@@ -248,5 +248,12 @@ const styles = StyleSheet.create({
         fontSize: 14,
         lineHeight: 20,
         textDecorationLine: "underline",
+    },
+    heading: {
+        fontSize: 24,
+        fontWeight: "bold",
+        marginBottom: 14,
+        color: colors.textPrimary,
+        alignSelf: "center",
     },
 })

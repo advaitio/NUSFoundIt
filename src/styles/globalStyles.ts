@@ -187,14 +187,15 @@ export const globalStyles = StyleSheet.create({
     detailLabel: {
         fontWeight: "700",
         color: "#4b5563",
-        width: 95,
-        fontSize: 14,
+        width: 135,
+        fontSize: 16,
+        lineHeight: 30,
     },
     detailValue: {
         color: colors.textPrimary,
         flex: 1,
-        fontSize: 14,
-        lineHeight: 20,
+        fontSize: 16,
+        lineHeight: 30,
     },
 });
 
