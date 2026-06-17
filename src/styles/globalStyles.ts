@@ -4,7 +4,8 @@ import { Platform, StyleSheet } from "react-native";
 export const colors = {
     background: "#ffffff",
     surface: "#f9fafb",
-    primary: "#007AFF",
+    //primary: "#007AFF", // old
+    primary: "#043366", // new (logoMain)
 
     textPrimary: "#111827",
     textSecondary: "#6b7280",
