@@ -23,3 +23,7 @@ export type LostItem = {
     imageUrl?: string; // Optional field for future use
     createdAt: any; // Firestore timestamp
 };
+
+export type MatchedFoundItem = FoundItem & {
+    matchScore: number;
+}
