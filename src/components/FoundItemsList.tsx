@@ -291,16 +291,17 @@ const styles = StyleSheet.create({
         lineHeight: 22,
     },
     linkValue: {
-        color: colors.primary,
+        color: colors.logoSecondary,
         flex: 1,
         fontSize: 14,
         lineHeight: 30,
         textDecorationLine: "underline",
     },
     viewDetailsText: {
-        color: colors.primary,
+        color: colors.logoSecondary,
         fontWeight: "600",
         marginTop: 12,
+        textDecorationLine: "underline",
     },
     itemCard: {
         width: "100%",

@@ -225,7 +225,7 @@ export default function LostItemsList({
                                     <LinkDetailRow label="Image" url={item.imageUrl} />
                                 </View>
 
-                                <Text style={styles.viewDetailsText}>Tap to view details</Text>
+                                <Text style={styles.viewDetailsText}>View details</Text>
                             </Pressable>
                         </Link>
                     )}
@@ -295,9 +295,10 @@ const styles = StyleSheet.create({
         textDecorationLine: "underline",
     },
     viewDetailsText: {
-        color: colors.primary,
+        color: colors.logoSecondary,
         fontWeight: "600",
         marginTop: 12,
+        textDecorationLine: "underline"
     },
     itemCard: {
         width: "100%",
