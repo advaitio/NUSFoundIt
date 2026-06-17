@@ -357,3 +357,37 @@ export const PopupStyles = StyleSheet.create({
         marginBottom: spacing.sm,
     }
 });
+
+export const DateStyles = StyleSheet.create({
+    datePickerBox: {
+        width: "100%",
+        borderWidth: 1,
+        borderColor: "#ccc",
+        borderRadius: 8,
+        padding: 14,
+        marginBottom: 16,
+        backgroundColor: "#f9f9f9",
+        justifyContent: "center",
+    },
+    dualDatePickerBox: {
+        flex: 1,
+        borderWidth: 1,
+        borderColor: colors.inputBorder,
+        borderRadius: 8,
+        paddingVertical: 10,
+        paddingHorizontal: spacing.md,
+        backgroundColor: colors.surface,
+        justifyContent: "center",
+    },
+    dateRangeRow: {
+        flexDirection: "row",
+        gap: spacing.md,
+        width: "100%",
+    },
+    datePickerLabel: {
+        fontSize: 11,
+        fontWeight: "600",
+        color: colors.textSecondary,
+        marginBottom: 2,
+    },
+});
