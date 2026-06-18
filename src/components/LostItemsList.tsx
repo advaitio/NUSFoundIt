@@ -220,8 +220,8 @@ export default function LostItemsList({
                                 <Text style={styles.itemName}>{item.itemName}</Text>
 
                                 <View style={globalStyles.detailsContainer}>
-                                    <DetailRow label="Description" value={item.description} />
-                                    <DetailRow label="Contact" value={item.contactPhoneNumber} />
+                                    <DetailRow label="Location Lost" value={item.locationLost} />
+                                    <DetailRow label="Date Lost" value={item.dateLost} />
                                     <LinkDetailRow label="Image" url={item.imageUrl} />
                                 </View>
 

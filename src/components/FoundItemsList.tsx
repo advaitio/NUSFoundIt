@@ -220,8 +220,8 @@ export default function FoundItemsList({
                                 <Text style={styles.itemName}>{item.itemName}</Text>
 
                                 <View style={globalStyles.detailsContainer}>
-                                    <DetailRow label="Description" value={item.description} />
-                                    <DetailRow label="Contact" value={item.contactPhoneNumber} />
+                                    <DetailRow label="Location Found" value={item.locationFound} />
+                                    <DetailRow label="Date Found" value={item.dateFound} />
                                     <LinkDetailRow label="Image" url={item.imageUrl} />
                                 </View>
 
