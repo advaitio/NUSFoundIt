@@ -1,3 +1,4 @@
+import { Ionicons } from "@expo/vector-icons";
 import DateTimePicker, { DateTimePickerEvent } from "@react-native-community/datetimepicker";
 import { useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -6,7 +7,6 @@ import { Dropdown } from "react-native-element-dropdown";
 import FoundItemsList from "../../components/FoundItemsList";
 import LostItemsList from "../../components/LostItemsList";
 import { colors, DateStyles, globalStyles, PopupStyles, spacing } from "../../styles/globalStyles";
-import { Ionicons } from "@expo/vector-icons"
 
 export default function ListingsScreen() {
     // state variable to track which tab is currently selected (found or lost)
@@ -283,6 +283,7 @@ export default function ListingsScreen() {
                                 dropdownPosition="top"
                                 inverted={false}
                                 onChange={item => setTempCategory(item.value)}
+                                containerStyle={PopupStyles.dropdownMenuPosition}
                             />
                         </View>
 
@@ -304,6 +305,7 @@ export default function ListingsScreen() {
                                 dropdownPosition="top"
                                 inverted={false}
                                 onChange={item => setTempLocation(item.value)}
+                                containerStyle={PopupStyles.dropdownMenuPosition}
                             />
                         </View>
 
