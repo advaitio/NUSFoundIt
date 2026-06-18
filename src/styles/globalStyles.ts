@@ -362,7 +362,10 @@ export const PopupStyles = StyleSheet.create({
         fontWeight: "700",
         color: colors.textSecondary,
         marginBottom: spacing.sm,
-    }
+    },
+    dropdownMenuPosition: {
+        transform: [{ translateY: -10 }],
+    },
 });
 
 export const DateStyles = StyleSheet.create({
