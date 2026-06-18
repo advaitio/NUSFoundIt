@@ -175,20 +175,18 @@ export default function LostItemForm() {
                 onFocus={() => setShowSuggestions(false)}
             />
             <View style={Suggestions.searchContainer}>
-                <TextInput
-                    style={globalStyles.input}
-                    placeholder="Location Lost (e.g. LT17, COM1)"
-                    placeholderTextColor={colors.placeholder}
-                    value={locationLost}
-
-                    onChangeText={handleLocationSelect}
-                    onFocus={() => { if(locationLost) setShowSuggestions(true); }}
-                    onSubmitEditing={() => setShowSuggestions(false)}
-                    returnKeyType="done"
-                />
-
                 {showSuggestions && filteredVenues.length > 0 && (
-                    <View style={[Suggestions.dropdownPopover, { backgroundColor: colors.background }]}>
+                    <View style={[
+                        Suggestions.dropdownPopover,
+                        {
+                            backgroundColor: colors.background,
+                            position: 'absolute',
+                            bottom: 70,
+                            marginTop: 0,
+                            marginBottom: 0,
+                            zIndex: 20
+                        }
+                    ]}>
                         {filteredVenues.map((item) => (
                             <Pressable
                                 key={item}
@@ -200,6 +198,18 @@ export default function LostItemForm() {
                         ))}
                     </View>
                 )}
+                
+                <TextInput
+                    style={globalStyles.input}
+                    placeholder="Location Lost (e.g. LT17, The Deck)"
+                    placeholderTextColor={colors.placeholder}
+                    value={locationLost}
+
+                    onChangeText={handleLocationSelect}
+                    onFocus={() => { if(locationLost) setShowSuggestions(true); }}
+                    onSubmitEditing={() => setShowSuggestions(false)}
+                    returnKeyType="done"
+                />
             </View>
 
             <Pressable
