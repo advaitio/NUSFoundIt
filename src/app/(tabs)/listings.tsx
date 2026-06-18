@@ -1,6 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
 import DateTimePicker, { DateTimePickerEvent } from "@react-native-community/datetimepicker";
-import { useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Animated, Button, Modal, Platform, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
@@ -79,25 +78,6 @@ export default function ListingsScreen() {
             setShowEndCalendar(false);
         });
     };
-
-    useFocusEffect(
-        useCallback(() => {
-            return () => {
-                setResetKey(prev => prev + 1);
-                setSelectedTab("found");
-                setSearchQuery("");
-                setFilterModalVisible(false);
-                setActiveCategory(null);
-                setActiveLocation(null);
-                setActiveStartDate(null);
-                setActiveEndDate(null);
-                setTempCategory(null);
-                setTempLocation(null);
-                setTempStartDate(null);
-                setTempEndDate(null);
-            };
-        }, [])
-    );
 
     const pickStartDate = (event: DateTimePickerEvent, selectedDate?: Date) => {
         if (Platform.OS === "android") {
