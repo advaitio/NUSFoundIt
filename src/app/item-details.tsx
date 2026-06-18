@@ -1,4 +1,4 @@
-import { Link, useLocalSearchParams } from "expo-router";
+import { Link, Stack, useLocalSearchParams } from "expo-router";
 import { collection, doc, getDoc, getDocs, orderBy, query } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, Alert, Linking, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
@@ -117,51 +117,59 @@ export default function ItemDetails() {
 
     // Render the item details and possible matches if it's a lost item
     return (
-        <ScrollView style={globalStyles.screen} contentContainerStyle={styles.content}>
-            <View style={globalStyles.card}>
-                <Text style={styles.heading}>{item.itemName}</Text>
+        <>
+            <Stack.Screen
+                options={{
+                    title: isLostItem ? "Lost Item Details" : "Found Item Details",
+                }}
+            />
 
-                <DetailRow label="Category" value={item.category} />
-                <DetailRow label={isLostItem ? "Location Lost" : "Location Found"} value={location} />
-                <DetailRow label={isLostItem ? "Date Lost" : "Date Found"} value={date} />
-                <DetailRow label="Description" value={item.description} />
-                <DetailRow label="Contact Email" value={item.contactEmail} />
-                <DetailRow label="Phone Number" value={item.contactPhoneNumber} />
-                <LinkDetailRow label="Image" url={item.imageUrl} />
-            </View>
-
-            {/* If it's a lost item, render the possible matches section */}
-            {isLostItem ? (
+            <ScrollView style={globalStyles.screen} contentContainerStyle={styles.content}>
                 <View style={globalStyles.card}>
-                    <Text style={styles.heading}>Possible Matches</Text>
-                    {matches.length === 0 ? (
-                        <Text style={globalStyles.placeholderText}>No matches found. Try updating the item details or check back later!</Text>
-                    ) : (
-                        matches.map((match) => (
-                            <Link
-                                key={match.id}
-                                push
-                                href={{
-                                    pathname: "/item-details",
-                                    params: { type: "found", id: match.id },
-                                }}
-                                asChild
-                            >
-                                <Pressable style={styles.matchCard}>
-                                    <Text style={styles.matchName}>{match.itemName}</Text>
-                                    <Text style={styles.matchText}>Category: {match.category}</Text>
-                                    <Text style={styles.matchText}>Location Found: {match.locationFound}</Text>
-                                    <Text style={styles.matchText}>Date Found: {match.dateFound}</Text>
-                                    <Text style={styles.matchText}>
-                                        Match Score: <Text style={styles.matchScore}>{match.matchScore}</Text>
-                                    </Text>
-                                </Pressable>
-                            </Link>
-                        ))
-                    )}
+                    <Text style={styles.heading}>{item.itemName}</Text>
+
+                    <DetailRow label="Category" value={item.category} />
+                    <DetailRow label={isLostItem ? "Location Lost" : "Location Found"} value={location} />
+                    <DetailRow label={isLostItem ? "Date Lost" : "Date Found"} value={date} />
+                    <DetailRow label="Description" value={item.description} />
+                    <DetailRow label="Contact Email" value={item.contactEmail} />
+                    <DetailRow label="Phone Number" value={item.contactPhoneNumber} />
+                    <LinkDetailRow label="Image" url={item.imageUrl} />
                 </View>
-            ) : null}
-        </ScrollView>
+
+                {/* If it's a lost item, render the possible matches section */}
+                {isLostItem ? (
+                    <View style={globalStyles.card}>
+                        <Text style={styles.heading}>Possible Matches</Text>
+                        {matches.length === 0 ? (
+                            <Text style={globalStyles.placeholderText}>No matches found. Try updating the item details or check back later!</Text>
+                        ) : (
+                            matches.map((match) => (
+                                <Link
+                                    key={match.id}
+                                    push
+                                    href={{
+                                        pathname: "/item-details",
+                                        params: { type: "found", id: match.id },
+                                    }}
+                                    asChild
+                                >
+                                    <Pressable style={styles.matchCard}>
+                                        <Text style={styles.matchName}>{match.itemName}</Text>
+                                        <Text style={styles.matchText}>Category: {match.category}</Text>
+                                        <Text style={styles.matchText}>Location Found: {match.locationFound}</Text>
+                                        <Text style={styles.matchText}>Date Found: {match.dateFound}</Text>
+                                        <Text style={styles.matchText}>
+                                            Match Score: <Text style={styles.matchScore}>{match.matchScore}</Text>
+                                        </Text>
+                                    </Pressable>
+                                </Link>
+                            ))
+                        )}
+                    </View>
+                ) : null}
+            </ScrollView>
+        </>
     )
 }
 
