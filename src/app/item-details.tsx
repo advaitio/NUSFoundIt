@@ -140,6 +140,7 @@ export default function ItemDetails() {
                         matches.map((match) => (
                             <Link
                                 key={match.id}
+                                push
                                 href={{
                                     pathname: "/item-details",
                                     params: { type: "found", id: match.id },
