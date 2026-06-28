@@ -1,3 +1,4 @@
+import { Link } from "expo-router";
 import { collection, getDocs, orderBy, query } from "firebase/firestore";
 import { useCallback, useEffect, useState } from "react";
 import {
@@ -13,9 +14,8 @@ import {
 } from "react-native";
 import { db } from "../firebase/firebaseConfig";
 import { colors, globalStyles } from "../styles/globalStyles";
-import { Link } from "expo-router";
 
-import venuesData from "../constants/venues.json";
+import venuesData from "../constants/venues.json"; //file directly sourced from NUSMods public Github Repository. 
 
 import { FoundItem } from "../types/items";
 

@@ -10,7 +10,7 @@ import { useRouter } from "expo-router";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { db } from "../firebase/firebaseConfig";
 
-import venuesData from "../constants/venues.json";
+import venuesData from "../constants/venues.json"; //file directly sourced from NUSMods public Github Repository. 
 
 //navigation functions
 export default function FoundItemForm() {
