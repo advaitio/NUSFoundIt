@@ -56,6 +56,15 @@ export default function FoundItemForm() {
         }
     };
 
+    const webDateChange = (e:any) => {
+        const val = e.target.value;
+        if (val) {
+            setDateFound(new Date(val));
+        } else {
+            setDateFound(null);
+        }
+    };
+
     const handleLocationSelect = (text: string) => {
         setLocationFound(text);
 
@@ -87,7 +96,12 @@ export default function FoundItemForm() {
     const handleSubmit = async () => {
         //validation for non-empty fields
         if (!itemName || !category || !description || !locationFound || !dateFound || !email || !phoneNumber) {
-            Alert.alert("Error\n", "Please fill in all required fields.");
+            // Alert does not on web interface, had to use native alert() for deployment to work. 
+            if (Platform.OS === "web") {
+                alert("Error\nPlease fill in all required fields.");
+            } else {
+                Alert.alert("Error\n", "Please fill in all required fields.");
+            }
             return;
         }
 
@@ -105,8 +119,13 @@ export default function FoundItemForm() {
                 createdAt: serverTimestamp(),
             });
 
-            // show success message
-            Alert.alert("Success\n", "Your report has been submitted successfully.");
+            // send user the success alert
+            if (Platform.OS === "web") {
+                // Alert does not work on web interface, had to use the native alert() to implement deployment
+                alert("Success\nYour report has been submitted successfully.");
+            } else {
+                Alert.alert("Success\n", "Your report has been submitted successfully.");
+            }
 
             // reset form fields
             setItemName("");
