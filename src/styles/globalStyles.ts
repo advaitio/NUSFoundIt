@@ -401,23 +401,3 @@ export const DateStyles = StyleSheet.create({
         marginBottom: 2,
     },
 });
-
-export const webLayoutStyles = StyleSheet.create({
-    webBackground: {
-        flex: 1,
-        alignItems: "center",
-        justifyContent: "center",
-        width: "100%",
-        height: "100%",
-    },
-    webContainer: {
-        width: "100%",
-        height: "100%",
-        ...Platform.select({
-            web: {
-                maxWidth: 430,
-                maxHeight: 932,
-            }
-        })
-    }
-});
