@@ -235,18 +235,43 @@ export default function FoundItemForm() {
             <Pressable
                 style={DateStyles.datePickerBox}
                 onPress={() => {
-                    setShowCalendar(true);
-                    setShowSuggestions(false);
+                    // separate condition handling for mobile which ensures continuity.
+                    if (Platform.OS !== "web") {
+                        setShowCalendar(true);
+                        setShowSuggestions(false);
+                    }
                 }}
             >
                 <Text style={[
                     globalStyles.inputText,
-                    {color: dateFound ? colors.textInput : colors.placeholder} // implement placeholder similar to other input fields. 
+                    {color: dateFound ? colors.textInput : colors.placeholder}
                 ]}>
                     {dateFound ? `Date Found: ${formatDateLabel(dateFound)}` : "Date Found (select date)"}
                 </Text>
+
+                {/* implement the raw HTML date input if the platform is web. */}
+                {Platform.OS === "web" && (
+                    <input
+                        type="date"
+                        onChange={(e) => {
+                            const val = e.target.value;
+                            setDateFound(val ? new Date(val) : null);
+                        }}
+                        max = {new Date().toISOString().split("T")[0]}
+                        style={{
+                            position: "absolute",
+                            top: 0,
+                            left: 0,
+                            width: "100%",
+                            height: "100%",
+                            opacity: 0,
+                            cursor: "pointer",
+                        }}
+                    />
+                )}
             </Pressable>
-            {showCalendar && (
+            {/* differentiate web to ensure popup only appears on mobile */}
+            {showCalendar && Platform.OS !== "web" && (
                 <DateTimePicker
                     // default to current date as placeholder.
                     value={dateFound || new Date()}
