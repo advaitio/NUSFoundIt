@@ -277,7 +277,6 @@ export default function LostItemForm() {
                 placeholderTextColor={colors.placeholder}
                 value={email}
                 onChangeText={setEmail}
-                multiline
                 keyboardType="email-address"
                 onFocus={() => setShowSuggestions(false)}
             />
