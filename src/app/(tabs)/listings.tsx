@@ -1,5 +1,5 @@
-import { Ionicons } from "@expo/vector-icons";
 import DateTimePicker, { DateTimePickerEvent } from "@react-native-community/datetimepicker";
+import { Image } from "expo-image";
 import { useEffect, useRef, useState } from "react";
 import { Animated, Button, Modal, Platform, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
@@ -196,7 +196,11 @@ export default function ListingsScreen() {
                             setTempEndDate(activeEndDate);
                         }}
                     >
-                        <Ionicons name="options-outline" size={24} color={colors.primary} />
+                        <Image
+                            source={ filterModalVisible ? require("../../../assets/images/options.png") : require("../../../assets/images/options-outline.png")}
+                            style={{ width: 24, height: 24}}
+                            tintColor={colors.primary}
+                        />
                     </Pressable>
                 </View>
 
