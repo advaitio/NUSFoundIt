@@ -1,10 +1,8 @@
 import { Ionicons } from "@expo/vector-icons";
-import { useFonts } from "expo-font";
 import { Tabs } from "expo-router";
 import { colors } from "../../styles/globalStyles";
 
 export default function TabLayout() {
-    useFonts(Ionicons.font);
     return (
         <Tabs
             initialRouteName="index"
