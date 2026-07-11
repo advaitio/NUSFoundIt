@@ -9,9 +9,8 @@ import { useRouter } from "expo-router";
 //Importing of Firebase tools and firebaseConfig file.
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { db } from "../firebase/firebaseConfig";
-
-import venuesData from "../constants/venues.json"; //file directly sourced from NUSMods public Github Repository. 
-
+//file directly sourced from NUSMods public Github Repository. Refer to README for full reference.
+import venuesData from "../constants/venues.json";
 //navigation functions
 export default function FoundItemForm() {
     const router = useRouter();
@@ -235,7 +234,7 @@ export default function FoundItemForm() {
             <Pressable
                 style={DateStyles.datePickerBox}
                 onPress={() => {
-                    // separate condition handling for mobile which ensures continuity.
+                    // separate condition handling for mobile to ensure its continuity. 
                     if (Platform.OS !== "web") {
                         setShowCalendar(true);
                         setShowSuggestions(false);
@@ -246,10 +245,13 @@ export default function FoundItemForm() {
                     globalStyles.inputText,
                     {color: dateFound ? colors.textInput : colors.placeholder}
                 ]}>
+                    {/* Made sure to implement placeholder similar to other input fields. */}
                     {dateFound ? `Date Found: ${formatDateLabel(dateFound)}` : "Date Found (select date)"}
                 </Text>
 
-                {/* implement the raw HTML date input if the platform is web. */}
+                {/* implement the raw HTML date input if the platform is web. 
+                Date Picker does not work on web, so maintained <Text> tag to easily transfer styles over, 
+                with raw HTML date input remaining invisible by intentionally setting opacity to 0 */}
                 {Platform.OS === "web" && (
                     <input
                         type="date"
@@ -260,12 +262,15 @@ export default function FoundItemForm() {
                         max = {new Date().toISOString().split("T")[0]}
                         style={{
                             position: "absolute",
-                            top: 0,
+                            opacity: 0, // makes HTML raw field invisible
+                            top: 0, // extends the field to cover the entire visible Pressable container, so users can click anywhere to use. 
                             left: 0,
-                            width: "100%",
-                            height: "100%",
-                            opacity: 0,
-                            cursor: "pointer",
+                            right: 0,
+                            bottom: 0,
+                            width: '100%',
+                            height: '100%',
+                            padding: 0,
+                            margin: 0,
                         }}
                     />
                 )}
