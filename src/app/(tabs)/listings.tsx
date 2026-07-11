@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import DateTimePicker, { DateTimePickerEvent } from "@react-native-community/datetimepicker";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Animated, Button, Modal, Platform, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import FoundItemsList from "../../components/FoundItemsList";
@@ -294,26 +294,80 @@ export default function ListingsScreen() {
                             <View style={DateStyles.dateRangeRow}>
                                 <Pressable
                                     style={DateStyles.dualDatePickerBox}
-                                    onPress={() =>
-                                        setShowStartCalendar(true)}>
+                                    onPress={() => {
+                                        if (Platform.OS === "web") {
+                                            setShowStartCalendar(true);
+                                        }
+                                    }}
+                                >
                                     <Text style={DateStyles.datePickerLabel}>Start Date</Text>
                                     <Text style={[globalStyles.inputText, { color: tempStartDate ? colors.textInput : colors.placeholder, fontSize: 14 }]}>
                                         {formatDateLabel(tempStartDate)}
                                     </Text>
+                                    {/* Replicated from report forms to implement invisible raw HTML input for web, 
+                                    as Date Picker is incompatible. */}
+                                    {Platform.OS === "web" && (
+                                        <input
+                                            type="date"
+                                            onChange={(e) => {
+                                                const val = e.target.value;
+                                                setTempStartDate(val ? new Date(val) : null);
+                                            }}
+                                            max = {new Date().toISOString().split("T")[0]}
+                                            style={{
+                                                position: "absolute",
+                                                opacity: 0, // turns the HTML field invisible
+                                                top: 0, // extends the field to cover entire visible Pressable container, so users can click anywhere to use. 
+                                                left: 0,
+                                                right: 0,
+                                                bottom: 0,
+                                                width: '100%',
+                                                height: '100%',
+                                                padding: 0,
+                                                margin: 0,
+                                            }}
+                                        />
+                                    )}
                                 </Pressable>
 
                                 <Pressable
                                     style={DateStyles.dualDatePickerBox}
-                                    onPress={() =>
-                                        setShowEndCalendar(true)}>
+                                    onPress={() => {
+                                        if (Platform.OS !== "web") {
+                                            setShowEndCalendar(true);
+                                        }
+                                    }}
+                                >
                                     <Text style={DateStyles.datePickerLabel}>End Date</Text>
                                     <Text style={[globalStyles.inputText, { color: tempEndDate ? colors.textInput : colors.placeholder, fontSize: 14 }]}>
                                         {formatDateLabel(tempEndDate)}
                                     </Text>
+                                    {/* Similar implementation to the start date, with invisible HTML field */}
+                                    {Platform.OS === "web" && (
+                                        <input
+                                            type="date"
+                                            value={tempEndDate ? tempEndDate.toISOString().split('T')[0] : ""}
+                                            onChange={(e) => {
+                                                const val = e.target.value;
+                                                setTempEndDate(val ? new Date(val) : null);
+                                            }}
+                                            min={tempStartDate ? tempStartDate.toISOString().split('T')[0] : undefined}
+                                            max={new Date().toISOString().split('T')[0]}
+                                            style={{
+                                                position: 'absolute',
+                                                top: 0,
+                                                left: 0,
+                                                width: '100%',
+                                                height: '100%',
+                                                opacity: 0,
+                                                cursor: 'pointer',
+                                            }}
+                                        />
+                                    )}
                                 </Pressable>
                             </View>
-
-                            {showStartCalendar && (
+                            {/* Avoid showing for web which creates error. */}
+                            {showStartCalendar && Platform.OS !== "web" && (
                                 <DateTimePicker
                                     // default to current date as placeholder.
                                     value={tempStartDate || new Date()}
@@ -327,8 +381,8 @@ export default function ListingsScreen() {
                             {showStartCalendar && Platform.OS === 'ios' && (
                                 <Button title="Confirm Start Date" onPress={() => setShowStartCalendar(false)} />
                             )}
-
-                            {showEndCalendar && (
+                            {/* Avoid showing for web which creates error. */}
+                            {showEndCalendar && Platform.OS !== "web" && (
                                 <DateTimePicker
                                     value={tempEndDate || new Date()}
                                     mode="date"
