@@ -3,13 +3,13 @@ import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Alert, Button, Keyboard, Platform, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
-import { colors, globalStyles, Suggestions } from "../styles/globalStyles";
+import { colors, DateStyles, globalStyles, Suggestions } from "../styles/globalStyles";
 
 //Importing of Firebase tools and firebaseConfig file.
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { db } from "../firebase/firebaseConfig";
-
-import venuesData from "../constants/venues.json"; //file directly sourced from NUSMods public Github Repository. 
+//file directly sourced from NUSMods public Github Repository. Refer to README for full reference.
+import venuesData from "../constants/venues.json";
 
 //navigation functions
 export default function LostItemForm() {
@@ -213,20 +213,51 @@ export default function LostItemForm() {
             </View>
 
             <Pressable
-            style={styles.datePickerBox}
+            style={DateStyles.datePickerBox}
             onPress={() => {
+                // separate condition handling for mobile to ensure its continuity. 
+                if (Platform.OS !== "web") {
                     setShowCalendar(true);
                     setShowSuggestions(false);
-                }}
+                }
+            }}
             >
                 <Text style={[
                     globalStyles.inputText,
-                    {color: dateLost ? colors.textInput : colors.placeholder} // implement placeholder similar to other input fields. 
+                    {color: dateLost ? colors.textInput : colors.placeholder} 
                 ]}>
+                    {/* Made sure to implement placeholder similar to other input fields. */}
                     {dateLost ? `Date Lost: ${formatDateLabel(dateLost)}` : "Date Lost (select date)"}
                 </Text>
+
+                {/* implement the raw HTML date input if the platform is web. 
+                Date Picker does not work on web, so maintained <Text> tag to easily transfer styles over, 
+                with raw HTML date input remaining invisible by intentionally setting opacity to 0 */}
+                {Platform.OS === "web" && (
+                    <input
+                        type="date"
+                        onChange={(e) => {
+                            const val = e.target.value;
+                            setDateLost(val ? new Date(val) : null);
+                        }}
+                        max = {new Date().toISOString().split("T")[0]}
+                        style={{
+                            position: "absolute",
+                            opacity: 0, // makes HTML raw field invisible
+                            top: 0, // extends the field to cover the entire visible Pressable container, so users can click anywhere to use. 
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                            width: '100%',
+                            height: '100%',
+                            padding: 0,
+                            margin: 0,
+                        }}
+                    />
+                )}
             </Pressable>
-            {showCalendar && (
+            {/* differentiate web to ensure popup only appears on mobile */}
+            {showCalendar && Platform.OS !== "web" && (
                 <DateTimePicker
                     // default to current date as placeholder.
                     value={dateLost || new Date()}
@@ -246,7 +277,6 @@ export default function LostItemForm() {
                 placeholderTextColor={colors.placeholder}
                 value={email}
                 onChangeText={setEmail}
-                multiline
                 keyboardType="email-address"
                 onFocus={() => setShowSuggestions(false)}
             />

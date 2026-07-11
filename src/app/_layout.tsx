@@ -7,5 +7,5 @@ export default function RootLayout() {
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="item-details" options={{ title: 'Item Details', headerBackButtonDisplayMode: "minimal" }} />
     </Stack>
-  )
+  );
 }

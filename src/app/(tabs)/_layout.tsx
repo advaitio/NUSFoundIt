@@ -1,6 +1,6 @@
+import { Image } from "expo-image";
 import { Tabs } from "expo-router";
 import { colors } from "../../styles/globalStyles";
-import { Ionicons } from "@expo/vector-icons";
 
 export default function TabLayout() {
     return (
@@ -16,8 +16,12 @@ export default function TabLayout() {
                 name="report" 
                 options={{ 
                     title: "Report",
-                    tabBarIcon: ({ color, size }) => (
-                        <Ionicons name="add-circle" size={size} color={color} />
+                    tabBarIcon: ({ focused, color, size }) => (
+                        <Image
+                            source={ focused ? require("../../../assets/images/add-circle.png") : require("../../../assets/images/add-circle-outline.png")}
+                            style={{ width: size, height: size}}
+                            tintColor={color}
+                        />
                     ),
                 }} 
             />
@@ -25,8 +29,12 @@ export default function TabLayout() {
                 name="index"
                 options={{ 
                     title: "Home",
-                    tabBarIcon: ({ color, size }) => (
-                        <Ionicons name="home" size={size} color={color} />
+                    tabBarIcon: ({ focused, color, size }) => (
+                        <Image
+                            source={focused ? require("../../../assets/images/home.png") : require("../../../assets/images/home-outline.png")}
+                            style={{ width: size, height: size}}
+                            tintColor={color}
+                        />
                     ),
                 }} 
             />
@@ -34,8 +42,12 @@ export default function TabLayout() {
                 name="listings" 
                 options={{ 
                     title: "Listings",
-                    tabBarIcon: ({ color, size }) => (
-                        <Ionicons name="list" size={size} color={color} />
+                    tabBarIcon: ({ focused, color, size }) => (
+                        <Image
+                            source={focused ? require("../../../assets/images/list-circle.png") : require("../../../assets/images/list-circle-outline.png")}
+                            style={{ width: size, height: size}}
+                            tintColor={color}
+                        />
                     ),
                 }} 
             />

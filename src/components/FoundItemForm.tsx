@@ -9,9 +9,8 @@ import { useRouter } from "expo-router";
 //Importing of Firebase tools and firebaseConfig file.
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { db } from "../firebase/firebaseConfig";
-
-import venuesData from "../constants/venues.json"; //file directly sourced from NUSMods public Github Repository. 
-
+//file directly sourced from NUSMods public Github Repository. Refer to README for full reference.
+import venuesData from "../constants/venues.json";
 //navigation functions
 export default function FoundItemForm() {
     const router = useRouter();
@@ -56,6 +55,15 @@ export default function FoundItemForm() {
         }
     };
 
+    const webDateChange = (e:any) => {
+        const val = e.target.value;
+        if (val) {
+            setDateFound(new Date(val));
+        } else {
+            setDateFound(null);
+        }
+    };
+
     const handleLocationSelect = (text: string) => {
         setLocationFound(text);
 
@@ -87,7 +95,12 @@ export default function FoundItemForm() {
     const handleSubmit = async () => {
         //validation for non-empty fields
         if (!itemName || !category || !description || !locationFound || !dateFound || !email || !phoneNumber) {
-            Alert.alert("Error\n", "Please fill in all required fields.");
+            // Alert does not on web interface, had to use native alert() for deployment to work. 
+            if (Platform.OS === "web") {
+                alert("Error\nPlease fill in all required fields.");
+            } else {
+                Alert.alert("Error\n", "Please fill in all required fields.");
+            }
             return;
         }
 
@@ -105,8 +118,13 @@ export default function FoundItemForm() {
                 createdAt: serverTimestamp(),
             });
 
-            // show success message
-            Alert.alert("Success\n", "Your report has been submitted successfully.");
+            // send user the success alert
+            if (Platform.OS === "web") {
+                // Alert does not work on web interface, had to use the native alert() to implement deployment
+                alert("Success\nYour report has been submitted successfully.");
+            } else {
+                Alert.alert("Success\n", "Your report has been submitted successfully.");
+            }
 
             // reset form fields
             setItemName("");
@@ -216,18 +234,49 @@ export default function FoundItemForm() {
             <Pressable
                 style={DateStyles.datePickerBox}
                 onPress={() => {
-                    setShowCalendar(true);
-                    setShowSuggestions(false);
+                    // separate condition handling for mobile to ensure its continuity. 
+                    if (Platform.OS !== "web") {
+                        setShowCalendar(true);
+                        setShowSuggestions(false);
+                    }
                 }}
             >
                 <Text style={[
                     globalStyles.inputText,
-                    {color: dateFound ? colors.textInput : colors.placeholder} // implement placeholder similar to other input fields. 
+                    {color: dateFound ? colors.textInput : colors.placeholder}
                 ]}>
+                    {/* Made sure to implement placeholder similar to other input fields. */}
                     {dateFound ? `Date Found: ${formatDateLabel(dateFound)}` : "Date Found (select date)"}
                 </Text>
+
+                {/* implement the raw HTML date input if the platform is web. 
+                Date Picker does not work on web, so maintained <Text> tag to easily transfer styles over, 
+                with raw HTML date input remaining invisible by intentionally setting opacity to 0 */}
+                {Platform.OS === "web" && (
+                    <input
+                        type="date"
+                        onChange={(e) => {
+                            const val = e.target.value;
+                            setDateFound(val ? new Date(val) : null);
+                        }}
+                        max = {new Date().toISOString().split("T")[0]}
+                        style={{
+                            position: "absolute",
+                            opacity: 0, // makes HTML raw field invisible
+                            top: 0, // extends the field to cover the entire visible Pressable container, so users can click anywhere to use. 
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                            width: '100%',
+                            height: '100%',
+                            padding: 0,
+                            margin: 0,
+                        }}
+                    />
+                )}
             </Pressable>
-            {showCalendar && (
+            {/* differentiate web to ensure popup only appears on mobile */}
+            {showCalendar && Platform.OS !== "web" && (
                 <DateTimePicker
                     // default to current date as placeholder.
                     value={dateFound || new Date()}
