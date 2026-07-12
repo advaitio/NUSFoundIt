@@ -5,7 +5,7 @@ import { ActivityIndicator, Alert, Linking, Pressable, ScrollView, StyleSheet, T
 import { db } from "../firebase/firebaseConfig";
 import { colors, globalStyles, spacing } from "../styles/globalStyles";
 import { FoundItem, LostItem, MatchedFoundItem, MatchedLostItem } from "../types/items";
-import { getPossibleFoundMatches } from "../utils/matching";
+import { getPossibleFoundMatches, getPossibleLostMatches } from "../utils/matching";
 
 export default function ItemDetails() {
     // Get the type and id parameters from the URL using useLocalSearchParams
@@ -62,16 +62,16 @@ export default function ItemDetails() {
                         const foundData = doc.data();
                         return {
                             id: doc.id,
-                            itemName: data.itemName ?? "",
-                            category: data.category ?? "",
-                            description: data.description ?? "",
-                            locationFound: data.locationFound ?? "",
-                            dateFound: data.dateFound ?? "",
-                            contactEmail: data.contactEmail ?? "",
-                            contactPhoneNumber: data.contactPhoneNumber ?? "",
-                            imageUrl: data.imageUrl || undefined,
-                            status: data.status ?? "active",
-                            createdAt: data.createdAt,
+                            itemName: foundData.itemName ?? "",
+                            category: foundData.category ?? "",
+                            description: foundData.description ?? "",
+                            locationFound: foundData.locationFound ?? "",
+                            dateFound: foundData.dateFound ?? "",
+                            contactEmail: foundData.contactEmail ?? "",
+                            contactPhoneNumber: foundData.contactPhoneNumber ?? "",
+                            imageUrl: foundData.imageUrl || undefined,
+                            status: foundData.status ?? "active",
+                            createdAt: foundData.createdAt,
                         };
                     });
 
@@ -91,6 +91,26 @@ export default function ItemDetails() {
                         createdAt: data.createdAt,
                     };
                     setItem(foundItem);
+                    const lostItemsQuery = query(collection(db, "lostItems"), orderBy("createdAt", "desc"));
+                    const lostSnapshot = await getDocs(lostItemsQuery);
+
+                    const lostItems: LostItem[] = lostSnapshot.docs.map((doc) => {
+                        const lostData = doc.data();
+                        return {
+                            id: doc.id,
+                            itemName: lostData.itemName ?? "",
+                            category: lostData.category ?? "",
+                            description: lostData.description ?? "",
+                            locationLost: lostData.locationLost ?? "",
+                            dateLost: lostData.dateLost ?? "",
+                            contactEmail: lostData.contactEmail ?? "",
+                            contactPhoneNumber: lostData.contactPhoneNumber ?? "",
+                            imageUrl: lostData.imageUrl || undefined,
+                            status: lostData.status ?? "active",
+                            createdAt: lostData.createdAt,
+                        };
+                    });
+                    setMatches(getPossibleLostMatches(foundItem, lostItems));
                 }
             } catch (error) {
                 console.error("Error fetching item details:", error);
