@@ -53,6 +53,12 @@ function getDateDifferenceInDays(lostDateStr: string, foundDateStr: string): num
     return Math.round((foundDate.getTime() - lostDate.getTime()) / oneDayMs); // returns diff in days
 }
 
+// checks if item status is matchable (active/claimed)
+function isMatchableStatus(status?: string): boolean {
+    const normalizedStatus = status?.toLowerCase() ?? "active"; // default to active if status is undefined/null
+    return normalizedStatus === "active" || normalizedStatus === "claimed";
+}
+
 // This function calculates a match score between a found item and a lost item 
 // based on category, location, and shared words in the name and description.
 export function getMatchScore(foundItem: FoundItem, lostItem: LostItem): number {
