@@ -59,6 +59,15 @@ function isMatchableStatus(status?: string): boolean {
     return normalizedStatus === "active" || normalizedStatus === "claimed";
 }
 
+// gets category of venue based on location
+function getVenueCategory(location: string): string | null {
+    if (location in venuesData) {
+        const venue = venuesData[location as keyof typeof venuesData];
+        return venue.category ?? null;
+    }
+    return null; // location not found
+}
+
 // This function calculates a match score between a found item and a lost item 
 // based on category, location, and shared words in the name and description.
 export function getMatchScore(foundItem: FoundItem, lostItem: LostItem): number {
