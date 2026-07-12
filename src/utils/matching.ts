@@ -143,43 +143,51 @@ function scoreDescription(foundItem: FoundItem, lostItem: LostItem): MatchReason
     return null;
 }
 
-// This function calculates a match score between a found item and a lost item 
-// based on category, location, and shared words in the name and description.
-export function getMatchScore(foundItem: FoundItem, lostItem: LostItem): number {
-    let score = 0;
-
-    // 3 pts for matching categories
-    if (lostItem.category === foundItem.category) {
-        score += 3;
-    }
-
-    // 2 pts for matching locations (case insensitive)
-    const lostLocation = normalize(lostItem.locationLost);
-    const foundLocation = normalize(foundItem.locationFound);
-    if (lostLocation && 
-        foundLocation && 
-        (lostLocation.includes(foundLocation) || foundLocation.includes(lostLocation))) {
-            score += 2;
-    }
-
-    // 2 pts for each shared word in the item name
-    score += countSharedWords(lostItem.itemName, foundItem.itemName) * 2;
-    // 1 pt for each shared word in the description
-    score += countSharedWords(lostItem.description, foundItem.description);
-
-    return score;
+export function getMatchDetails(foundItem: FoundItem, lostItem: LostItem): { score: number; reasons: MatchReason[]; } {
+    const possibleReasons = [
+        scoreCategory(foundItem, lostItem),
+        scoreLocation(foundItem, lostItem),
+        scoreDate(foundItem, lostItem),
+        scoreItemName(foundItem, lostItem),
+        scoreDescription(foundItem, lostItem),
+    ];
+    const reasons = possibleReasons.filter((reason): reason is MatchReason => reason !== null); //filter out nulls
+    const score = reasons.reduce((acc, reason) => acc + reason.points, 0); //sum of pts
+    return { score, reasons };
 }
 
-// This functiontakes a lost item and a list of found items, 
-// calculates the match score for each found item, 
-// filters out those with a score less than 3, 
-// and sorts the remaining items by their match score in descending order.
-export function getPossibleMatches(lostItem: LostItem, foundItems: FoundItem[]): MatchedFoundItem[] {
+export function getMatchScore(foundItem: FoundItem, lostItem: LostItem): number {
+    return getMatchDetails(foundItem, lostItem).score;
+}
+
+// shows matching found items in lost item details page
+export function getPossibleFoundMatches(lostItem: LostItem, foundItems: FoundItem[]): MatchedFoundItem[] {
     return foundItems
-        .map((foundItem) => ({
-            ...foundItem,
-            matchScore: getMatchScore(foundItem, lostItem),
-        }))
+        .filter((foundItem) => isMatchableStatus(foundItem.status))
+        .map((foundItem) => {
+            const matchDetails = getMatchDetails(foundItem, lostItem);
+            return {
+                ...foundItem,
+                matchScore: matchDetails.score,
+                matchReasons: matchDetails.reasons,
+            };
+        })
+        .filter((item) => item.matchScore >= MIN_MATCH_SCORE)
+        .sort((a, b) => b.matchScore - a.matchScore);
+}
+
+// shows matching lost items in found item details page
+export function getPossibleLostMatches(foundItem: FoundItem, lostItems: LostItem[]): MatchedLostItem[] {
+    return lostItems
+        .filter((lostItem) => isMatchableStatus(lostItem.status))
+        .map((lostItem) => {
+            const matchDetails = getMatchDetails(foundItem, lostItem);
+            return {
+                ...lostItem,
+                matchScore: matchDetails.score,
+                matchReasons: matchDetails.reasons,
+            };
+        })
         .filter((item) => item.matchScore >= MIN_MATCH_SCORE)
         .sort((a, b) => b.matchScore - a.matchScore);
 }
