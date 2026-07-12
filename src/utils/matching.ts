@@ -125,6 +125,24 @@ function scoreDate(foundItem: FoundItem, lostItem: LostItem): MatchReason | null
     return null; //no score for 1-2wks
 }
 
+// 2pts for each shared item name word
+function scoreItemName(foundItem: FoundItem, lostItem: LostItem): MatchReason | null {
+    const sharedWords = countSharedWords(foundItem.itemName, lostItem.itemName);
+    if (sharedWords > 0) {
+        return { label: "Shared item name keywords", points: sharedWords * 2 };
+    }
+    return null;
+}
+
+// 1pt for each shared desc word
+function scoreDescription(foundItem: FoundItem, lostItem: LostItem): MatchReason | null {
+    const sharedWords = countSharedWords(foundItem.description, lostItem.description);
+    if (sharedWords > 0) {
+        return { label: "Shared item description keywords", points: sharedWords };
+    }
+    return null;
+}
+
 // This function calculates a match score between a found item and a lost item 
 // based on category, location, and shared words in the name and description.
 export function getMatchScore(foundItem: FoundItem, lostItem: LostItem): number {
