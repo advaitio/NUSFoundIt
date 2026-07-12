@@ -24,6 +24,19 @@ export type LostItem = {
     createdAt: any; // Firestore timestamp
 };
 
+export type ItemStatus = "active" | "claimed" | "resolved" | "closed";
+
+export type MatchReason = { // explanation of why an item matched
+    label: string;
+    points: number;
+};
+
 export type MatchedFoundItem = FoundItem & {
     matchScore: number;
-}
+    matchReasons: MatchReason[];
+};
+
+export type MatchedLostItem = LostItem & {
+    matchScore: number;
+    matchReasons: MatchReason[];
+};
