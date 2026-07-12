@@ -3,23 +3,27 @@ import venuesData from "../constants/venues.json";
 
 const MIN_MATCH_SCORE = 4;
 
-// This function normalizes a string by converting it to lowercase and trimming whitespace.
+const IGNORED_WORDS = new Set([
+    "the", "and", "for", "with", "from", "that", "this", "these", "those", "a", "an", "of", "in", "on", "at",
+    "item", "items", "lost", "found", "near", "around",
+])
+
+// normalizes a string before comparison
 function normalize(text: string): string {
     return text.toLowerCase().trim();
 }
 
-// This function takes a string and returns an array of normalized words,
-// filtering out words that are shorter than 4 characters.
+// takes a string and splits it into useful words
 function getWords(text: string): string[] {
-    return normalize(text).split(/\s+/).filter((word) => word.length >= 3);
+    return normalize(text).split(/\s+/).filter((word) => word.length >= 3 && !IGNORED_WORDS.has(word));
 }
 
-// This function counts the number of shared words between two strings.
+// counts shared words between two strings.
 function countSharedWords(textA: string, textB: string): number {
-    // Create sets of words for both texts
+    // create sets of words for both texts
     const wordsA = new Set(getWords(textA));
     const wordsB = new Set(getWords(textB));
-    // The number of shared words is the total unique words minus the unique words in each set
+    // num shared words is total unique words minus the unique words in each set
     return wordsA.size + wordsB.size - new Set([...wordsA, ...wordsB]).size;
 }
 
