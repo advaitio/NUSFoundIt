@@ -1,4 +1,7 @@
-import { FoundItem, LostItem, MatchedFoundItem } from '../types/items';
+import { FoundItem, LostItem, MatchedFoundItem, MatchedLostItem, MatchReason } from "../types/items";
+import venuesData from "../constants/venues.json";
+
+const MIN_MATCH_SCORE = 4;
 
 // This function normalizes a string by converting it to lowercase and trimming whitespace.
 function normalize(text: string): string {
@@ -57,6 +60,6 @@ export function getPossibleMatches(lostItem: LostItem, foundItems: FoundItem[]):
             ...foundItem,
             matchScore: getMatchScore(foundItem, lostItem),
         }))
-        .filter((item) => item.matchScore >= 3)
+        .filter((item) => item.matchScore >= MIN_MATCH_SCORE)
         .sort((a, b) => b.matchScore - a.matchScore);
 }
