@@ -68,6 +68,63 @@ function getVenueCategory(location: string): string | null {
     return null; // location not found
 }
 
+// 3pts for matching categories
+function scoreCategory(foundItem: FoundItem, lostItem: LostItem): MatchReason | null {
+    if (foundItem.category && lostItem.category && foundItem.category === lostItem.category) {
+        return { label: "Same category", points: 3 };
+    }
+    return null;
+}
+
+// 2pts for matching locations
+function scoreLocation(foundItem: FoundItem, lostItem: LostItem): MatchReason | null {
+    const lostLocation = normalize(lostItem.locationLost);
+    const foundLocation = normalize(foundItem.locationFound);
+
+    if (!lostLocation || !foundLocation) return null; //no score if either empty
+
+    if (lostLocation.includes(foundLocation) || foundLocation.includes(lostLocation)) {
+        return { label: "Similar location", points: 2 };
+    }
+
+    const lostVenueCategory = getVenueCategory(lostLocation);
+    const foundVenueCategory = getVenueCategory(foundLocation);
+
+    if (lostVenueCategory && foundVenueCategory && lostVenueCategory === foundVenueCategory) {
+        return { label: "Same general location group", points: 1 };
+    }
+
+    return null;
+}
+
+// scores depend on date proximity
+function scoreDate(foundItem: FoundItem, lostItem: LostItem): MatchReason | null {
+    const diffDays = getDateDifferenceInDays(lostItem.dateLost, foundItem.dateFound);
+    if (diffDays === null) return null; //invalid dates
+
+    if (diffDays < 0) {
+        return { label: "Found date is before lost date", points: -2 };
+    }
+
+    if (diffDays <= 1) {
+        return { label: "Found within 1 day of lost date", points: 3 };
+    }
+
+    if (diffDays <= 3) {
+        return { label: "Found within 3 day of lost date", points: 2 };
+    }
+
+    if (diffDays <= 7) {
+        return { label: "Found within 1 week of lost date", points: 1 };
+    }
+
+    if (diffDays > 14) {
+        return { label: "Found more than 2 weeks after lost date", points: -1 };
+    }
+
+    return null; //no score for 1-2wks
+}
+
 // This function calculates a match score between a found item and a lost item 
 // based on category, location, and shared words in the name and description.
 export function getMatchScore(foundItem: FoundItem, lostItem: LostItem): number {
