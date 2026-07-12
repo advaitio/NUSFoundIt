@@ -42,6 +42,17 @@ function parseDate(dateString: string): Date | null {
     return date;
 }
 
+// calculates the diff in days (+ve means found after lost)
+function getDateDifferenceInDays(lostDateStr: string, foundDateStr: string): number | null {
+    const lostDate = parseDate(lostDateStr);
+    const foundDate = parseDate(foundDateStr);
+
+    if (!lostDate || !foundDate) return null; //invalid
+
+    const oneDayMs = 24 * 60 * 60 * 1000; // hrs*mins*secs*millisecs
+    return Math.round((foundDate.getTime() - lostDate.getTime()) / oneDayMs); // returns diff in days
+}
+
 // This function calculates a match score between a found item and a lost item 
 // based on category, location, and shared words in the name and description.
 export function getMatchScore(foundItem: FoundItem, lostItem: LostItem): number {
