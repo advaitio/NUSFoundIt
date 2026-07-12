@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import { ActivityIndicator, Alert, Linking, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { db } from "../firebase/firebaseConfig";
 import { colors, globalStyles, spacing } from "../styles/globalStyles";
-import { FoundItem, LostItem, MatchedFoundItem } from "../types/items";
-import { getPossibleMatches } from "../utils/matching";
+import { FoundItem, LostItem, MatchedFoundItem, MatchedLostItem } from "../types/items";
+import { getPossibleFoundMatches } from "../utils/matching";
 
 export default function ItemDetails() {
     // Get the type and id parameters from the URL using useLocalSearchParams
@@ -13,7 +13,7 @@ export default function ItemDetails() {
 
     // State variables for the item details, possible matches, loading state, and error message
     const [item, setItem] = useState<FoundItem | LostItem | null>(null);
-    const [matches, setMatches] = useState<MatchedFoundItem[]>([]);
+    const [matches, setMatches] = useState<(MatchedFoundItem | MatchedLostItem)[]>([]);
     const [loading, setLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState("");
 
@@ -49,6 +49,7 @@ export default function ItemDetails() {
                         contactEmail: data.contactEmail ?? "",
                         contactPhoneNumber: data.contactPhoneNumber ?? "",
                         imageUrl: data.imageUrl || undefined,
+                        status: data.status ?? "active",
                         createdAt: data.createdAt,
                     };
 
@@ -58,14 +59,23 @@ export default function ItemDetails() {
                     const foundSnapshot = await getDocs(foundItemsQuery);
 
                     const foundItems: FoundItem[] = foundSnapshot.docs.map((doc) => {
-                        const foundData = doc.data() as FoundItem;
+                        const foundData = doc.data();
                         return {
-                            ...foundData,
                             id: doc.id,
+                            itemName: data.itemName ?? "",
+                            category: data.category ?? "",
+                            description: data.description ?? "",
+                            locationFound: data.locationFound ?? "",
+                            dateFound: data.dateFound ?? "",
+                            contactEmail: data.contactEmail ?? "",
+                            contactPhoneNumber: data.contactPhoneNumber ?? "",
+                            imageUrl: data.imageUrl || undefined,
+                            status: data.status ?? "active",
+                            createdAt: data.createdAt,
                         };
                     });
 
-                    setMatches(getPossibleMatches(lostItem, foundItems));
+                    setMatches(getPossibleFoundMatches(lostItem, foundItems));
                 } else {
                     const foundItem: FoundItem = {
                         id: itemSnapshot.id,
@@ -77,6 +87,7 @@ export default function ItemDetails() {
                         contactEmail: data.contactEmail ?? "",
                         contactPhoneNumber: data.contactPhoneNumber ?? "",
                         imageUrl: data.imageUrl || undefined,
+                        status: data.status ?? "active",
                         createdAt: data.createdAt,
                     };
                     setItem(foundItem);
