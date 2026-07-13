@@ -195,11 +195,10 @@ export default function ItemDetails() {
                                 >
                                     <Pressable style={styles.matchCard}>
                                         <View style={styles.matchHeader}>
-                                            <Text style={styles.matchName} numberOfLines={2}>{match.itemName}</Text>
+                                            <Text style={styles.matchName}>{match.itemName}</Text>
 
-                                            <View style={styles.scoreBadge}>
-                                                <Text style={styles.scoreLabel}>Score</Text>
-                                                <Text style={styles.scoreValue}>{match.matchScore}</Text>
+                                            <View style={styles.scorePill}>
+                                                <Text style={styles.scorePillText}>Score {match.matchScore}</Text>
                                             </View>
                                         </View>
 
@@ -299,16 +298,14 @@ const styles = StyleSheet.create({
     },
     matchHeader: {
         flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "flex-start",
+        alignItems: "center",
         gap: spacing.sm,
     },
     matchName: {
         flex: 1,
-        fontSize: 22,
+        fontSize: 20,
         fontWeight: "700",
         color: colors.textPrimary,
-        paddingTop: 6,
     },
     matchText: {
         lineHeight: 20,
@@ -348,24 +345,16 @@ const styles = StyleSheet.create({
         fontSize: 14,
         lineHeight: 21,
     },
-    scoreBadge: {
-        width: 72,
-        height: 64,
-        alignItems: "center",
-        justifyContent: "center",
-        borderRadius: 14,
-        backgroundColor: colors.surface,
+    scorePill: {
+        paddingVertical: 6,
+        paddingHorizontal: 12,
+        borderRadius: 999,
         borderWidth: 1.5,
         borderColor: colors.logoAccent,
+        backgroundColor: colors.surface,
     },
-    scoreLabel: {
-        fontSize: 11,
-        color: colors.textSecondary,
-        fontWeight: "600",
-    },
-    scoreValue: {
-        fontSize: 24,
-        lineHeight: 28,
+    scorePillText: {
+        fontSize: 14,
         color: colors.logoAccent,
         fontWeight: "800",
     },
