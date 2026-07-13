@@ -168,37 +168,54 @@ export default function ItemDetails() {
                     <LinkDetailRow label="Image" url={item.imageUrl} />
                 </View>
 
-                {/* If it's a lost item, render the possible matches section */}
-                {isLostItem ? (
-                    <View style={globalStyles.card}>
-                        <Text style={styles.heading}>Possible Matches</Text>
-                        {matches.length === 0 ? (
-                            <Text style={globalStyles.placeholderText}>No matches found. Try updating the item details or check back later!</Text>
-                        ) : (
-                            matches.map((match) => (
+                {/* render possible matches for lost/found items */}
+                <View style={globalStyles.card}>
+                    <Text style={styles.heading}>{isLostItem ? "Possible Found Item Matches" : "Possible Lost Item Matches"}</Text>
+                    {matches.length === 0 ? (
+                        <Text style={globalStyles.placeholderText}>
+                            {isLostItem
+                                ? "No matching found items yet. Check back later!"
+                                : "No matching lost item reports yet. Check back later!"}
+                        </Text>
+                    ) : (
+                        matches.map((match) => {
+                            const matchType = isLostItem ? "found" : "lost";
+                            const matchLocation = isLostItem ? (match as FoundItem).locationFound : (match as LostItem).locationLost;
+                            const matchDate = isLostItem ? (match as FoundItem).dateFound : (match as LostItem).dateLost;
+
+                            return (
                                 <Link
                                     key={match.id}
                                     push
                                     href={{
                                         pathname: "/item-details",
-                                        params: { type: "found", id: match.id },
+                                        params: { type: matchType, id: match.id },
                                     }}
                                     asChild
                                 >
                                     <Pressable style={styles.matchCard}>
                                         <Text style={styles.matchName}>{match.itemName}</Text>
                                         <Text style={styles.matchText}>Category: {match.category}</Text>
-                                        <Text style={styles.matchText}>Location Found: {match.locationFound}</Text>
-                                        <Text style={styles.matchText}>Date Found: {match.dateFound}</Text>
+                                        <Text style={styles.matchText}>{isLostItem ? "Location Found" : "Location Lost"}: {matchLocation}</Text>
+                                        <Text style={styles.matchText}>{isLostItem ? "Date Found" : "Date Lost"}: {matchDate}</Text>
                                         <Text style={styles.matchText}>
                                             Match Score: <Text style={styles.matchScore}>{match.matchScore}</Text>
                                         </Text>
+                                        <View style={styles.matchReasonsContainer}>
+                                            <Text style={styles.matchReasonsTitle}>Why this matched:</Text>
+                                            {match.matchReasons.map((reason, index) => (
+                                                <Text key={index} style={styles.matchReasonText}>
+                                                    - {reason.label} ({reason.points > 0 ? "+" : ""}{reason.points}) {/* Display the reason and its points */}
+                                                </Text>
+                                            ))}
+                                        </View>
                                     </Pressable>
                                 </Link>
-                            ))
-                        )}
-                    </View>
-                ) : null}
+                            )
+                        })
+                    )}
+                </View>
+
             </ScrollView>
         </>
     )
@@ -298,10 +315,26 @@ const styles = StyleSheet.create({
         textDecorationLine: "underline",
     },
     heading: {
-        fontSize: 24,
+        fontSize: 23,
         fontWeight: "bold",
         marginBottom: 14,
         color: colors.textPrimary,
         alignSelf: "center",
+    },
+    matchReasonsContainer: {
+        marginTop: spacing.sm,
+        paddingTop: spacing.sm,
+        borderTopWidth: 1,
+        borderTopColor: colors.border,
+    },
+    matchReasonsTitle: {
+        fontWeight: "700",
+        color: colors.textPrimary,
+        marginBottom: spacing.xs,
+    },
+    matchReasonText: {
+        color: colors.textSecondary,
+        fontSize: 13,
+        lineHeight: 18,
     },
 })
