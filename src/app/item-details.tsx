@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import { ActivityIndicator, Alert, Linking, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { db } from "../firebase/firebaseConfig";
 import { colors, globalStyles, spacing } from "../styles/globalStyles";
-import { FoundItem, LostItem, MatchedFoundItem } from "../types/items";
-import { getPossibleMatches } from "../utils/matching";
+import { FoundItem, LostItem, MatchedFoundItem, MatchedLostItem } from "../types/items";
+import { getPossibleFoundMatches, getPossibleLostMatches } from "../utils/matching";
 
 export default function ItemDetails() {
     // Get the type and id parameters from the URL using useLocalSearchParams
@@ -13,7 +13,7 @@ export default function ItemDetails() {
 
     // State variables for the item details, possible matches, loading state, and error message
     const [item, setItem] = useState<FoundItem | LostItem | null>(null);
-    const [matches, setMatches] = useState<MatchedFoundItem[]>([]);
+    const [matches, setMatches] = useState<(MatchedFoundItem | MatchedLostItem)[]>([]);
     const [loading, setLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState("");
 
@@ -49,6 +49,7 @@ export default function ItemDetails() {
                         contactEmail: data.contactEmail ?? "",
                         contactPhoneNumber: data.contactPhoneNumber ?? "",
                         imageUrl: data.imageUrl || undefined,
+                        status: data.status ?? "active",
                         createdAt: data.createdAt,
                     };
 
@@ -58,14 +59,23 @@ export default function ItemDetails() {
                     const foundSnapshot = await getDocs(foundItemsQuery);
 
                     const foundItems: FoundItem[] = foundSnapshot.docs.map((doc) => {
-                        const foundData = doc.data() as FoundItem;
+                        const foundData = doc.data();
                         return {
-                            ...foundData,
                             id: doc.id,
+                            itemName: foundData.itemName ?? "",
+                            category: foundData.category ?? "",
+                            description: foundData.description ?? "",
+                            locationFound: foundData.locationFound ?? "",
+                            dateFound: foundData.dateFound ?? "",
+                            contactEmail: foundData.contactEmail ?? "",
+                            contactPhoneNumber: foundData.contactPhoneNumber ?? "",
+                            imageUrl: foundData.imageUrl || undefined,
+                            status: foundData.status ?? "active",
+                            createdAt: foundData.createdAt,
                         };
                     });
 
-                    setMatches(getPossibleMatches(lostItem, foundItems));
+                    setMatches(getPossibleFoundMatches(lostItem, foundItems));
                 } else {
                     const foundItem: FoundItem = {
                         id: itemSnapshot.id,
@@ -77,9 +87,30 @@ export default function ItemDetails() {
                         contactEmail: data.contactEmail ?? "",
                         contactPhoneNumber: data.contactPhoneNumber ?? "",
                         imageUrl: data.imageUrl || undefined,
+                        status: data.status ?? "active",
                         createdAt: data.createdAt,
                     };
                     setItem(foundItem);
+                    const lostItemsQuery = query(collection(db, "lostItems"), orderBy("createdAt", "desc"));
+                    const lostSnapshot = await getDocs(lostItemsQuery);
+
+                    const lostItems: LostItem[] = lostSnapshot.docs.map((doc) => {
+                        const lostData = doc.data();
+                        return {
+                            id: doc.id,
+                            itemName: lostData.itemName ?? "",
+                            category: lostData.category ?? "",
+                            description: lostData.description ?? "",
+                            locationLost: lostData.locationLost ?? "",
+                            dateLost: lostData.dateLost ?? "",
+                            contactEmail: lostData.contactEmail ?? "",
+                            contactPhoneNumber: lostData.contactPhoneNumber ?? "",
+                            imageUrl: lostData.imageUrl || undefined,
+                            status: lostData.status ?? "active",
+                            createdAt: lostData.createdAt,
+                        };
+                    });
+                    setMatches(getPossibleLostMatches(foundItem, lostItems));
                 }
             } catch (error) {
                 console.error("Error fetching item details:", error);
@@ -137,37 +168,57 @@ export default function ItemDetails() {
                     <LinkDetailRow label="Image" url={item.imageUrl} />
                 </View>
 
-                {/* If it's a lost item, render the possible matches section */}
-                {isLostItem ? (
-                    <View style={globalStyles.card}>
-                        <Text style={styles.heading}>Possible Matches</Text>
-                        {matches.length === 0 ? (
-                            <Text style={globalStyles.placeholderText}>No matches found. Try updating the item details or check back later!</Text>
-                        ) : (
-                            matches.map((match) => (
+                {/* render possible matches for lost/found items */}
+                <View style={globalStyles.card}>
+                    <Text style={styles.heading}>{isLostItem ? "Possible Found Item Matches" : "Possible Lost Item Matches"}</Text>
+                    {matches.length === 0 ? (
+                        <Text style={globalStyles.placeholderText}>
+                            {isLostItem
+                                ? "No matching found items yet. Check back later!"
+                                : "No matching lost item reports yet. Check back later!"}
+                        </Text>
+                    ) : (
+                        matches.map((match) => {
+                            const matchType = isLostItem ? "found" : "lost";
+                            const matchLocation = isLostItem ? (match as FoundItem).locationFound : (match as LostItem).locationLost;
+                            const matchDate = isLostItem ? (match as FoundItem).dateFound : (match as LostItem).dateLost;
+
+                            return (
                                 <Link
                                     key={match.id}
                                     push
                                     href={{
                                         pathname: "/item-details",
-                                        params: { type: "found", id: match.id },
+                                        params: { type: matchType, id: match.id },
                                     }}
                                     asChild
                                 >
                                     <Pressable style={styles.matchCard}>
-                                        <Text style={styles.matchName}>{match.itemName}</Text>
-                                        <Text style={styles.matchText}>Category: {match.category}</Text>
-                                        <Text style={styles.matchText}>Location Found: {match.locationFound}</Text>
-                                        <Text style={styles.matchText}>Date Found: {match.dateFound}</Text>
-                                        <Text style={styles.matchText}>
-                                            Match Score: <Text style={styles.matchScore}>{match.matchScore}</Text>
-                                        </Text>
+                                        <View style={styles.matchHeader}>
+                                            <Text style={styles.matchName}>{match.itemName}</Text>
+
+                                            <View style={styles.scorePill}>
+                                                <Text style={styles.scorePillText}>Score {match.matchScore}</Text>
+                                            </View>
+                                        </View>
+
+                                        <View style={styles.matchReasonsContainer}>
+                                            <Text style={styles.matchReasonsTitle}>Why this matched:</Text>
+                                            {match.matchReasons.map((reason, index) => (
+                                                <Text key={index} style={styles.matchReasonText}>
+                                                    - {reason.label} ({reason.points > 0 ? "+" : ""}{reason.points}) {/* Display the reason and its points */}
+                                                </Text>
+                                            ))}
+                                        </View>
+
+                                        <Text style={styles.viewDetailsText}>Tap to view full item details.</Text>
                                     </Pressable>
                                 </Link>
-                            ))
-                        )}
-                    </View>
-                ) : null}
+                            )
+                        })
+                    )}
+                </View>
+
             </ScrollView>
         </>
     )
@@ -245,10 +296,15 @@ const styles = StyleSheet.create({
         borderLeftWidth: 4,
         borderLeftColor: colors.logoAccent,
     },
+    matchHeader: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: spacing.sm,
+    },
     matchName: {
-        fontSize: 18,
-        fontWeight: "bold",
-        marginBottom: spacing.xs,
+        flex: 1,
+        fontSize: 20,
+        fontWeight: "700",
         color: colors.textPrimary,
     },
     matchText: {
@@ -267,10 +323,45 @@ const styles = StyleSheet.create({
         textDecorationLine: "underline",
     },
     heading: {
-        fontSize: 24,
+        fontSize: 23,
         fontWeight: "bold",
         marginBottom: 14,
         color: colors.textPrimary,
         alignSelf: "center",
     },
+    matchReasonsContainer: {
+        marginTop: spacing.md,
+        paddingTop: spacing.sm,
+        borderTopWidth: 1,
+        borderTopColor: colors.border,
+    },
+    matchReasonsTitle: {
+        fontWeight: "700",
+        color: colors.textPrimary,
+        marginBottom: spacing.xs,
+    },
+    matchReasonText: {
+        color: colors.textSecondary,
+        fontSize: 14,
+        lineHeight: 21,
+    },
+    scorePill: {
+        paddingVertical: 6,
+        paddingHorizontal: 12,
+        borderRadius: 999,
+        borderWidth: 1.5,
+        borderColor: colors.logoAccent,
+        backgroundColor: colors.surface,
+    },
+    scorePillText: {
+        fontSize: 14,
+        color: colors.logoAccent,
+        fontWeight: "800",
+    },
+    viewDetailsText: {
+        marginTop: spacing.md,
+        color: colors.logoSecondary,
+        fontSize: 13,
+        fontWeight: "700",
+    }
 })
