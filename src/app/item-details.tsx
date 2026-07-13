@@ -194,13 +194,15 @@ export default function ItemDetails() {
                                     asChild
                                 >
                                     <Pressable style={styles.matchCard}>
-                                        <Text style={styles.matchName}>{match.itemName}</Text>
-                                        <Text style={styles.matchText}>Category: {match.category}</Text>
-                                        <Text style={styles.matchText}>{isLostItem ? "Location Found" : "Location Lost"}: {matchLocation}</Text>
-                                        <Text style={styles.matchText}>{isLostItem ? "Date Found" : "Date Lost"}: {matchDate}</Text>
-                                        <Text style={styles.matchText}>
-                                            Match Score: <Text style={styles.matchScore}>{match.matchScore}</Text>
-                                        </Text>
+                                        <View style={styles.matchHeader}>
+                                            <Text style={styles.matchName} numberOfLines={2}>{match.itemName}</Text>
+
+                                            <View style={styles.scoreBadge}>
+                                                <Text style={styles.scoreLabel}>Score</Text>
+                                                <Text style={styles.scoreValue}>{match.matchScore}</Text>
+                                            </View>
+                                        </View>
+
                                         <View style={styles.matchReasonsContainer}>
                                             <Text style={styles.matchReasonsTitle}>Why this matched:</Text>
                                             {match.matchReasons.map((reason, index) => (
@@ -209,6 +211,8 @@ export default function ItemDetails() {
                                                 </Text>
                                             ))}
                                         </View>
+
+                                        <Text style={styles.viewDetailsText}>Tap to view full item details.</Text>
                                     </Pressable>
                                 </Link>
                             )
@@ -293,11 +297,18 @@ const styles = StyleSheet.create({
         borderLeftWidth: 4,
         borderLeftColor: colors.logoAccent,
     },
+    matchHeader: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "flex-start",
+        gap: spacing.sm,
+    },
     matchName: {
-        fontSize: 18,
-        fontWeight: "bold",
-        marginBottom: spacing.xs,
+        flex: 1,
+        fontSize: 22,
+        fontWeight: "700",
         color: colors.textPrimary,
+        paddingTop: 6,
     },
     matchText: {
         lineHeight: 20,
@@ -322,7 +333,7 @@ const styles = StyleSheet.create({
         alignSelf: "center",
     },
     matchReasonsContainer: {
-        marginTop: spacing.sm,
+        marginTop: spacing.md,
         paddingTop: spacing.sm,
         borderTopWidth: 1,
         borderTopColor: colors.border,
@@ -334,7 +345,34 @@ const styles = StyleSheet.create({
     },
     matchReasonText: {
         color: colors.textSecondary,
-        fontSize: 13,
-        lineHeight: 18,
+        fontSize: 14,
+        lineHeight: 21,
     },
+    scoreBadge: {
+        width: 72,
+        height: 64,
+        alignItems: "center",
+        justifyContent: "center",
+        borderRadius: 14,
+        backgroundColor: colors.surface,
+        borderWidth: 1.5,
+        borderColor: colors.logoAccent,
+    },
+    scoreLabel: {
+        fontSize: 11,
+        color: colors.textSecondary,
+        fontWeight: "600",
+    },
+    scoreValue: {
+        fontSize: 24,
+        lineHeight: 28,
+        color: colors.logoAccent,
+        fontWeight: "800",
+    },
+    viewDetailsText: {
+        marginTop: spacing.md,
+        color: colors.logoSecondary,
+        fontSize: 13,
+        fontWeight: "700",
+    }
 })
