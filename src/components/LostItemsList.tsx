@@ -58,6 +58,7 @@ export default function LostItemsList({
                     contactEmail: data.contactEmail ?? "",
                     contactPhoneNumber: data.contactPhoneNumber ?? "",
                     imageUrl: data.imageUrl ?? "",
+                    status: data.status ?? "active",
                     createdAt: data.createdAt,
                 };
             });
