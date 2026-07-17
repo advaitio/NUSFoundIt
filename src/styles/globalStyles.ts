@@ -409,7 +409,7 @@ export const ImageStyles = StyleSheet.create({
         marginBottom: 16,
         padding: 10,
         borderWidth: 1,
-        borderColor: colors.border,
+        borderColor: colors.inputBorder,
         borderRadius: 8,
         backgroundColor: colors.surface,
     },

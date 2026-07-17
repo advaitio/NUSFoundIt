@@ -85,7 +85,9 @@ export default function FoundItemForm() {
 
     const pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ["images"],
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [4, 3],
             quality: 0.5,
         });
 
@@ -187,7 +189,7 @@ export default function FoundItemForm() {
                 placeholderTextColor={colors.placeholder}
                 value={description}
                 onChangeText={(text) => {
-                    const lines = text.split("\n");
+                    const lines = text.split('\n');
                     if (lines.length <= 3) {
                         setDescription(text);
                     }
@@ -202,7 +204,7 @@ export default function FoundItemForm() {
                         Suggestions.dropdownPopover,
                         {
                             backgroundColor: colors.background,
-                            position: "absolute",
+                            position: 'absolute',
                             bottom: 70,
                             marginTop: 0,
                             marginBottom: 0,
@@ -270,8 +272,8 @@ export default function FoundItemForm() {
                             left: 0,
                             right: 0,
                             bottom: 0,
-                            width: "100%",
-                            height: "100%",
+                            width: '100%',
+                            height: '100%',
                             padding: 0,
                             margin: 0,
                         }}
@@ -290,7 +292,7 @@ export default function FoundItemForm() {
                 />
             )}
 
-            {showCalendar && Platform.OS === "ios" && (
+            {showCalendar && Platform.OS === 'ios' && (
                 <Button title="Confirm Date" onPress={() => setShowCalendar(false)} />
             )}
             <TextInput
@@ -312,8 +314,7 @@ export default function FoundItemForm() {
                 maxLength={8}
                 onFocus={() => setShowSuggestions(false)}
             />
-            {!image && (
-                <Pressable
+            <Pressable
                 style={globalStyles.input}
                 onPress={pickImage}
             >
@@ -321,7 +322,6 @@ export default function FoundItemForm() {
                     {image ? "Change Image..." : "Upload Image (optional)"}
                 </Text>
             </Pressable>
-            )}
             {image && (
                 <View style={ImageStyles.imageBox}>
                     <Image source={{uri: image}} style={ImageStyles.image} />
