@@ -211,13 +211,13 @@ const styles = StyleSheet.create({
         lineHeight: 21,
     },
     itemName: {
-        fontSize: 22,
+        fontSize: 20,
         fontWeight: "bold",
-        marginBottom: 14,
+        marginBottom: 10,
         color: colors.textPrimary,
     },
     detailsContainer: {
-        gap: 10,
+        gap: 5,
     },
     contactBox: {
         marginTop: 16,
@@ -245,8 +245,8 @@ const styles = StyleSheet.create({
         alignItems: "flex-start",
     },
     thumbnail: {
-        width: 85,
-        height: 85,
+        width: 100,
+        height: 100,
         borderRadius: 8,
         marginRight: 14,
     },
