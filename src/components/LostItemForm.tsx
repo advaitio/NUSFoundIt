@@ -1,13 +1,15 @@
 import DateTimePicker, { DateTimePickerEvent } from "@react-native-community/datetimepicker";
+import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { Alert, Button, Keyboard, Platform, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { Alert, Button, Image, Keyboard, Platform, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
-import { colors, DateStyles, globalStyles, Suggestions } from "../styles/globalStyles";
+import { colors, DateStyles, globalStyles, ImageStyles, Suggestions } from "../styles/globalStyles";
 
 //Importing of Firebase tools and firebaseConfig file.
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
-import { db } from "../firebase/firebaseConfig";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { db, storage } from "../firebase/firebaseConfig";
 //file directly sourced from NUSMods public Github Repository. Refer to README for full reference.
 import venuesData from "../constants/venues.json";
 
@@ -25,7 +27,8 @@ export default function LostItemForm() {
     const [showCalendar, setShowCalendar] = useState(false); // control of calendar popup visibility
     const [email, setEmail] = useState("");
     const [phoneNumber, setPhoneNumber] = useState("");
-    const [imageUrl, setImageUrl] = useState(""); //Optional field, might not implement yet.
+    const [image, setImage] = useState<string | null>(null);
+    const [loading, setLoading] = useState(false);
 
     const categoryData = [
         { label: "ID Card / Matric Card", value: "ID card" },
@@ -82,16 +85,52 @@ export default function LostItemForm() {
         Keyboard.dismiss();
     };
 
+    const pickImage = async () => {
+            let result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ["images"],
+                quality: 0.3,
+            });
+    
+            if (!result.canceled) {
+                setImage(result.assets[0].uri);
+            }
+        };
+
     // function to handle form submission
     const handleSubmit = async () => {
+        if (loading) {
+            return;
+        }
         //validation for non-empty fields
         if (!itemName || !category || !description || !dateLost || !email || !phoneNumber) {
-            Alert.alert("Error\n", "Please fill in all required fields.");
+            if (Platform.OS === "web") {
+                alert("Error\nPlease fill in all required fields.");
+            } else {
+                Alert.alert("Error\n", "Please fill in all required fields.");
+            }
             return;
         }
 
         // send data to Firestore
         try {
+            setLoading(true);
+            let uploadLink = "";
+
+            if (image) {
+                try {
+                    const transform = await fetch(image);
+                    const blob = await transform.blob();
+                    const imageName = "item_" + Date.now() + "." + image.split(".").pop();
+                    const imageRef = ref(storage, "images/" + imageName)
+
+                    await uploadBytes(imageRef, blob)
+                    uploadLink = await getDownloadURL(imageRef);
+                } catch (imageError) {
+                    Alert.alert("Upload Error", "Failed to upload the image to the server.");
+                    setLoading(false);
+                    return;
+                }
+            }
             await addDoc(collection(db, "lostItems"), {
                 itemName,
                 category,
@@ -100,12 +139,17 @@ export default function LostItemForm() {
                 dateLost: formatDateLabel(dateLost), // convert date to string format
                 contactEmail: email,
                 contactPhoneNumber: phoneNumber,
-                imageUrl,  
+                imageUrl: uploadLink,  
                 createdAt: serverTimestamp(),
             });
 
             // show success message
-            Alert.alert("Success\n", "Your report has been submitted successfully.");
+            if (Platform.OS === "web") {
+                // Alert does not work on web interface, had to use the native alert() to implement deployment, emulated from Found item from. 
+                alert("Success\nYour report has been submitted successfully.");
+            } else {
+                Alert.alert("Success\n", "Your report has been submitted successfully.");
+            }
 
             // reset form fields
             setItemName("");
@@ -115,15 +159,14 @@ export default function LostItemForm() {
             setDateLost(null);
             setEmail("");
             setPhoneNumber("");
-            setImageUrl("");
-
-            // navigate to listings page in case user wants to view their report immediately after submission
-            // router.push("/listings");
+            setImage(null);
         
         // general error handling for issues during submission process.
         } catch (error) {
             console.error("Error adding document: ", error);
             Alert.alert("Error\n", "Something went wrong. Please try again.");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -290,18 +333,31 @@ export default function LostItemForm() {
                 maxLength={8}
                 onFocus={() => setShowSuggestions(false)}
             />
-            <TextInput
+            
+            {!image && (
+                <Pressable
                 style={globalStyles.input}
-                placeholder="Image URL (optional)"
-                placeholderTextColor={colors.placeholder}
-                value={imageUrl}
-                onChangeText={setImageUrl}
-                multiline
-                onFocus={() => setShowSuggestions(false)}
-            />
+                onPress={pickImage}
+            >
+                <Text style={[globalStyles.inputText, {color: image ? colors.textInput : colors.placeholder}]}>
+                    {image ? "Change Image..." : "Upload Image (optional)"}
+                </Text>
+            </Pressable>
+            )}
+            {image && (
+                <View style={ImageStyles.imageBox}>
+                    <Image source={{uri: image}} style={ImageStyles.image} />
+                    <Pressable
+                        style={ImageStyles.deleteImage}
+                        onPress={() => setImage(null)}
+                    >
+                        <Text style={ImageStyles.deleteImageText}>Remove</Text>
+                    </Pressable>
+                </View>
+            )}
 
-            <Pressable style={styles.buttonContainer} onPress={handleSubmit}>
-                <Text style={styles.buttonText}>Submit</Text>
+            <Pressable style={[styles.buttonContainer, loading && {opacity: 0.5}]} onPress={handleSubmit} disabled={loading}>
+                <Text style={styles.buttonText}>{loading ? "Sending..." : "Submit"}</Text>
             </Pressable>
         </View>
     );

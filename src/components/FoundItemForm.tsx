@@ -162,9 +162,6 @@ export default function FoundItemForm() {
             setEmail("");
             setPhoneNumber("");
             setImage(null);
-
-            // navigate to listings page in case user wants to view their report immediately after submission
-            // router.push("/listings");
         
         // general error handling for issues during submission process.
         } catch (error) {
