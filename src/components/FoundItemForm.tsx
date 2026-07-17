@@ -1,8 +1,9 @@
 import DateTimePicker, { DateTimePickerEvent } from "@react-native-community/datetimepicker";
+import * as ImagePicker from "expo-image-picker";
 import { useState } from "react";
-import { Alert, Button, Keyboard, Platform, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { Alert, Button, Image, Keyboard, Platform, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
-import { colors, DateStyles, globalStyles, Suggestions } from "../styles/globalStyles";
+import { colors, DateStyles, globalStyles, ImageStyles, Suggestions } from "../styles/globalStyles";
 
 import { useRouter } from "expo-router";
 
@@ -25,7 +26,7 @@ export default function FoundItemForm() {
     const [showCalendar, setShowCalendar] = useState(false); // control of calendar popup visibility
     const [email, setEmail] = useState("");
     const [phoneNumber, setPhoneNumber] = useState("");
-    const [imageUrl, setImageUrl] = useState(""); //Optional field, might not implement yet.
+    const [image, setImage] = useState<string | null>(null); //Optional field, might not implement yet.
 
     const categoryData = [
         { label: "ID Card / Matric Card", value: "ID card" },
@@ -52,15 +53,6 @@ export default function FoundItemForm() {
 
         if (selectedDate) {
             setDateFound(selectedDate);
-        }
-    };
-
-    const webDateChange = (e:any) => {
-        const val = e.target.value;
-        if (val) {
-            setDateFound(new Date(val));
-        } else {
-            setDateFound(null);
         }
     };
 
@@ -91,6 +83,17 @@ export default function FoundItemForm() {
         Keyboard.dismiss();
     };
 
+    const pickImage = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ["images"],
+            quality: 0.5,
+        });
+
+        if (!result.canceled) {
+            setImage(result.assets[0].uri);
+        }
+    };
+
     // function to handle form submission
     const handleSubmit = async () => {
         //validation for non-empty fields
@@ -114,7 +117,7 @@ export default function FoundItemForm() {
                 dateFound: formatDateLabel(dateFound), // convert date to string format
                 contactEmail: email,
                 contactPhoneNumber: phoneNumber,
-                imageUrl,  
+                imageUrl: image ? image : "",
                 createdAt: serverTimestamp(),
             });
 
@@ -134,7 +137,7 @@ export default function FoundItemForm() {
             setDateFound(null);
             setEmail("");
             setPhoneNumber("");
-            setImageUrl("");
+            setImage(null);
 
             // navigate to listings page in case user wants to view their report immediately after submission
             // router.push("/listings");
@@ -184,7 +187,7 @@ export default function FoundItemForm() {
                 placeholderTextColor={colors.placeholder}
                 value={description}
                 onChangeText={(text) => {
-                    const lines = text.split('\n');
+                    const lines = text.split("\n");
                     if (lines.length <= 3) {
                         setDescription(text);
                     }
@@ -199,7 +202,7 @@ export default function FoundItemForm() {
                         Suggestions.dropdownPopover,
                         {
                             backgroundColor: colors.background,
-                            position: 'absolute',
+                            position: "absolute",
                             bottom: 70,
                             marginTop: 0,
                             marginBottom: 0,
@@ -267,8 +270,8 @@ export default function FoundItemForm() {
                             left: 0,
                             right: 0,
                             bottom: 0,
-                            width: '100%',
-                            height: '100%',
+                            width: "100%",
+                            height: "100%",
                             padding: 0,
                             margin: 0,
                         }}
@@ -287,7 +290,7 @@ export default function FoundItemForm() {
                 />
             )}
 
-            {showCalendar && Platform.OS === 'ios' && (
+            {showCalendar && Platform.OS === "ios" && (
                 <Button title="Confirm Date" onPress={() => setShowCalendar(false)} />
             )}
             <TextInput
@@ -309,15 +312,27 @@ export default function FoundItemForm() {
                 maxLength={8}
                 onFocus={() => setShowSuggestions(false)}
             />
-            <TextInput
+            {!image && (
+                <Pressable
                 style={globalStyles.input}
-                placeholder="Image URL (optional)"
-                placeholderTextColor={colors.placeholder}
-                value={imageUrl}
-                onChangeText={setImageUrl}
-                multiline
-                onFocus={() => setShowSuggestions(false)}
-            />
+                onPress={pickImage}
+            >
+                <Text style={[globalStyles.inputText, {color: image ? colors.textInput : colors.placeholder}]}>
+                    {image ? "Change Image..." : "Upload Image (optional)"}
+                </Text>
+            </Pressable>
+            )}
+            {image && (
+                <View style={ImageStyles.imageBox}>
+                    <Image source={{uri: image}} style={ImageStyles.image} />
+                    <Pressable
+                        style={ImageStyles.deleteImage}
+                        onPress={() => setImage(null)}
+                    >
+                        <Text style={ImageStyles.deleteImageText}>Remove</Text>
+                    </Pressable>
+                </View>
+            )}
 
             <Pressable style={styles.buttonContainer} onPress={handleSubmit}>
                 <Text style={styles.buttonText}>Submit</Text>

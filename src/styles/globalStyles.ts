@@ -401,3 +401,33 @@ export const DateStyles = StyleSheet.create({
         marginBottom: 2,
     },
 });
+
+export const ImageStyles = StyleSheet.create({
+    imageBox: {
+        width: "100%",
+        alignItems: "center",
+        marginBottom: 16,
+        padding: 10,
+        borderWidth: 1,
+        borderColor: colors.border,
+        borderRadius: 8,
+        backgroundColor: colors.surface,
+    },
+    image: {
+        width: "100%",
+        height: 200,
+        borderRadius: 8,
+        marginBottom: 10,
+    },
+    deleteImage: {
+        paddingVertical: 6,
+        paddingHorizontal: 12,
+        backgroundColor: colors.error,
+        borderRadius: 6,
+    },
+    deleteImageText: {
+        color: "#fff",
+        fontSize: 14,
+        fontWeight: "600",
+    },
+});
