@@ -107,7 +107,7 @@ export const globalStyles = StyleSheet.create({
         backgroundColor: colors.primary,
         paddingVertical: 14,
         paddingHorizontal: 16,
-        width: "30%",
+        width: "35%",
         marginTop: 10,
         borderRadius: 14,
         alignItems: "center",

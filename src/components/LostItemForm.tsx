@@ -356,7 +356,7 @@ export default function LostItemForm() {
                 </View>
             )}
 
-            <Pressable style={[styles.buttonContainer, loading && {opacity: 0.5}]} onPress={handleSubmit} disabled={loading}>
+            <Pressable style={[globalStyles.buttonContainer, loading && {opacity: 0.5}]} onPress={handleSubmit} disabled={loading}>
                 <Text style={styles.buttonText}>{loading ? "Sending..." : "Submit"}</Text>
             </Pressable>
         </View>
@@ -376,16 +376,6 @@ const styles = StyleSheet.create({
         padding: 14,
         marginBottom: 16,
         backgroundColor: "#f9f9f9",
-        justifyContent: "center",
-    },
-    buttonContainer: {
-        backgroundColor: colors.primary,
-        paddingVertical: 14,
-        paddingHorizontal: 16,
-        width: "30%",
-        marginTop: 10,
-        borderRadius: 14,
-        alignItems: "center",
         justifyContent: "center",
     },
     buttonText: {

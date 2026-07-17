@@ -357,7 +357,7 @@ export default function FoundItemForm() {
                 </View>
             )}
 
-            <Pressable style={[styles.buttonContainer, loading && {opacity: 0.5}]} onPress={handleSubmit} disabled={loading}>
+            <Pressable style={[globalStyles.buttonContainer, loading && {opacity: 0.5}]} onPress={handleSubmit} disabled={loading}>
                 <Text style={styles.buttonText}>{loading ? "Sending..." : "Submit"}</Text>
             </Pressable>
         </View>
@@ -368,16 +368,6 @@ const styles = StyleSheet.create({
     keyboardContainer: {
         flex: 1,
         backgroundColor: "#fff",
-    },
-    buttonContainer: {
-        backgroundColor: colors.primary,
-        paddingVertical: 14,
-        paddingHorizontal: 16,
-        width: "30%",
-        marginTop: 10,
-        borderRadius: 14,
-        alignItems: "center",
-        justifyContent: "center",
     },
     buttonText: {
         color: "#ffffff",
