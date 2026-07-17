@@ -28,6 +28,7 @@ export default function FoundItemForm() {
     const [email, setEmail] = useState("");
     const [phoneNumber, setPhoneNumber] = useState("");
     const [image, setImage] = useState<string | null>(null); //Optional field, might not implement yet.
+    const [loading, setLoading] = useState(false);
 
     const categoryData = [
         { label: "ID Card / Matric Card", value: "ID card" },
@@ -97,6 +98,9 @@ export default function FoundItemForm() {
 
     // function to handle form submission
     const handleSubmit = async () => {
+        if (loading) {
+            return;
+        }
         //validation for non-empty fields
         if (!itemName || !category || !description || !locationFound || !dateFound || !email || !phoneNumber) {
             // Alert does not on web interface, had to use native alert() for deployment to work. 
@@ -110,6 +114,7 @@ export default function FoundItemForm() {
 
         // send data to Firestore
         try {
+            setLoading(true);
             let uploadLink = "";
 
             if (image) {
@@ -123,6 +128,7 @@ export default function FoundItemForm() {
                     uploadLink = await getDownloadURL(imageRef);
                 } catch (imageError) {
                     Alert.alert("Upload Error", "Failed to upload the image to the server.");
+                    setLoading(false);
                     return;
                 }
             }
@@ -164,6 +170,8 @@ export default function FoundItemForm() {
         } catch (error) {
             console.error("Error adding document: ", error);
             Alert.alert("Error\n", "Something went wrong. Please try again.");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -352,8 +360,8 @@ export default function FoundItemForm() {
                 </View>
             )}
 
-            <Pressable style={styles.buttonContainer} onPress={handleSubmit}>
-                <Text style={styles.buttonText}>Submit</Text>
+            <Pressable style={[styles.buttonContainer, loading && {opacity: 0.5}]} onPress={handleSubmit} disabled={loading}>
+                <Text style={styles.buttonText}>{loading ? "Sending..." : "Submit"}</Text>
             </Pressable>
         </View>
     );
