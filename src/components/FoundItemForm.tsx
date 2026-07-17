@@ -9,7 +9,8 @@ import { useRouter } from "expo-router";
 
 //Importing of Firebase tools and firebaseConfig file.
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
-import { db } from "../firebase/firebaseConfig";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { db, storage } from "../firebase/firebaseConfig";
 //file directly sourced from NUSMods public Github Repository. Refer to README for full reference.
 import venuesData from "../constants/venues.json";
 //navigation functions
@@ -109,6 +110,18 @@ export default function FoundItemForm() {
 
         // send data to Firestore
         try {
+            let uploadLink = "";
+
+            if (image) {
+                const transform = await fetch(image);
+                const blob = await transform.blob();
+                const imageName = "item_" + Date.now() + "." + image.split(".").pop();
+                const imageRef = ref(storage, "images/" + imageName)
+
+                await uploadBytes(imageRef, blob)
+                uploadLink = await getDownloadURL(imageRef);
+            }
+
             await addDoc(collection(db, "foundItems"), {
                 itemName,
                 category,
@@ -117,7 +130,7 @@ export default function FoundItemForm() {
                 dateFound: formatDateLabel(dateFound), // convert date to string format
                 contactEmail: email,
                 contactPhoneNumber: phoneNumber,
-                imageUrl: image ? image : "",
+                imageUrl: uploadLink,
                 createdAt: serverTimestamp(),
             });
 
