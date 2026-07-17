@@ -3,9 +3,8 @@ import { collection, getDocs, orderBy, query } from "firebase/firestore";
 import { useCallback, useEffect, useState } from "react";
 import {
     ActivityIndicator,
-    Alert,
     FlatList,
-    Linking,
+    Image,
     Pressable,
     RefreshControl,
     StyleSheet,
@@ -137,49 +136,6 @@ export default function FoundItemsList({
         );
     }
 
-    // sub-component for displaying link rows (e.g. image URL) in the listing cards
-    function LinkDetailRow({
-        label,
-        url,
-    }: {
-        label: string;
-        url?: string
-    }) {
-        if (!url) return null;
-
-        const validURL = url;
-
-        // helper function to open the URL in the device's default browser
-        async function openLink() {
-            try {
-                if (!validURL.startsWith("http://") && !validURL.startsWith("https://")) {
-                    Alert.alert("Invalid URL");
-                    return;
-                }
-
-                const supported = await Linking.canOpenURL(validURL);
-
-                if (supported) {
-                    await Linking.openURL(validURL);
-                } else {
-                    Alert.alert("Cannot open image", "This image URL could not be opened.");
-                }
-            } catch (error) {
-                console.error("Error opening image URL:", error);
-                Alert.alert("Error", "Something went wrong while opening the image URL.");
-            }
-        }
-
-        return (
-            <View style={globalStyles.detailRow}>
-                <Text style={globalStyles.detailLabel}>{label}</Text>
-                <Pressable onPress={openLink} style={{ flex: 1 }}>
-                    <Text style={styles.linkValue}>Open image</Text>
-                </Pressable>
-            </View>
-        )
-    }
-
     // conditional rendering based on loading state, error state and data availability
     if (loading) {
         return (
@@ -218,15 +174,24 @@ export default function FoundItemsList({
                             params: { id: item.id, type: "found" },
                         }} asChild>
                             <Pressable style={StyleSheet.flatten([globalStyles.card, styles.itemCard])}>
-                                <Text style={styles.itemName}>{item.itemName}</Text>
+                                <View style={styles.cardRow}>
+                                    {item.imageUrl ? (
+                                        <Image
+                                            source={{uri: item.imageUrl}}
+                                            style={styles.thumbnail}/>
+                                    ) : null}
 
-                                <View style={globalStyles.detailsContainer}>
-                                    <DetailRow label="Location Found" value={item.locationFound} />
-                                    <DetailRow label="Date Found" value={item.dateFound} />
-                                    <LinkDetailRow label="Image" url={item.imageUrl} />
+                                    <View style={styles.textBox}>
+                                        <Text style={styles.itemName}>{item.itemName}</Text>
+
+                                        <View style={globalStyles.detailsContainer}>
+                                            <DetailRow label="Location Found" value={item.locationFound} />
+                                            <DetailRow label="Date Found" value={item.dateFound} />
+                                        </View>
+
+                                        <Text style={styles.viewDetailsText}>View details</Text>
+                                    </View>
                                 </View>
-
-                                <Text style={styles.viewDetailsText}>View details</Text>
                             </Pressable>
                         </Link>
                     )}
@@ -291,13 +256,6 @@ const styles = StyleSheet.create({
         fontSize: 14,
         lineHeight: 22,
     },
-    linkValue: {
-        color: colors.logoSecondary,
-        flex: 1,
-        fontSize: 14,
-        lineHeight: 30,
-        textDecorationLine: "underline",
-    },
     viewDetailsText: {
         color: colors.logoSecondary,
         fontWeight: "600",
@@ -307,5 +265,16 @@ const styles = StyleSheet.create({
     itemCard: {
         width: "100%",
         alignSelf: "stretch",
+    },
+    cardRow: {
+        flexDirection: "row",
+        alignItems: "flex-start",
+    },
+    thumbnail: {
+        width: 85,
+        height: 85,
+    },
+    textBox: {
+        flex: 1,
     },
 });
