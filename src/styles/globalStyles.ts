@@ -182,6 +182,7 @@ export const globalStyles = StyleSheet.create({
         gap: 10,
     },
     detailRow: {
+        gap: 10,
         flexDirection: "row",
         alignItems: "flex-start",
     },
@@ -190,7 +191,8 @@ export const globalStyles = StyleSheet.create({
         color: "#4b5563",
         width: 135,
         fontSize: 16,
-        lineHeight: 30,
+        lineHeight: 20,
+        marginTop: 3,
     },
     detailValue: {
         color: colors.textPrimary,

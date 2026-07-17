@@ -164,11 +164,27 @@ export default function FoundItemsList({
                                     ) : null}
 
                                     <View style={styles.textBox}>
-                                        <Text style={styles.itemName}>{item.itemName}</Text>
-
-                                        <View style={globalStyles.detailsContainer}>
-                                            <Text style={globalStyles.detailLabel}>{item.locationFound}</Text>
-                                            <Text style={globalStyles.detailLabel}>{item.dateFound}</Text>
+                                        <View style={styles.titleRow}>
+                                            <Text style={styles.itemName}>{item.itemName}</Text>
+                                            <Image 
+                                                source={require("../../assets/images/right-arrow.png")} 
+                                                style={{width: 25, height: 25}}/>
+                                        </View>
+                                        <View style={styles.detailsContainer}>
+                                            <View style={globalStyles.detailRow}>
+                                                <Image 
+                                                    source={require("../../assets/images/location.png")} 
+                                                    style={{width: 25, height: 25}}
+                                                    tintColor={"#4b5563"}/>
+                                                <Text style={globalStyles.detailLabel}>{item.locationFound}</Text>
+                                            </View>
+                                            <View style={globalStyles.detailRow}>
+                                                <Image 
+                                                    source={require("../../assets/images/calendar.png")} 
+                                                    style={{width: 25, height: 25}}
+                                                    tintColor={"#4b5563"}/>
+                                                <Text style={globalStyles.detailLabel}>{item.dateFound}</Text>
+                                            </View>
                                         </View>
                                     </View>
                                 </View>
@@ -213,11 +229,11 @@ const styles = StyleSheet.create({
     itemName: {
         fontSize: 20,
         fontWeight: "bold",
-        marginBottom: 10,
         color: colors.textPrimary,
+        flex: 1,
     },
     detailsContainer: {
-        gap: 5,
+        gap: 10,
     },
     contactBox: {
         marginTop: 16,
@@ -253,4 +269,10 @@ const styles = StyleSheet.create({
     textBox: {
         flex: 1,
     },
+    titleRow: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginBottom: 10,
+    }
 });
