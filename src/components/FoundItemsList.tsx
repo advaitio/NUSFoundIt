@@ -118,24 +118,6 @@ export default function FoundItemsList({
         return matchesSearch && matchesCategory && matchesLocation && matchesDate;
     });
 
-    // sub-component for displaying individual detail rows in the listing cards
-    function DetailRow({
-        label,
-        value,
-    }: {
-        label: string;
-        value?: string;
-    }) {
-        if (!value) return null;
-
-        return (
-            <View style={globalStyles.detailRow}>
-                <Text style={globalStyles.detailLabel}>{label}</Text>
-                <Text style={globalStyles.detailValue}>{value}</Text>
-            </View>
-        );
-    }
-
     // conditional rendering based on loading state, error state and data availability
     if (loading) {
         return (
@@ -185,11 +167,9 @@ export default function FoundItemsList({
                                         <Text style={styles.itemName}>{item.itemName}</Text>
 
                                         <View style={globalStyles.detailsContainer}>
-                                            <DetailRow label="Location Found" value={item.locationFound} />
-                                            <DetailRow label="Date Found" value={item.dateFound} />
+                                            <Text style={globalStyles.detailLabel}>{item.locationFound}</Text>
+                                            <Text style={globalStyles.detailLabel}>{item.dateFound}</Text>
                                         </View>
-
-                                        <Text style={styles.viewDetailsText}>View details</Text>
                                     </View>
                                 </View>
                             </Pressable>
@@ -256,12 +236,6 @@ const styles = StyleSheet.create({
         fontSize: 14,
         lineHeight: 22,
     },
-    viewDetailsText: {
-        color: colors.logoSecondary,
-        fontWeight: "600",
-        marginTop: 12,
-        textDecorationLine: "underline",
-    },
     itemCard: {
         width: "100%",
         alignSelf: "stretch",
@@ -273,6 +247,8 @@ const styles = StyleSheet.create({
     thumbnail: {
         width: 85,
         height: 85,
+        borderRadius: 8,
+        marginRight: 14,
     },
     textBox: {
         flex: 1,
