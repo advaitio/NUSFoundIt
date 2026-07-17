@@ -87,7 +87,7 @@ export default function FoundItemForm() {
     const pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ["images"],
-            quality: 0.5,
+            quality: 0.3,
         });
 
         if (!result.canceled) {
@@ -113,13 +113,18 @@ export default function FoundItemForm() {
             let uploadLink = "";
 
             if (image) {
-                const transform = await fetch(image);
-                const blob = await transform.blob();
-                const imageName = "item_" + Date.now() + "." + image.split(".").pop();
-                const imageRef = ref(storage, "images/" + imageName)
+                try {
+                    const transform = await fetch(image);
+                    const blob = await transform.blob();
+                    const imageName = "item_" + Date.now() + "." + image.split(".").pop();
+                    const imageRef = ref(storage, "images/" + imageName)
 
-                await uploadBytes(imageRef, blob)
-                uploadLink = await getDownloadURL(imageRef);
+                    await uploadBytes(imageRef, blob)
+                    uploadLink = await getDownloadURL(imageRef);
+                } catch (imageError) {
+                    Alert.alert("Upload Error", "Failed to upload the image to the server.");
+                    return;
+                }
             }
 
             await addDoc(collection(db, "foundItems"), {
