@@ -1,7 +1,7 @@
 import { Link, Stack, useLocalSearchParams } from "expo-router";
 import { collection, doc, getDoc, getDocs, orderBy, query } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, Alert, Linking, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Image, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { db } from "../firebase/firebaseConfig";
 import { colors, globalStyles, spacing } from "../styles/globalStyles";
 import { FoundItem, LostItem, MatchedFoundItem, MatchedLostItem } from "../types/items";
@@ -126,6 +126,7 @@ export default function ItemDetails() {
     if (loading) {
         return (
             <View style={globalStyles.centeredScreen}>
+                <Stack.Screen options={{title: "Loading"}}/>
                 <ActivityIndicator size="large" color={colors.primary} />
                 <Text style={styles.loadingText}>Loading item details...</Text>
             </View>
@@ -136,6 +137,7 @@ export default function ItemDetails() {
     if (errorMessage || !item) {
         return (
             <View style={globalStyles.centeredScreen}>
+                <Stack.Screen options={{title: "Not Found"}}/>
                 <Text style={globalStyles.errorText}>{errorMessage || "Item not found."}</Text>
             </View>
         )
@@ -165,7 +167,11 @@ export default function ItemDetails() {
                     <DetailRow label="Description" value={item.description} />
                     <DetailRow label="Contact Email" value={item.contactEmail} />
                     <DetailRow label="Phone Number" value={item.contactPhoneNumber} />
-                    <LinkDetailRow label="Image" url={item.imageUrl} />
+                    {item.imageUrl ? (
+                        <View style={styles.imageBox}>
+                            <Image source={{uri: item.imageUrl}} style={styles.imageDetails}/>
+                        </View>
+                    ) : null}
                 </View>
 
                 {/* render possible matches for lost/found items */}
@@ -235,49 +241,6 @@ function DetailRow({ label, value }: { label: string; value?: string }) {
     )
 }
 
-// sub-component for displaying link rows (e.g. image URL) in the listing cards
-function LinkDetailRow({
-    label,
-    url,
-}: {
-    label: string;
-    url?: string
-}) {
-    if (!url) return null;
-
-    const validURL = url;
-
-    // helper function to open the URL in the device's default browser
-    async function openLink() {
-        try {
-            if (!validURL.startsWith("http://") && !validURL.startsWith("https://")) {
-                Alert.alert("Invalid URL");
-                return;
-            }
-
-            const supported = await Linking.canOpenURL(validURL);
-
-            if (supported) {
-                await Linking.openURL(validURL);
-            } else {
-                Alert.alert("Cannot open image", "This image URL could not be opened.");
-            }
-        } catch (error) {
-            console.error("Error opening image URL:", error);
-            Alert.alert("Error", "Something went wrong while opening the image URL.");
-        }
-    }
-
-    return (
-        <View style={globalStyles.detailRow}>
-            <Text style={globalStyles.detailLabel}>{label}</Text>
-            <Pressable onPress={openLink} style={{ flex: 1 }}>
-                <Text style={styles.linkValue}>Open image</Text>
-            </Pressable>
-        </View>
-    )
-}
-
 const styles = StyleSheet.create({
     loadingText: {
         marginTop: spacing.md,
@@ -314,13 +277,6 @@ const styles = StyleSheet.create({
     matchScore: {
         color: colors.logoAccent,
         fontWeight: "700",
-    },
-    linkValue: {
-        color: colors.logoSecondary,
-        flex: 1,
-        fontSize: 14,
-        lineHeight: 20,
-        textDecorationLine: "underline",
     },
     heading: {
         fontSize: 23,
@@ -363,5 +319,14 @@ const styles = StyleSheet.create({
         color: colors.logoSecondary,
         fontSize: 13,
         fontWeight: "700",
+    },
+    imageBox: {
+        width: "100%",
+        alignItems: "center",
+    },
+    imageDetails: {
+        width: "100%",
+        resizeMode: "cover",
+        height: 250,
     }
 })
