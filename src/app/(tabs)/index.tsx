@@ -16,9 +16,9 @@ export default function HomeScreen() {
         {/* Header */}
         <View style={styles.header}>
           <Text style={styles.greeting}>
-            Welcome to NUSFoundIt!
+            Lost and found, simplified.
           </Text>
-          <Text style={styles.headerSubtitle}>Stop searching. Start finding.</Text>
+          <Text style={styles.headerSubtitle}>Report items, browse listings, and view possible matches all in one place.</Text>
         </View>
 
         {/* logo and app name */}
@@ -35,10 +35,10 @@ export default function HomeScreen() {
         {/* actions container */}
         <View style={styles.actionsContainer}>
           <Link href="/report" asChild>
-            <Pressable style={StyleSheet.flatten([styles.actionCard, styles.reportCard])}>
+            <Pressable style={StyleSheet.flatten([styles.actionCard, styles.reportCard1])}>
               <View style={styles.actionIconBox}>
                 <Image
-                  source={require("../../../assets/images/add-circle-outline.png")}
+                  source={require("../../../assets/images/add-outline.png")}
                   style={styles.actionIcon}
                   tintColor={colors.logoSecondary}
                 />
@@ -46,7 +46,28 @@ export default function HomeScreen() {
 
               <View style={styles.actionTextContainer}>
                 <Text style={styles.actionTitle}>Report an Item</Text>
-                <Text style={styles.actionSubtitle}>Submit a lost or found item report.</Text>
+              </View>
+
+              <Image
+                source={require("../../../assets/images/right-arrow.png")}
+                style={styles.arrowIcon}
+                tintColor="#ffffff"
+              />
+            </Pressable>
+          </Link>
+
+          <Link href="/listings" asChild>
+            <Pressable style={StyleSheet.flatten([styles.actionCard, styles.reportCard2])}>
+              <View style={styles.actionIconBox}>
+                <Image
+                  source={require("../../../assets/images/list-outline.png")}
+                  style={styles.actionIcon}
+                  tintColor={colors.logoSecondary}
+                />
+              </View>
+
+              <View style={styles.actionTextContainer}>
+                <Text style={styles.actionTitle}>Browse Listings</Text>
               </View>
 
               <Image
@@ -57,10 +78,7 @@ export default function HomeScreen() {
             </Pressable>
           </Link>
         </View>
-
-        {/* navigation links to main pages */}
-        <Link href="/report" style={globalStyles.primaryButton}>Report an Item</Link>
-        <Link href="/listings" style={globalStyles.primaryButton}>View Item Listings</Link>
+        
       </ScrollView>
     </SafeAreaView>
   )
@@ -110,7 +128,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing.xl,
   },
   actionCard: {
-    minHeight: 92,
+    minHeight: 50,
     borderRadius: 22,
     padding: spacing.lg,
     flexDirection: "row",
@@ -122,12 +140,15 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
     elevation: 4,
   },
-  reportCard: {
+  reportCard1: {
     backgroundColor: colors.logoMain,
   },
+  reportCard2: {
+    backgroundColor: colors.logoSecondary,
+  },
   actionIconBox: {
-    width: 52,
-    height: 52,
+    width: 45,
+    height: 45,
     borderRadius: 16,
     backgroundColor: "#ffffff",
     alignItems: "center",
