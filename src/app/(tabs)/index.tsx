@@ -6,7 +6,11 @@ import { colors, globalStyles, spacing } from "../../styles/globalStyles";
 
 export default function HomeScreen() {
   return (
-    <View style={globalStyles.centeredScreen}>
+    <ScrollView
+      style={styles.screen}
+      contentContainerStyle={styles.content}
+      showsVerticalScrollIndicator={false}
+    >
       {/* logo and app name */}
       <Image source={require("../../../assets/images/NUSFoundIt logo 1 no text no bg.png")} style={globalStyles.logo} />
       <Text style={globalStyles.title}>
@@ -19,6 +23,17 @@ export default function HomeScreen() {
       {/* navigation links to main pages */}
       <Link href="/report" style={globalStyles.primaryButton}>Report an Item</Link>
       <Link href="/listings" style={globalStyles.primaryButton}>View Item Listings</Link>
-    </View>
+    </ScrollView>
   )
 }
+
+const styles = StyleSheet.create({
+  screen: {
+    flex: 1,
+    backgroundColor: colors.logoCream,
+  },
+  content: {
+    padding: spacing.xl,
+    paddingBottom: spacing.xxxl,
+  },
+})
