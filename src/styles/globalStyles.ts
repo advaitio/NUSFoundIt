@@ -107,7 +107,7 @@ export const globalStyles = StyleSheet.create({
         backgroundColor: colors.primary,
         paddingVertical: 14,
         paddingHorizontal: 16,
-        width: "30%",
+        width: "35%",
         marginTop: 10,
         borderRadius: 14,
         alignItems: "center",
@@ -182,6 +182,7 @@ export const globalStyles = StyleSheet.create({
         gap: 10,
     },
     detailRow: {
+        gap: 10,
         flexDirection: "row",
         alignItems: "flex-start",
     },
@@ -190,7 +191,8 @@ export const globalStyles = StyleSheet.create({
         color: "#4b5563",
         width: 135,
         fontSize: 16,
-        lineHeight: 30,
+        lineHeight: 20,
+        marginTop: 3,
     },
     detailValue: {
         color: colors.textPrimary,
@@ -399,5 +401,35 @@ export const DateStyles = StyleSheet.create({
         fontWeight: "600",
         color: colors.textSecondary,
         marginBottom: 2,
+    },
+});
+
+export const ImageStyles = StyleSheet.create({
+    imageBox: {
+        width: "100%",
+        alignItems: "center",
+        marginBottom: 16,
+        padding: 10,
+        borderWidth: 1,
+        borderColor: colors.inputBorder,
+        borderRadius: 8,
+        backgroundColor: colors.surface,
+    },
+    image: {
+        width: "100%",
+        height: 200,
+        borderRadius: 8,
+        marginBottom: 10,
+    },
+    deleteImage: {
+        paddingVertical: 6,
+        paddingHorizontal: 12,
+        backgroundColor: colors.error,
+        borderRadius: 6,
+    },
+    deleteImageText: {
+        color: "#fff",
+        fontSize: 14,
+        fontWeight: "600",
     },
 });
