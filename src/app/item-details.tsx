@@ -16,6 +16,7 @@ export default function ItemDetails() {
     const [matches, setMatches] = useState<(MatchedFoundItem | MatchedLostItem)[]>([]);
     const [loading, setLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState("");
+    const [imageRatio, setImageRatio] = useState(1);
 
     // Fetch item details and possible matches (if it's a lost item) when the component mounts
     useEffect(() => {
@@ -122,6 +123,14 @@ export default function ItemDetails() {
         fetchItemDetails();
     }, [id, type]);
 
+    useEffect(() => {
+        if (item && item.imageUrl) {
+            Image.getSize(item.imageUrl, (width, height) => {
+                setImageRatio(width / height);
+            });
+        }
+    }, [item]);
+
     // Render loading state, error state, or item details with possible matches
     if (loading) {
         return (
@@ -169,7 +178,7 @@ export default function ItemDetails() {
                     <DetailRow label="Phone Number" value={item.contactPhoneNumber} />
                     {item.imageUrl ? (
                         <View style={styles.imageBox}>
-                            <Image source={{uri: item.imageUrl}} style={styles.imageDetails}/>
+                            <Image source={{uri: item.imageUrl}} style={[styles.imageDetails, {aspectRatio: imageRatio}]}/>
                         </View>
                     ) : null}
                 </View>
@@ -321,13 +330,12 @@ const styles = StyleSheet.create({
         fontWeight: "700",
     },
     imageBox: {
+        marginTop: 10,
         width: "100%",
         alignItems: "center",
     },
     imageDetails: {
         width: "100%",
-        resizeMode: "cover",
-        height: 500,
-        borderRadius: 8,
+        borderRadius: 16,
     }
 })
