@@ -11,6 +11,17 @@ export default function HomeScreen() {
       contentContainerStyle={styles.content}
       showsVerticalScrollIndicator={false}
     >
+      {/* Header */}
+      <View style={styles.header}>
+        <Text style={styles.greeting}>
+          <Text style={styles.greeting}>Welcome to </Text>
+          <Text style={{ color: colors.logoMain }}>NUS</Text>
+          <Text style={{ color: colors.logoSecondary }}>Found</Text>
+          <Text style={{ color: colors.logoAccent }}>It</Text>
+        </Text>
+        <Text style={styles.headerSubtitle}>Stop searching. Start finding.</Text>
+      </View>
+
       {/* logo and app name */}
       <Image source={require("../../../assets/images/NUSFoundIt logo 1 no text no bg.png")} style={globalStyles.logo} />
       <Text style={globalStyles.title}>
@@ -35,5 +46,19 @@ const styles = StyleSheet.create({
   content: {
     padding: spacing.xl,
     paddingBottom: spacing.xxxl,
+  },
+  header: {
+    marginBottom: spacing.lg,
+  },
+  greeting: {
+    fontSize: 26,
+    fontWeight: "800",
+    color: colors.logoMain,
+    marginBottom: 4,
+  },
+  headerSubtitle: {
+    fontSize: 16,
+    color: colors.textSecondary,
+    fontWeight: "500",
   },
 })
