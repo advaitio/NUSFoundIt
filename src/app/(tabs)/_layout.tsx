@@ -29,6 +29,7 @@ export default function TabLayout() {
                 name="index"
                 options={{ 
                     title: "Home",
+                    headerShown: false,
                     tabBarIcon: ({ focused, color, size }) => (
                         <Image
                             source={focused ? require("../../../assets/images/home.png") : require("../../../assets/images/home-outline.png")}

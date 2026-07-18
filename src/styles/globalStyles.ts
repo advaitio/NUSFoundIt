@@ -206,6 +206,10 @@ export const globalStyles = StyleSheet.create({
         flex: 1,
         fontSize: 16,
     },
+    safeArea: {
+        flex: 1,
+        backgroundColor: colors.logoCream,
+    }
 });
 
 export const Suggestions = {
