@@ -1,6 +1,7 @@
 import { Link } from "expo-router";
-import { Image, Text, View } from "react-native";
-import { colors, globalStyles } from "../../styles/globalStyles";
+import { Text, View, Pressable, ScrollView, StyleSheet } from "react-native";
+import { Image } from "expo-image";
+import { colors, globalStyles, spacing } from "../../styles/globalStyles";
 
 
 export default function HomeScreen() {
