@@ -2,7 +2,8 @@ import { NativeStackNavigationOptions } from "@react-navigation/native-stack";
 import { Platform, StyleSheet } from "react-native";
 
 export const colors = {
-    background: "#ffffff",
+    //background: "#ffffff", // old
+    background: "#fff7e8", // new (light beige) same as logoCream
     surface: "#f9fafb",
     //primary: "#007AFF", // old
     primary: "#043366", // new (logoMain)
@@ -16,10 +17,11 @@ export const colors = {
     border: "#e5e7eb",
     inputBorder: "#cccccc",
 
-    // NUSFoundIt logo colors
+    // NUSFoundIt app colors
     logoMain: "#043366",
     logoSecondary: "#059190",
     logoAccent: "#EE7B12",
+    logoCream: "#fff7e8",
 
     error: "#d32f2f",
 };
