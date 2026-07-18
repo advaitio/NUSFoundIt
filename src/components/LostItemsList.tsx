@@ -3,9 +3,8 @@ import { collection, getDocs, orderBy, query } from "firebase/firestore";
 import { useCallback, useEffect, useState } from "react";
 import {
     ActivityIndicator,
-    Alert,
     FlatList,
-    Linking,
+    Image,
     Pressable,
     RefreshControl,
     StyleSheet,
@@ -120,67 +119,6 @@ export default function LostItemsList({
         return matchesSearch && matchesCategory && matchesLocation && matchesDate;
     });
 
-    // sub-component for displaying individual detail rows in the listing cards
-    function DetailRow({
-        label,
-        value,
-    }: {
-        label: string;
-        value?: string;
-    }) {
-        if (!value) return null;
-
-        return (
-            <View style={globalStyles.detailRow}>
-                <Text style={globalStyles.detailLabel}>{label}</Text>
-                <Text style={globalStyles.detailValue}>{value}</Text>
-            </View>
-        );
-    }
-
-    // sub-component for displaying link rows (e.g. image URL) in the listing cards
-    function LinkDetailRow({
-        label,
-        url,
-    }: {
-        label: string;
-        url?: string
-    }) {
-        if (!url) return null;
-
-        const validURL = url;
-
-        // helper function to open the URL in the device's default browser
-        async function openLink() {
-            try {
-                if (!validURL.startsWith("http://") && !validURL.startsWith("https://")) {
-                    Alert.alert("Invalid URL");
-                    return;
-                }
-
-                const supported = await Linking.canOpenURL(validURL);
-
-                if (supported) {
-                    await Linking.openURL(validURL);
-                } else {
-                    Alert.alert("Cannot open image", "This image URL could not be opened.");
-                }
-            } catch (error) {
-                console.error("Error opening image URL:", error);
-                Alert.alert("Error", "Something went wrong while opening the image URL.");
-            }
-        }
-
-        return (
-            <View style={globalStyles.detailRow}>
-                <Text style={globalStyles.detailLabel}>{label}</Text>
-                <Pressable onPress={openLink} style={{ flex: 1 }}>
-                    <Text style={styles.linkValue}>Open image</Text>
-                </Pressable>
-            </View>
-        )
-    }
-
     // conditional rendering based on loading state, error state and data availability
     if (loading) {
         return (
@@ -218,15 +156,38 @@ export default function LostItemsList({
                             params: { id: item.id, type: "lost" },
                         }} asChild>
                             <Pressable style={StyleSheet.flatten([globalStyles.card, styles.itemCard])}>
-                                <Text style={styles.itemName}>{item.itemName}</Text>
+                                <View style={styles.cardRow}>
+                                    {item.imageUrl ? (
+                                        <Image
+                                            source={{uri: item.imageUrl}}
+                                            style={styles.thumbnail}/>
+                                    ) : null}
 
-                                <View style={globalStyles.detailsContainer}>
-                                    <DetailRow label="Location Lost" value={item.locationLost} />
-                                    <DetailRow label="Date Lost" value={item.dateLost} />
-                                    <LinkDetailRow label="Image" url={item.imageUrl} />
+                                    <View style={styles.textBox}>
+                                        <View style={styles.titleRow}>
+                                            <Text style={styles.itemName}>{item.itemName}</Text>
+                                            <Image 
+                                                source={require("../../assets/images/right-arrow.png")} 
+                                                style={{width: 25, height: 25}}/>
+                                        </View>
+                                        <View style={styles.detailsContainer}>
+                                            <View style={globalStyles.detailRow}>
+                                                <Image 
+                                                    source={require("../../assets/images/location.png")} 
+                                                    style={{width: 25, height: 25}}
+                                                    tintColor={"#4b5563"}/>
+                                                <Text style={globalStyles.detailLabel}>{item.locationLost}</Text>
+                                            </View>
+                                            <View style={globalStyles.detailRow}>
+                                                <Image 
+                                                    source={require("../../assets/images/calendar.png")} 
+                                                    style={{width: 25, height: 25}}
+                                                    tintColor={"#4b5563"}/>
+                                                <Text style={globalStyles.detailLabel}>{item.dateLost}</Text>
+                                            </View>
+                                        </View>
+                                    </View>
                                 </View>
-
-                                <Text style={styles.viewDetailsText}>View details</Text>
                             </Pressable>
                         </Link>
                     )}
@@ -266,9 +227,9 @@ const styles = StyleSheet.create({
         lineHeight: 21,
     },
     itemName: {
-        fontSize: 22,
+        fontSize: 20,
         fontWeight: "bold",
-        marginBottom: 14,
+        flex: 1,
         color: colors.textPrimary,
     },
     contactBox: {
@@ -288,21 +249,30 @@ const styles = StyleSheet.create({
         fontSize: 14,
         lineHeight: 22,
     },
-    linkValue: {
-        color: colors.primary,
-        flex: 1,
-        fontSize: 14,
-        lineHeight: 20,
-        textDecorationLine: "underline",
-    },
-    viewDetailsText: {
-        color: colors.logoSecondary,
-        fontWeight: "600",
-        marginTop: 12,
-        textDecorationLine: "underline"
-    },
     itemCard: {
         width: "100%",
         alignSelf: "stretch",
+    },
+    cardRow: {
+        flexDirection: "row",
+        alignItems: "flex-start",
+    },
+    detailsContainer: {
+        gap: 10,
+    },
+    thumbnail: {
+        width: 100,
+        height: 100,
+        borderRadius: 8,
+        marginRight: 14,
+    },
+    textBox: {
+        flex: 1,
+    },
+    titleRow: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginBottom: 10,
     },
 });
