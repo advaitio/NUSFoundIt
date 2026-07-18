@@ -3,8 +3,9 @@ import { Platform, StyleSheet } from "react-native";
 
 export const colors = {
     //background: "#ffffff", // old
-    background: "#fff7e8", // new (light beige) same as logoCream
+    background: "#fffbf4", // new (light beige) same as logoCream
     surface: "#f9fafb",
+    surfaceSoft: "#fffdf8",
     //primary: "#007AFF", // old
     primary: "#043366", // new (logoMain)
 
@@ -21,7 +22,7 @@ export const colors = {
     logoMain: "#043366",
     logoSecondary: "#059190",
     logoAccent: "#EE7B12",
-    logoCream: "#fff7e8",
+    logoCream: "#fffbf4",
 
     error: "#d32f2f",
 };
@@ -62,8 +63,8 @@ export const globalStyles = StyleSheet.create({
     },
 
     title: {
-        fontSize: 32,
-        fontWeight: "bold",
+        fontSize: 38,
+        fontWeight: "900",
         marginBottom: spacing.md,
         textAlign: "center",
         color: colors.textPrimary,
@@ -175,8 +176,8 @@ export const globalStyles = StyleSheet.create({
     },
 
     logo: {
-        width: 120,
-        height: 120,
+        width: 130,
+        height: 130,
         resizeMode: "contain",
         marginBottom: spacing.sm,
     },
