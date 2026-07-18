@@ -191,8 +191,7 @@ export const globalStyles = StyleSheet.create({
         color: "#4b5563",
         width: 135,
         fontSize: 16,
-        lineHeight: 20,
-        marginTop: 3,
+        lineHeight: 30,
     },
     detailValue: {
         color: colors.textPrimary,
