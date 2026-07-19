@@ -137,7 +137,7 @@ export default function ListingsScreen() {
         });
     };
     return (
-        <SafeAreaView style={globalStyles.safeArea}>
+        <SafeAreaView edges={["top"]} style={globalStyles.safeArea}>
             <View style={styles.container}>
                 <View style={styles.customHeader}>
                     <Text style={styles.customHeaderTitle}>Listings</Text>

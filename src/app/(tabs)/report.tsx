@@ -25,7 +25,7 @@ export default function ReportScreen() {
         }, [])
     );
     return (
-        <SafeAreaView style={globalStyles.safeArea}>
+        <SafeAreaView edges={["top"]} style={globalStyles.safeArea}>
             <KeyboardAvoidingView
                 behavior={Platform.OS === "ios" ? "padding" : "height"}
                 keyboardVerticalOffset={0}
