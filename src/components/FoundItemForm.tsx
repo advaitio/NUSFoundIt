@@ -175,7 +175,7 @@ export default function FoundItemForm() {
     return (
         <View style={globalStyles.formContainer}>
             <Text style={globalStyles.pageTitle}>Item Details</Text>
-            <Text style={globalStyles.pageSubtitle}>Tell us what you found so the owner can identify it.</Text>
+            <Text style={globalStyles.pageSubtitle}>Tell us what you found so the owner can find it.</Text>
             <TextInput
                 style={globalStyles.input}
                 placeholder="Item Name (Max 30 char.)"
