@@ -4,7 +4,8 @@ import { Platform, StyleSheet } from "react-native";
 export const colors = {
     //background: "#ffffff", // old
     background: "#fffbf4", // new (light beige) same as logoCream
-    surface: "#f9fafb",
+    //surface: "#f9fafb", // old
+    surface: "#fffdf8", // new (same as surfaceSoft for consistency)
     surfaceSoft: "#fffdf8",
     //primary: "#007AFF", // old
     primary: "#043366", // new (logoMain)
@@ -12,10 +13,11 @@ export const colors = {
     textPrimary: "#111827",
     textSecondary: "#6b7280",
     textMuted: "#666666",
-    textInput: "#333333",
+    //textInput: "#333333",
+    textInput: "#1f2937", // bluer shade
     placeholder: "#999999",
 
-    border: "#e5e7eb",
+    border: "#f1e2c8",
     inputBorder: "#cccccc",
 
     // NUSFoundIt app colors
@@ -384,7 +386,7 @@ export const DateStyles = StyleSheet.create({
         borderRadius: 8,
         padding: 14,
         marginBottom: 16,
-        backgroundColor: "#f9f9f9",
+        backgroundColor: "#fffdf8",
         justifyContent: "center",
     },
     dualDatePickerBox: {
