@@ -16,6 +16,7 @@ export default function TabLayout() {
                 name="report" 
                 options={{ 
                     title: "Report",
+                    headerShown: false,
                     tabBarIcon: ({ focused, color, size }) => (
                         <Image
                             source={ focused ? require("../../../assets/images/add-circle.png") : require("../../../assets/images/add-circle-outline.png")}
@@ -43,6 +44,7 @@ export default function TabLayout() {
                 name="listings" 
                 options={{ 
                     title: "Listings",
+                    headerShown: false,
                     tabBarIcon: ({ focused, color, size }) => (
                         <Image
                             source={focused ? require("../../../assets/images/list-circle.png") : require("../../../assets/images/list-circle-outline.png")}
