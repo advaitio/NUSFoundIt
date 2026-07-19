@@ -8,14 +8,34 @@ export default function TabLayout() {
             initialRouteName="index"
             screenOptions={{
                 tabBarActiveTintColor: colors.logoMain,
-                tabBarInactiveTintColor: colors.textSecondary,
+                tabBarInactiveTintColor: "#6b7280",
                 headerTitleAlign: "center",
+
+                tabBarStyle: {
+                    backgroundColor: "#fffdf8",
+                    borderTopWidth: 1,
+                    borderTopColor: "#eadcc8",
+                    height: 70,
+                    paddingTop: 4,
+                    paddingBottom: 8,
+                    shadowColor: "#000",
+                    shadowOffset: {width: 0, height: -2},
+                    shadowOpacity: 0.05,
+                    shadowRadius: 8,
+                    elevation: 8,
+                },
+
+                tabBarLabelStyle: {
+                    fontSize: 12,
+                    fontWeight: "600",
+                },
             }}
         >
             <Tabs.Screen 
                 name="report" 
                 options={{ 
                     title: "Report",
+                    headerShown: false,
                     tabBarIcon: ({ focused, color, size }) => (
                         <Image
                             source={ focused ? require("../../../assets/images/add-circle.png") : require("../../../assets/images/add-circle-outline.png")}
@@ -43,6 +63,7 @@ export default function TabLayout() {
                 name="listings" 
                 options={{ 
                     title: "Listings",
+                    headerShown: false,
                     tabBarIcon: ({ focused, color, size }) => (
                         <Image
                             source={focused ? require("../../../assets/images/list-circle.png") : require("../../../assets/images/list-circle-outline.png")}

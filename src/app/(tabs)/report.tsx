@@ -4,6 +4,8 @@ import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text
 import FoundItemForm from "../../components/FoundItemForm";
 import LostItemForm from "../../components/LostItemForm";
 import { colors, spacing } from "../../styles/globalStyles";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { globalStyles } from "../../styles/globalStyles";
 
 export default function ReportScreen() {
     // state variable to track which tab is currently selected (found or lost)
@@ -23,43 +25,49 @@ export default function ReportScreen() {
         }, [])
     );
     return (
-        <KeyboardAvoidingView
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
-            keyboardVerticalOffset={Platform.select({ ios: 90, android: 120 })}
-            style={{ flex: 1, backgroundColor: colors.background }}
-        >
-            <ScrollView
-                ref={scrollViewRef}
-                style={ [styles.container, { flex: 1 }] }
-                contentContainerStyle={ styles.content }
-                keyboardShouldPersistTaps="handled"
+        <SafeAreaView edges={["top"]} style={globalStyles.safeArea}>
+            <KeyboardAvoidingView
+                behavior={Platform.OS === "ios" ? "padding" : "height"}
+                keyboardVerticalOffset={0}
+                style={{ flex: 1, backgroundColor: colors.background }}
             >
-                {/* tab buttons to switch between found and lost item forms */}
-                <View style={styles.tabContainer}>
-                    {/* tab button for found item form */}
-                    <Pressable
-                        style={[styles.tabButton, selectedTab === "found" && styles.activeTabButton]}
-                        onPress={() => setSelectedTab("found")}
-                    >
-                        <Text style={[styles.tabText, selectedTab === "found" && styles.activeTabText]}>Found Item</Text>
-                    </Pressable>
-                    {/* tab button for lost item form */}
-                    <Pressable
-                        style={[styles.tabButton, selectedTab === "lost" && styles.activeTabButton]}
-                        onPress={() => setSelectedTab("lost")}
-                    >
-                        <Text style={[styles.tabText, selectedTab === "lost" && styles.activeTabText]}>Lost Item</Text>
-                    </Pressable>
+                <View style={styles.customHeader}>
+                    <Text style={styles.customHeaderTitle}>Report</Text>
                 </View>
 
-                {/* render the appropriate form based on which tab is selected */}
-                {selectedTab === "found" ? (
-                    <FoundItemForm key={`found-${resetKey}`} />
-                ) : (
-                    <LostItemForm key={`lost-${resetKey}`} />
-                )}
-            </ScrollView>
-        </KeyboardAvoidingView>
+                <ScrollView
+                    ref={scrollViewRef}
+                    style={ [styles.container, { flex: 1 }] }
+                    contentContainerStyle={ styles.content }
+                    keyboardShouldPersistTaps="handled"
+                >
+                    {/* tab buttons to switch between found and lost item forms */}
+                    <View style={styles.tabContainer}>
+                        {/* tab button for found item form */}
+                        <Pressable
+                            style={[styles.tabButton, selectedTab === "found" && styles.activeTabButton]}
+                            onPress={() => setSelectedTab("found")}
+                        >
+                            <Text style={[styles.tabText, selectedTab === "found" && styles.activeTabText]}>Found Item</Text>
+                        </Pressable>
+                        {/* tab button for lost item form */}
+                        <Pressable
+                            style={[styles.tabButton, selectedTab === "lost" && styles.activeTabButton]}
+                            onPress={() => setSelectedTab("lost")}
+                        >
+                            <Text style={[styles.tabText, selectedTab === "lost" && styles.activeTabText]}>Lost Item</Text>
+                        </Pressable>
+                    </View>
+
+                    {/* render the appropriate form based on which tab is selected */}
+                    {selectedTab === "found" ? (
+                        <FoundItemForm key={`found-${resetKey}`} />
+                    ) : (
+                        <LostItemForm key={`lost-${resetKey}`} />
+                    )}
+                </ScrollView>
+            </KeyboardAvoidingView>
+        </SafeAreaView>
     )
 }
 
@@ -69,26 +77,38 @@ const styles = StyleSheet.create({
     },
     content: {
         padding: spacing.xl,
+        paddingTop: spacing.xs,
         paddingBottom: 10,
     },
     tabContainer: {
+        marginTop: "auto",
         flexDirection: "row",
-        marginBottom: spacing.xl,
-        backgroundColor: colors.surface,
-        borderRadius: 10,
+        marginBottom: spacing.sm,
+        backgroundColor: colors.surfaceSoft,
+        borderRadius: 18,
         borderWidth: 1,
-        borderColor: colors.border,
-        padding: spacing.sm,
+        borderColor: "#f1e2c8",
+        padding: spacing.xs,
+        shadowColor: "#000",
+        shadowOffset: {width: 0, height: 2},
+        shadowOpacity: 0.05,
+        shadowRadius: 6,
+        elevation: 2,
     },
     tabButton: {
         flex: 1,
-        paddingVertical: spacing.md,
-        borderRadius: 8,
+        paddingVertical: 14,
+        borderRadius: 13,
         alignItems: "center",
-        backgroundColor: colors.surface,
+        justifyContent: "center"
     },
     activeTabButton: {
-        backgroundColor: colors.primary,
+        backgroundColor: colors.logoMain,
+        shadowColor: colors.logoMain,
+        shadowOffset: {width: 0, height: 2},
+        shadowOpacity: 0.16,
+        shadowRadius: 6,
+        elevation: 2,
     },
     tabText: {
         fontSize: 16,
@@ -97,5 +117,15 @@ const styles = StyleSheet.create({
     },
     activeTabText: {
         color: colors.background,
+    },
+    customHeader: {
+        height: 50,
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    customHeaderTitle: {
+        fontSize: 22,
+        fontWeight: "800",
+        color: colors.logoMain,
     },
 })

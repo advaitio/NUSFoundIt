@@ -10,7 +10,7 @@ export default function HomeScreen() {
   const [activePopup, setActivePopup] = useState<"howItWorks" | "quickTips" | null>(null); //popup state
 
   return (
-    <SafeAreaView style={globalStyles.safeArea}>
+    <SafeAreaView edges={["top"]} style={globalStyles.safeArea}>
       <ScrollView
         style={styles.screen}
         contentContainerStyle={styles.content}
