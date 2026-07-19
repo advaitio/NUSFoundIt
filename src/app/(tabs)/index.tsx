@@ -1,11 +1,14 @@
 import { Link } from "expo-router";
-import { Text, View, Pressable, ScrollView, StyleSheet } from "react-native";
+import { Modal, Text, View, Pressable, ScrollView, StyleSheet } from "react-native";
 import { Image } from "expo-image";
 import { colors, globalStyles, spacing } from "../../styles/globalStyles";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useState } from "react";
 
 
 export default function HomeScreen() {
+  const [activePopup, setActivePopup] = useState<"howItWorks" | "quickTips" | null>(null); //popup state
+
   return (
     <SafeAreaView style={globalStyles.safeArea}>
       <ScrollView
@@ -78,8 +81,72 @@ export default function HomeScreen() {
             </Pressable>
           </Link>
         </View>
+
+        {/* info cards */}
+        <View style={styles.infoCardsContainer}>
+          <Pressable style={styles.infoCard} onPress={() => setActivePopup("howItWorks")}>
+            <View style={styles.infoIconCircleBlue}>
+              <Image
+                  source={require("../../../assets/images/help-outline.png")}
+                  style={styles.infoIcon}
+                  tintColor={colors.logoMain}
+                />
+            </View>
+            <Text style={styles.infoTitle}>How it works</Text>
+            <Text style={styles.infoText}>Report or browse items posted by the NUS community.</Text>
+            <Text style={styles.infoLink}>Learn more</Text>
+          </Pressable>
+
+          <Pressable style={styles.infoCard} onPress={() => setActivePopup("quickTips")}>
+            <View style={styles.infoIconCircleOrange}>
+              <Image
+                  source={require("../../../assets/images/bulb-outline.png")}
+                  style={styles.infoIcon}
+                  tintColor={colors.logoAccent}
+                />
+            </View>
+            <Text style={styles.infoTitle}>Quick tips</Text>
+            <Text style={styles.infoText}>Add clear photos and details to improve matching chances.</Text>
+            <Text style={styles.infoLink}>Learn more</Text>
+          </Pressable>
+        </View>
         
       </ScrollView>
+
+      <Modal
+        visible={activePopup !== null}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setActivePopup(null)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalCard}>
+            {activePopup === "howItWorks" && (
+              <>
+                <Text style={styles.modalTitle}>How NUSFoundIt works</Text>
+                <Text style={styles.modalBody}>1. Submit a lost or found item report with useful details such as location, date, category, description, image, and contact info.</Text>
+                <Text style={styles.modalBody}>2. Browse all the public listings from the NUS community.</Text>
+                <Text style={styles.modalBody}>3. Use the search and filter options to narrow down relevant items.</Text>
+                <Text style={styles.modalBody}>4. Check the generated possible matches and contact the listed person.</Text>
+              </>
+            )}
+            {activePopup === "quickTips" && (
+              <>
+                <Text style={styles.modalTitle}>Quick reporting tips</Text>
+                <Text style={styles.modalBody}>- Add a clear photo where possible.</Text>
+                <Text style={styles.modalBody}>- Use specific locations, such as "COM1 Level 2" instead of just "NUS".</Text>
+                <Text style={styles.modalBody}>- Include useful keywords like brand, color, size, and unique markings.</Text>
+                <Text style={styles.modalBody}>- Provide valid contact details.</Text>
+              </>
+            )}
+
+            <Pressable style={styles.modalButton} onPress={() => setActivePopup(null)}>
+              <Text style={styles.modalButtonText}>Got it</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
+
     </SafeAreaView>
   )
 }
@@ -177,4 +244,63 @@ const styles = StyleSheet.create({
     width: 22,
     height: 22,
   },
+  infoCardsContainer: {
+    flexDirection: "row",
+    gap: spacing.md,
+    marginTop: spacing.sm,
+  },
+  infoCard: {
+    flex: 1,
+    minHeight: 190,
+    backgroundColor: colors.surfaceSoft,
+    borderRadius: 22,
+    padding: spacing.lg,
+    borderWidth: 1,
+    borderColor: "#f1e2c8",
+    shadowColor: "#000",
+    shadowOffset: {width: 0, height: 5},
+    shadowOpacity: 0.07,
+    shadowRadius: 12,
+    elevation: 3,
+  },
+  infoIconCircleBlue: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: "#add8e6",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: spacing.md,
+  },
+  infoIconCircleOrange: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: "#ffd580",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: spacing.md,
+  },
+  infoIcon: {
+    width: 30,
+    height: 30,
+  },
+  infoTitle: {
+    fontSize: 16,
+    fontWeight: "800",
+    color: colors.logoMain,
+    marginBottom: spacing.xs,
+  },
+  infoText: {
+    fontSize: 13,
+    color: colors.textSecondary,
+    lineHeight: 18,
+    marginBottom: spacing.md,
+  },
+  infoLink: {
+    marginTop: "auto",
+    fontSize: 13,
+    fontWeight: "800",
+    color: colors.logoSecondary,
+  }
 })
