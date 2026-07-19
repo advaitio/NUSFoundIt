@@ -124,8 +124,8 @@ export default function HomeScreen() {
             {activePopup === "howItWorks" && (
               <>
                 <Text style={styles.modalTitle}>How NUSFoundIt works</Text>
-                <Text style={styles.modalBody}>1. Submit a lost or found item report with useful details such as location, date, category, description, image, and contact info.</Text>
-                <Text style={styles.modalBody}>2. Browse all the public listings from the NUS community.</Text>
+                <Text style={styles.modalBody}>1. Submit a lost or found item report with useful details such as item name, location, date, category, description, image, and contact information.</Text>
+                <Text style={styles.modalBody}>2. Browse all the public listings from the NUS community and click on a listing card to view full item details.</Text>
                 <Text style={styles.modalBody}>3. Use the search and filter options to narrow down relevant items.</Text>
                 <Text style={styles.modalBody}>4. Check the generated possible matches and contact the listed person.</Text>
               </>
@@ -136,7 +136,7 @@ export default function HomeScreen() {
                 <Text style={styles.modalBody}>- Add a clear photo where possible.</Text>
                 <Text style={styles.modalBody}>- Use specific locations, such as "COM1 Level 2" instead of just "NUS".</Text>
                 <Text style={styles.modalBody}>- Include useful keywords like brand, color, size, and unique markings.</Text>
-                <Text style={styles.modalBody}>- Provide valid contact details.</Text>
+                <Text style={styles.modalBody}>- Provide a reliable way to contact you (email & phone number).</Text>
               </>
             )}
 
@@ -222,8 +222,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   actionIcon: {
-    width: 30,
-    height: 30,
+    width: 35,
+    height: 35,
   },
   actionTextContainer: {
     flex: 1,
@@ -302,5 +302,49 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: "800",
     color: colors.logoSecondary,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.35)",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: spacing.xl,
+  },
+  modalCard: {
+    width: "100%",
+    backgroundColor: colors.surfaceSoft,
+    borderRadius: 24,
+    padding: spacing.xl,
+    borderWidth: 1,
+    borderColor: "#f1e2c8",
+    shadowColor: "#000",
+    shadowOffset: {width: 0, height: 8},
+    shadowOpacity: 0.16,
+    shadowRadius: 18,
+    elevation: 6,
+  },
+  modalTitle: {
+    fontSize: 22,
+    fontWeight: "800",
+    color: colors.logoMain,
+    marginBottom: spacing.md,
+  },
+  modalBody: {
+    fontSize: 16,
+    color: colors.textSecondary,
+    lineHeight: 22,
+    marginBottom: spacing.sm,
+  },
+  modalButton: {
+    marginTop: spacing.lg,
+    backgroundColor: colors.logoMain,
+    borderRadius: 16,
+    paddingVertical: spacing.md,
+    alignItems: "center",
+  },
+  modalButtonText: {
+    fontSize: 16,
+    fontWeight: "800",
+    color: "#ffffff",
   }
 })
