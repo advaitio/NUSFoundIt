@@ -83,7 +83,7 @@ export const globalStyles = StyleSheet.create({
     subtitle: {
         fontSize: 16,
         marginBottom: spacing.xxxl,
-        color: colors.textMuted,
+        color: colors.logoMain,
         lineHeight: 22,
         textAlign: "center",
     },

@@ -1,9 +1,9 @@
-import { Link } from "expo-router";
-import { Modal, Text, View, Pressable, ScrollView, StyleSheet } from "react-native";
 import { Image } from "expo-image";
-import { colors, globalStyles, spacing } from "../../styles/globalStyles";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { Link } from "expo-router";
 import { useState } from "react";
+import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { colors, globalStyles, spacing } from "../../styles/globalStyles";
 
 
 export default function HomeScreen() {
@@ -18,9 +18,7 @@ export default function HomeScreen() {
       >
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.greeting}>
-            Lost and found, simplified.
-          </Text>
+          <Text style={styles.greeting}>stop<Text style={{color:colors.logoSecondary}}> searching. </Text>start <Text style={{color:colors.logoAccent}}>finding. </Text></Text>
           <Text style={styles.headerSubtitle}>Report items, browse listings, and view possible matches all in one place.</Text>
         </View>
 
@@ -105,8 +103,8 @@ export default function HomeScreen() {
                   tintColor={colors.logoAccent}
                 />
             </View>
-            <Text style={styles.infoTitle}>Quick tips</Text>
-            <Text style={styles.infoText}>Add clear photos and details to improve matching chances.</Text>
+            <Text style={[styles.infoTitle, {color: colors.logoAccent}]}>Quick tips</Text>
+            <Text style={[styles.infoText, {color: colors.logoAccent}]}>Add clear photos and details to improve matching chances.</Text>
             <Text style={styles.infoLink}>Learn more</Text>
           </Pressable>
         </View>
@@ -132,15 +130,15 @@ export default function HomeScreen() {
             )}
             {activePopup === "quickTips" && (
               <>
-                <Text style={styles.modalTitle}>Quick reporting tips</Text>
-                <Text style={styles.modalBody}>- Add a clear photo where possible.</Text>
-                <Text style={styles.modalBody}>- Use specific locations, such as "COM1 Level 2" instead of just "NUS".</Text>
-                <Text style={styles.modalBody}>- Include useful keywords like brand, color, size, and unique markings.</Text>
-                <Text style={styles.modalBody}>- Provide a reliable way to contact you (email & phone number).</Text>
+                <Text style={[styles.modalTitle, {color: colors.logoAccent}]}>Quick reporting tips</Text>
+                <Text style={[styles.modalBody, {color: colors.logoAccent}]}>- Add a clear photo where possible.</Text>
+                <Text style={[styles.modalBody, {color: colors.logoAccent}]}>- Use specific locations, such as "COM1 Level 2" instead of just "NUS".</Text>
+                <Text style={[styles.modalBody, {color: colors.logoAccent}]}>- Include useful keywords like brand, color, size, and unique markings.</Text>
+                <Text style={[styles.modalBody, {color: colors.logoAccent}]}>- Provide a reliable way to contact you (email & phone number).</Text>
               </>
             )}
 
-            <Pressable style={styles.modalButton} onPress={() => setActivePopup(null)}>
+            <Pressable style={[styles.modalButton, {backgroundColor: activePopup === "howItWorks" ? colors.logoMain : colors.logoAccent}]} onPress={() => setActivePopup(null)}>
               <Text style={styles.modalButtonText}>Got it</Text>
             </Pressable>
           </View>
@@ -165,14 +163,14 @@ const styles = StyleSheet.create({
     paddingTop: spacing.sm,
   },
   greeting: {
-    fontSize: 26,
+    fontSize: 24,
     fontWeight: "800",
     color: colors.logoMain,
     marginBottom: 4,
   },
   headerSubtitle: {
     fontSize: 16,
-    color: colors.textSecondary,
+    color: colors.logoMain,
     fontWeight: "500",
   },
   logoContainer: {
@@ -293,7 +291,7 @@ const styles = StyleSheet.create({
   },
   infoText: {
     fontSize: 13,
-    color: colors.textSecondary,
+    color: colors.logoMain,
     lineHeight: 18,
     marginBottom: spacing.md,
   },
@@ -331,7 +329,7 @@ const styles = StyleSheet.create({
   },
   modalBody: {
     fontSize: 16,
-    color: colors.textSecondary,
+    color: colors.logoMain,
     lineHeight: 22,
     marginBottom: spacing.sm,
   },
