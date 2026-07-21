@@ -29,6 +29,7 @@ export default function FoundItemForm() {
     const [phoneNumber, setPhoneNumber] = useState("");
     const [image, setImage] = useState<string | null>(null); //Optional field, might not implement yet.
     const [loading, setLoading] = useState(false);
+    const [focusedField, setFocusedField] = useState<string | null>(null);
 
     const categoryData = [
         { label: "ID Card / Matric Card", value: "ID card" },
@@ -56,6 +57,7 @@ export default function FoundItemForm() {
         if (selectedDate) {
             setDateFound(selectedDate);
         }
+        setFocusedField(null);
     };
 
     const handleLocationSelect = (text: string) => {
@@ -174,24 +176,27 @@ export default function FoundItemForm() {
 
     return (
         <View style={globalStyles.formContainer}>
-            <Text style={globalStyles.pageTitle}>Item Details</Text>
-            <Text style={globalStyles.pageSubtitle}>Tell us what you found so the owner can find it.</Text>
+            <Text style={[globalStyles.pageTitle, {color: colors.primary}]}>Item Details</Text>
+            <Text style={[globalStyles.pageSubtitle, {color: colors.logoAccent}]}>Tell us what you found so the owner can find it.</Text>
             <TextInput
-                style={globalStyles.input}
+                style={[globalStyles.input, {borderColor: colors.border}, focusedField === "itemName" && {borderColor: colors.primary}]}
                 placeholder="Item Name (Max 30 char.)"
                 placeholderTextColor={colors.placeholder}
                 value={itemName}
                 onChangeText={setItemName}
                 maxLength={30} // limit item name to 30 characters to prevent excessively long entries.
-                onFocus={() => setShowSuggestions(false)}
+                onFocus={() => {setShowSuggestions(false); setFocusedField("itemName");}}
+                onBlur={() => setFocusedField(null)}
             />
             <Dropdown
-                style={globalStyles.dropdown}
+                style={[globalStyles.dropdown, {borderColor: colors.border}, focusedField === "category" && {borderColor: colors.primary}]}
                 placeholderStyle={globalStyles.placeholderText}
                 selectedTextStyle={[
                     globalStyles.inputText,
                     { color: category ? colors.textInput : colors.placeholder} // implement placeholder similar to other input fields.
                 ]}
+                containerStyle={{backgroundColor: colors.logoCream}}
+                activeColor={colors.logoAccent}
                 itemTextStyle={globalStyles.inputText}
                 data={categoryData}
                 labelField="label"
@@ -202,10 +207,12 @@ export default function FoundItemForm() {
                     setCategory(item.value);
                     setShowSuggestions(false);
                 }}
+                onFocus={() => setFocusedField("category")}
+                onBlur={() => setFocusedField(null)}
             />
             <TextInput
             // multiline input to allow for more detailed descriptions of found items.
-                style={[globalStyles.input, globalStyles.multilineInput]}
+                style={[globalStyles.input, globalStyles.multilineInput, {borderColor: colors.border}, focusedField === "description" && {borderColor: colors.primary}]}
                 placeholder="Description"
                 placeholderTextColor={colors.placeholder}
                 value={description}
@@ -217,7 +224,8 @@ export default function FoundItemForm() {
                 }}
                 multiline
                 numberOfLines={3}
-                onFocus={() => setShowSuggestions(false)}
+                onFocus={() => {setShowSuggestions(false); setFocusedField("description");}}
+                onBlur={() => setFocusedField(null)}
             />
             <View style={Suggestions.searchContainer}>
                 {showSuggestions && filteredVenues.length > 0 && (
@@ -245,20 +253,21 @@ export default function FoundItemForm() {
                 )}
 
                 <TextInput
-                    style={globalStyles.input}
+                    style={[globalStyles.input, {borderColor: colors.border}, focusedField === "location" && {borderColor: colors.primary}]}
                     placeholder="Location Found (e.g. LT17, The Deck)"
                     placeholderTextColor={colors.placeholder}
                     value={locationFound}
 
                     onChangeText={handleLocationSelect}
-                    onFocus={() => { if(locationFound) setShowSuggestions(true); }}
+                    onFocus={() => { if(locationFound) setShowSuggestions(true); setFocusedField("location");}}
+                    onBlur={() => setFocusedField(null)}
                     onSubmitEditing={() => setShowSuggestions(false)}
                     returnKeyType="done"
                 />
             </View>
 
             <Pressable
-                style={DateStyles.datePickerBox}
+                style={[DateStyles.datePickerBox, {borderColor: colors.border}, focusedField === "date" && {borderColor: colors.primary}]}
                 onPress={() => {
                     // separate condition handling for mobile to ensure its continuity. 
                     if (Platform.OS !== "web") {
@@ -281,6 +290,8 @@ export default function FoundItemForm() {
                 {Platform.OS === "web" && (
                     <input
                         type="date"
+                        onFocus={() => setFocusedField("date")}
+                        onBlur={() => setFocusedField(null)}
                         onChange={(e) => {
                             const val = e.target.value;
                             setDateFound(val ? new Date(val) : null);
@@ -317,36 +328,35 @@ export default function FoundItemForm() {
                 <Button title="Confirm Date" onPress={() => setShowCalendar(false)} />
             )}
             <TextInput
-                style={globalStyles.input}
+                style={[globalStyles.input, {borderColor: colors.border}, focusedField === "email" && {borderColor: colors.primary}]}
                 placeholder="Contact Email"
                 placeholderTextColor={colors.placeholder}
                 value={email}
                 onChangeText={setEmail}
                 keyboardType="email-address"
-                onFocus={() => setShowSuggestions(false)}
+                onFocus={() => {setShowSuggestions(false); setFocusedField("email");}}
+                onBlur={() => setFocusedField(null)}
             />
             <TextInput
-                style={globalStyles.input}
+                style={[globalStyles.input, {borderColor: colors.border}, focusedField === "phone" && {borderColor: colors.primary}]}
                 placeholder="Contact Phone Number"
                 placeholderTextColor={colors.placeholder}
                 value={phoneNumber}
                 onChangeText={(text) => setPhoneNumber(text.replace(/[^0-9]/g, ""))}
                 keyboardType="phone-pad"
                 maxLength={8}
-                onFocus={() => setShowSuggestions(false)}
+                onFocus={() => {setShowSuggestions(false); setFocusedField("phone");}}
+                onBlur={() => setFocusedField(null)}
             />
             {!image && (
-                <Pressable
-                style={globalStyles.input}
-                onPress={pickImage}
-            >
-                <Text style={[globalStyles.inputText, {color: image ? colors.textInput : colors.placeholder}]}>
-                    {image ? "Change Image..." : "Upload Image (optional)"}
-                </Text>
-            </Pressable>
-            )}
+                <Pressable style={[globalStyles.input, {borderColor: colors.border}]} onPress={pickImage}>
+                    <Text style={[globalStyles.inputText, {color: image ? colors.textInput : colors.placeholder}]}>
+                        {image ? "Change Image..." : "Upload Image (optional)"}
+                    </Text>
+                </Pressable>
+                )}
             {image && (
-                <View style={ImageStyles.imageBox}>
+                <View style={[ImageStyles.imageBox, {borderColor: colors.border}]}>
                     <Image source={{uri: image}} style={ImageStyles.image} />
                     <Pressable
                         style={ImageStyles.deleteImage}

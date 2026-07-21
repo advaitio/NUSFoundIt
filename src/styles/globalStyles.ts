@@ -133,6 +133,11 @@ export const globalStyles = StyleSheet.create({
         fontSize: 16,
         backgroundColor: colors.surface,
         color: colors.textInput,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.12,
+        shadowRadius: 10,
+        elevation: 4,
     },
 
     multilineInput: {
@@ -149,6 +154,11 @@ export const globalStyles = StyleSheet.create({
         paddingHorizontal: spacing.md,
         marginBottom: spacing.lg,
         backgroundColor: colors.surface,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.12,
+        shadowRadius: 10,
+        elevation: 4,
     },
 
     placeholderText: {
@@ -277,6 +287,11 @@ export const PopupStyles = StyleSheet.create({
         height: 50,
         justifyContent: "center",
         alignItems: "center",
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.12,
+        shadowRadius: 10,
+        elevation: 4,
     },
     buttonText: {
         fontSize: 15,
@@ -388,6 +403,11 @@ export const DateStyles = StyleSheet.create({
         marginBottom: 16,
         backgroundColor: "#fffdf8",
         justifyContent: "center",
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.12,
+        shadowRadius: 10,
+        elevation: 4,
     },
     dualDatePickerBox: {
         flex: 1,
@@ -422,6 +442,11 @@ export const ImageStyles = StyleSheet.create({
         borderColor: colors.inputBorder,
         borderRadius: 8,
         backgroundColor: colors.surface,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.12,
+        shadowRadius: 10,
+        elevation: 4,
     },
     image: {
         width: "100%",
@@ -432,7 +457,7 @@ export const ImageStyles = StyleSheet.create({
     deleteImage: {
         paddingVertical: 6,
         paddingHorizontal: 12,
-        backgroundColor: colors.error,
+        backgroundColor: colors.logoAccent,
         borderRadius: 6,
     },
     deleteImageText: {
