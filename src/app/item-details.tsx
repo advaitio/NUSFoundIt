@@ -7,6 +7,29 @@ import { colors, globalStyles, spacing } from "../styles/globalStyles";
 import { FoundItem, LostItem, MatchedFoundItem, MatchedLostItem } from "../types/items";
 import { getPossibleFoundMatches, getPossibleLostMatches } from "../utils/matching";
 
+const getPlaceholderImage = (category: string) => {
+    switch (category.toLowerCase()) {
+        case "id card": 
+            return require("../../assets/images/placeholder-id.png");
+        case "wallet": 
+            return require("../../assets/images/placeholder-wallet.png");
+        case "bottle": 
+            return require("../../assets/images/placeholder-bottle.png");
+        case "phone": 
+            return require("../../assets/images/placeholder-phone.png");
+        case "laptop": 
+            return require("../../assets/images/placeholder-laptop.png");
+        case "keys": 
+            return require("../../assets/images/placeholder-keys.png");
+        case "electronics": 
+            return require("../../assets/images/placeholder-electronics.png");
+        case "clothing": 
+            return require("../../assets/images/placeholder-clothing.png");
+        default: 
+            return require("../../assets/images/placeholder-other.png"); 
+    }
+};
+
 export default function ItemDetails() {
     // Get the type and id parameters from the URL using useLocalSearchParams
     const { type, id } = useLocalSearchParams<{ type: string; id: string }>();
@@ -176,11 +199,14 @@ export default function ItemDetails() {
                     <DetailRow label="Description" value={item.description} />
                     <DetailRow label="Contact Email" value={item.contactEmail} />
                     <DetailRow label="Phone Number" value={item.contactPhoneNumber} />
-                    {item.imageUrl ? (
-                        <View style={styles.imageBox}>
-                            <Image source={{uri: item.imageUrl}} style={[styles.imageDetails, {aspectRatio: imageRatio}]}/>
-                        </View>
-                    ) : null}
+                    <View style={styles.imageBox}>
+                        <Image source={item.imageUrl ? {uri: item.imageUrl} : getPlaceholderImage(item.category)} style={[styles.imageDetails, item.imageUrl ? {aspectRatio: imageRatio} : {height: 400, resizeMode: "contain", opacity: 0.4}]}/>
+                        {!item.imageUrl && (
+                            <View style={styles.placeholderBadge}>
+                                <Text style={styles.placeholderBadgeText}>NO PHOTO</Text>
+                            </View>
+                        )}
+                    </View>
                 </View>
 
                 {/* render possible matches for lost/found items */}
@@ -333,9 +359,28 @@ const styles = StyleSheet.create({
         marginTop: 10,
         width: "100%",
         alignItems: "center",
+        position: "relative",
     },
     imageDetails: {
         width: "100%",
         borderRadius: 16,
-    }
+        backgroundColor: colors.surfaceSoft,
+    },
+    placeholderBadge: {
+        position: "absolute",
+        bottom: 0,
+        left: 0,
+        right: 0,
+        backgroundColor: "rgba(0, 0, 0, 0.5)",
+        paddingVertical: 8,
+        borderBottomLeftRadius: 16,
+        borderBottomRightRadius: 16,
+        alignItems: "center",
+    },
+    placeholderBadgeText: {
+        color: "#ffffff",
+        fontSize: 12,
+        fontWeight: "bold",
+        letterSpacing: 1,
+    },
 })
