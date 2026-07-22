@@ -7,6 +7,8 @@ import { colors, globalStyles, spacing } from "../styles/globalStyles";
 import { FoundItem, LostItem, MatchedFoundItem, MatchedLostItem } from "../types/items";
 import { getPossibleFoundMatches, getPossibleLostMatches } from "../utils/matching";
 
+// import {updateDoc} from "firebase/firestore"
+
 const getPlaceholderImage = (category: string) => {
     switch (category.toLowerCase()) {
         case "id card": 
@@ -40,6 +42,10 @@ export default function ItemDetails() {
     const [loading, setLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState("");
     const [imageRatio, setImageRatio] = useState(1);
+
+    const [telegramID, setTelegramID] = useState("");
+    const [threshold, setThreshold] = useState("40");
+    const [isSavingAlert, setIsSavingAlert] = useState(false);
 
     // Fetch item details and possible matches (if it's a lost item) when the component mounts
     useEffect(() => {
