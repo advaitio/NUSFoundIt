@@ -90,7 +90,7 @@ export const globalStyles = StyleSheet.create({
 
     pageSubtitle: {
         fontSize: 15,
-        color: colors.textSecondary,
+        color: colors.logoAccent,
         marginBottom: spacing.xl,
         lineHeight: 21,
         textAlign: "center",
@@ -126,7 +126,7 @@ export const globalStyles = StyleSheet.create({
     input: {
         width: "100%",
         borderWidth: 1,
-        borderColor: colors.inputBorder,
+        borderColor: colors.border,
         borderRadius: 8,
         padding: spacing.md,
         marginBottom: spacing.lg,
@@ -149,7 +149,7 @@ export const globalStyles = StyleSheet.create({
         width: "100%",
         height: 50,
         borderWidth: 1,
-        borderColor: colors.inputBorder,
+        borderColor: colors.border,
         borderRadius: 8,
         paddingHorizontal: spacing.md,
         marginBottom: spacing.lg,
@@ -397,7 +397,7 @@ export const DateStyles = StyleSheet.create({
     datePickerBox: {
         width: "100%",
         borderWidth: 1,
-        borderColor: "#ccc",
+        borderColor: colors.border,
         borderRadius: 8,
         padding: 14,
         marginBottom: 16,
@@ -439,7 +439,7 @@ export const ImageStyles = StyleSheet.create({
         marginBottom: 16,
         padding: 10,
         borderWidth: 1,
-        borderColor: colors.inputBorder,
+        borderColor: colors.border,
         borderRadius: 8,
         backgroundColor: colors.surface,
         shadowColor: "#000",

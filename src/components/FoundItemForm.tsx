@@ -179,7 +179,7 @@ export default function FoundItemForm() {
             <Text style={[globalStyles.pageTitle, {color: colors.primary}]}>Item Details</Text>
             <Text style={[globalStyles.pageSubtitle, {color: colors.logoAccent}]}>Tell us what you found so the owner can find it.</Text>
             <TextInput
-                style={[globalStyles.input, {borderColor: colors.border}, focusedField === "itemName" && {borderColor: colors.primary}]}
+                style={[globalStyles.input, focusedField === "itemName" && {borderColor: colors.primary}]}
                 placeholder="Item Name (Max 30 char.)"
                 placeholderTextColor={colors.placeholder}
                 value={itemName}
@@ -189,7 +189,7 @@ export default function FoundItemForm() {
                 onBlur={() => setFocusedField(null)}
             />
             <Dropdown
-                style={[globalStyles.dropdown, {borderColor: colors.border}, focusedField === "category" && {borderColor: colors.primary}]}
+                style={[globalStyles.dropdown, focusedField === "category" && {borderColor: colors.primary}]}
                 placeholderStyle={globalStyles.placeholderText}
                 selectedTextStyle={[
                     globalStyles.inputText,
@@ -212,7 +212,7 @@ export default function FoundItemForm() {
             />
             <TextInput
             // multiline input to allow for more detailed descriptions of found items.
-                style={[globalStyles.input, globalStyles.multilineInput, {borderColor: colors.border}, focusedField === "description" && {borderColor: colors.primary}]}
+                style={[globalStyles.input, globalStyles.multilineInput, focusedField === "description" && {borderColor: colors.primary}]}
                 placeholder="Description"
                 placeholderTextColor={colors.placeholder}
                 value={description}
@@ -253,7 +253,7 @@ export default function FoundItemForm() {
                 )}
 
                 <TextInput
-                    style={[globalStyles.input, {borderColor: colors.border}, focusedField === "location" && {borderColor: colors.primary}]}
+                    style={[globalStyles.input, focusedField === "location" && {borderColor: colors.primary}]}
                     placeholder="Location Found (e.g. LT17, The Deck)"
                     placeholderTextColor={colors.placeholder}
                     value={locationFound}
@@ -267,7 +267,7 @@ export default function FoundItemForm() {
             </View>
 
             <Pressable
-                style={[DateStyles.datePickerBox, {borderColor: colors.border}, focusedField === "date" && {borderColor: colors.primary}]}
+                style={[DateStyles.datePickerBox, focusedField === "date" && {borderColor: colors.primary}]}
                 onPress={() => {
                     // separate condition handling for mobile to ensure its continuity. 
                     if (Platform.OS !== "web") {
@@ -328,7 +328,7 @@ export default function FoundItemForm() {
                 <Button title="Confirm Date" onPress={() => setShowCalendar(false)} />
             )}
             <TextInput
-                style={[globalStyles.input, {borderColor: colors.border}, focusedField === "email" && {borderColor: colors.primary}]}
+                style={[globalStyles.input, focusedField === "email" && {borderColor: colors.primary}]}
                 placeholder="Contact Email"
                 placeholderTextColor={colors.placeholder}
                 value={email}
@@ -338,7 +338,7 @@ export default function FoundItemForm() {
                 onBlur={() => setFocusedField(null)}
             />
             <TextInput
-                style={[globalStyles.input, {borderColor: colors.border}, focusedField === "phone" && {borderColor: colors.primary}]}
+                style={[globalStyles.input, focusedField === "phone" && {borderColor: colors.primary}]}
                 placeholder="Contact Phone Number"
                 placeholderTextColor={colors.placeholder}
                 value={phoneNumber}
@@ -349,14 +349,14 @@ export default function FoundItemForm() {
                 onBlur={() => setFocusedField(null)}
             />
             {!image && (
-                <Pressable style={[globalStyles.input, {borderColor: colors.border}]} onPress={pickImage}>
+                <Pressable style={globalStyles.input} onPress={pickImage}>
                     <Text style={[globalStyles.inputText, {color: image ? colors.textInput : colors.placeholder}]}>
                         {image ? "Change Image..." : "Upload Image (optional)"}
                     </Text>
                 </Pressable>
                 )}
             {image && (
-                <View style={[ImageStyles.imageBox, {borderColor: colors.border}]}>
+                <View style={ImageStyles.imageBox}>
                     <Image source={{uri: image}} style={ImageStyles.image} />
                     <Pressable
                         style={ImageStyles.deleteImage}

@@ -140,7 +140,7 @@ export default function ListingsScreen() {
         <SafeAreaView edges={["top"]} style={globalStyles.safeArea}>
             <View style={styles.container}>
                 <View style={styles.customHeader}>
-                    <Text style={styles.customHeaderTitle}>Listings</Text>
+                    <Text style={[styles.customHeaderTitle, {color: selectedTab === "found" ? colors.logoMain : colors.logoSecondary}]}>Listings</Text>
                 </View>
                 <View style={styles.content}>
                     {/* tab buttons to switch between found and lost item forms */}
@@ -161,7 +161,7 @@ export default function ListingsScreen() {
                         </Pressable>
                         {/* tab button for lost item form */}
                         <Pressable
-                            style={[styles.tabButton, selectedTab === "lost" && styles.activeTabButton]}
+                            style={[styles.tabButton, selectedTab === "lost" && {...styles.activeTabButton, backgroundColor: colors.logoSecondary}]}
                             onPress={() => {
                                 setSelectedTab("lost");
                                 setSearchQuery("");
@@ -181,7 +181,7 @@ export default function ListingsScreen() {
                     <View style={styles.searchRowContainer}>
                         <View style={styles.searchBarContainer}>
                             <TextInput
-                                style={[globalStyles.input, { width: 'auto', flex: 1, marginBottom: 0 }]}
+                                style={[globalStyles.input, {width: 'auto', flex: 1, marginBottom: 0}]}
                                 placeholder={selectedTab === "found" ? "Search found items..." : "Search lost items..."}
                                 placeholderTextColor={colors.placeholder}
                                 value={searchQuery}
