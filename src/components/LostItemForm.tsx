@@ -29,6 +29,7 @@ export default function LostItemForm() {
     const [phoneNumber, setPhoneNumber] = useState("");
     const [image, setImage] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
+    const [focusedField, setFocusedField] = useState<string | null>(null);
 
     const categoryData = [
         { label: "ID Card / Matric Card", value: "ID card" },
@@ -56,6 +57,8 @@ export default function LostItemForm() {
         if (selectedDate) {
             setDateLost(selectedDate);
         }
+
+        setFocusedField(null);
     };
 
     const handleLocationSelect = (text: string) => {
@@ -172,24 +175,27 @@ export default function LostItemForm() {
 
     return (
         <View style={globalStyles.formContainer}>
-            <Text style={globalStyles.pageTitle}>Item Details</Text>
-            <Text style={globalStyles.pageSubtitle}>Tell us what you lost so we can help you find it.</Text>
+            <Text style={[globalStyles.pageTitle, {color: colors.logoSecondary}]}>Item Details</Text>
+            <Text style={[globalStyles.pageSubtitle, {color: colors.logoAccent}]}>Tell us what you lost so we can help you find it.</Text>
             <TextInput
-                style={globalStyles.input}
+                style={[globalStyles.input, focusedField === "itemName" && {borderColor: colors.logoSecondary}]}
                 placeholder="Item Name (Max 30 char.)"
                 placeholderTextColor={colors.placeholder}
                 value={itemName}
                 onChangeText={setItemName}
                 maxLength={30} // limit item name to 30 characters to prevent excessively long entries.
-                onFocus={() => setShowSuggestions(false)}
+                onFocus={() => {setShowSuggestions(false); setFocusedField("itemName");}}
+                onBlur={() => setFocusedField(null)}
             />
             <Dropdown
-                style={globalStyles.dropdown}
+                style={[globalStyles.dropdown, focusedField === "category" && {borderColor: colors.logoSecondary}]}
                 placeholderStyle={globalStyles.placeholderText}
                 selectedTextStyle={[
                     globalStyles.inputText,
                     { color: category ? colors.textInput : colors.placeholder} // implement placeholder similar to other input fields.
                 ]}
+                containerStyle={{backgroundColor: colors.logoCream}}
+                activeColor={colors.logoAccent}
                 itemTextStyle={globalStyles.inputText}
                 data={categoryData}
                 labelField="label"
@@ -200,10 +206,12 @@ export default function LostItemForm() {
                     setCategory(item.value);
                     setShowSuggestions(false);
                 }}
+                onFocus={() => setFocusedField("category")}
+                onBlur={() => setFocusedField(null)}
             />
             <TextInput
             // multiline input to allow for more detailed descriptions of lost items.
-                style={[globalStyles.input, globalStyles.multilineInput]}
+                style={[globalStyles.input, globalStyles.multilineInput, focusedField === "description" && {borderColor: colors.logoSecondary}]}
                 placeholder="Description"
                 placeholderTextColor={colors.placeholder}
                 value={description}
@@ -215,7 +223,8 @@ export default function LostItemForm() {
                 }}
                 multiline
                 numberOfLines={3}
-                onFocus={() => setShowSuggestions(false)}
+                onFocus={() => {setShowSuggestions(false); setFocusedField("description");}}
+                onBlur={() => setFocusedField(null)}
             />
             <View style={Suggestions.searchContainer}>
                 {showSuggestions && filteredVenues.length > 0 && (
@@ -243,20 +252,21 @@ export default function LostItemForm() {
                 )}
                 
                 <TextInput
-                    style={globalStyles.input}
+                    style={[globalStyles.input, focusedField === "location" && {borderColor: colors.logoSecondary}]}
                     placeholder="Location Lost (e.g. LT17, The Deck)"
                     placeholderTextColor={colors.placeholder}
                     value={locationLost}
 
                     onChangeText={handleLocationSelect}
-                    onFocus={() => { if(locationLost) setShowSuggestions(true); }}
+                    onFocus={() => { if(locationLost) setShowSuggestions(true); setFocusedField("location");}}
+                    onBlur={() => setFocusedField(null)}
                     onSubmitEditing={() => setShowSuggestions(false)}
                     returnKeyType="done"
                 />
             </View>
 
             <Pressable
-            style={DateStyles.datePickerBox}
+            style={[DateStyles.datePickerBox, focusedField === "date" && {borderColor: colors.logoSecondary}]}
             onPress={() => {
                 // separate condition handling for mobile to ensure its continuity. 
                 if (Platform.OS !== "web") {
@@ -279,6 +289,8 @@ export default function LostItemForm() {
                 {Platform.OS === "web" && (
                     <input
                         type="date"
+                        onFocus={() => setFocusedField("date")}
+                        onBlur={() => setFocusedField(null)}
                         onChange={(e) => {
                             const val = e.target.value;
                             setDateLost(val ? new Date(val) : null);
@@ -315,34 +327,33 @@ export default function LostItemForm() {
                 <Button title="Confirm Date" onPress={() => setShowCalendar(false)} />
             )}
             <TextInput
-                style={globalStyles.input}
+                style={[globalStyles.input, focusedField === "email" && {borderColor: colors.logoSecondary}]}
                 placeholder="Contact Email"
                 placeholderTextColor={colors.placeholder}
                 value={email}
                 onChangeText={setEmail}
                 keyboardType="email-address"
-                onFocus={() => setShowSuggestions(false)}
+                onFocus={() => {setShowSuggestions(false); setFocusedField("email");}}
+                onBlur={() => setFocusedField(null)}
             />
             <TextInput
-                style={globalStyles.input}
+                style={[globalStyles.input, focusedField === "phone" && {borderColor: colors.logoSecondary}]}
                 placeholder="Contact Phone Number"
                 placeholderTextColor={colors.placeholder}
                 value={phoneNumber}
                 onChangeText={(text) => setPhoneNumber(text.replace(/[^0-9]/g, ""))}
                 keyboardType="phone-pad"
                 maxLength={8}
-                onFocus={() => setShowSuggestions(false)}
+                onFocus={() => {setShowSuggestions(false); setFocusedField("phone");}}
+                onBlur={() => setFocusedField(null)}
             />
             
             {!image && (
-                <Pressable
-                style={globalStyles.input}
-                onPress={pickImage}
-            >
-                <Text style={[globalStyles.inputText, {color: image ? colors.textInput : colors.placeholder}]}>
-                    {image ? "Change Image..." : "Upload Image (optional)"}
-                </Text>
-            </Pressable>
+                <Pressable style={globalStyles.input} onPress={pickImage}>
+                    <Text style={[globalStyles.inputText, {color: image ? colors.textInput : colors.placeholder}]}>
+                        {image ? "Change Image..." : "Upload Image (optional)"}
+                    </Text>
+                </Pressable>
             )}
             {image && (
                 <View style={ImageStyles.imageBox}>
@@ -356,7 +367,7 @@ export default function LostItemForm() {
                 </View>
             )}
 
-            <Pressable style={[globalStyles.buttonContainer, loading && {opacity: 0.5}]} onPress={handleSubmit} disabled={loading}>
+            <Pressable style={[globalStyles.buttonContainer, {backgroundColor: colors.logoSecondary}, loading && {opacity: 0.5}]} onPress={handleSubmit} disabled={loading}>
                 <Text style={styles.buttonText}>{loading ? "Sending..." : "Submit"}</Text>
             </Pressable>
         </View>

@@ -1,11 +1,10 @@
 import { useFocusEffect } from "expo-router";
 import { useCallback, useRef, useState } from "react";
 import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import FoundItemForm from "../../components/FoundItemForm";
 import LostItemForm from "../../components/LostItemForm";
-import { colors, spacing } from "../../styles/globalStyles";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { globalStyles } from "../../styles/globalStyles";
+import { colors, globalStyles, spacing } from "../../styles/globalStyles";
 
 export default function ReportScreen() {
     // state variable to track which tab is currently selected (found or lost)
@@ -32,7 +31,7 @@ export default function ReportScreen() {
                 style={{ flex: 1, backgroundColor: colors.background }}
             >
                 <View style={styles.customHeader}>
-                    <Text style={styles.customHeaderTitle}>Report</Text>
+                    <Text style={[styles.customHeaderTitle, {color: selectedTab === "found" ? colors.logoMain : colors.logoSecondary}]}>Report</Text>
                 </View>
 
                 <ScrollView
@@ -52,7 +51,7 @@ export default function ReportScreen() {
                         </Pressable>
                         {/* tab button for lost item form */}
                         <Pressable
-                            style={[styles.tabButton, selectedTab === "lost" && styles.activeTabButton]}
+                            style={[styles.tabButton, selectedTab === "lost" && {...styles.activeTabButton, backgroundColor: colors.logoSecondary}]}
                             onPress={() => setSelectedTab("lost")}
                         >
                             <Text style={[styles.tabText, selectedTab === "lost" && styles.activeTabText]}>Lost Item</Text>

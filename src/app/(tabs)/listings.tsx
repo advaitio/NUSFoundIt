@@ -29,6 +29,8 @@ export default function ListingsScreen() {
 
     const slideAnim = useRef(new Animated.Value(600)).current;
 
+    const [focusedField, setFocusedField] = useState<string | null>(null);
+
     const categoryData = [
         { label: "ID Card / Matric Card", value: "ID card" },
         { label: "Wallet / Purse", value: "wallet" },
@@ -140,7 +142,7 @@ export default function ListingsScreen() {
         <SafeAreaView edges={["top"]} style={globalStyles.safeArea}>
             <View style={styles.container}>
                 <View style={styles.customHeader}>
-                    <Text style={styles.customHeaderTitle}>Listings</Text>
+                    <Text style={[styles.customHeaderTitle, {color: selectedTab === "found" ? colors.logoMain : colors.logoSecondary}]}>Listings</Text>
                 </View>
                 <View style={styles.content}>
                     {/* tab buttons to switch between found and lost item forms */}
@@ -161,7 +163,7 @@ export default function ListingsScreen() {
                         </Pressable>
                         {/* tab button for lost item form */}
                         <Pressable
-                            style={[styles.tabButton, selectedTab === "lost" && styles.activeTabButton]}
+                            style={[styles.tabButton, selectedTab === "lost" && {...styles.activeTabButton, backgroundColor: colors.logoSecondary}]}
                             onPress={() => {
                                 setSelectedTab("lost");
                                 setSearchQuery("");
@@ -181,10 +183,12 @@ export default function ListingsScreen() {
                     <View style={styles.searchRowContainer}>
                         <View style={styles.searchBarContainer}>
                             <TextInput
-                                style={[globalStyles.input, { width: 'auto', flex: 1, marginBottom: 0 }]}
+                                style={[globalStyles.input, {width: 'auto', flex: 1, marginBottom: 0}, focusedField === "search" && {borderColor: selectedTab === "found" ? colors.logoMain: colors.logoSecondary}]}
                                 placeholder={selectedTab === "found" ? "Search found items..." : "Search lost items..."}
                                 placeholderTextColor={colors.placeholder}
                                 value={searchQuery}
+                                onFocus={() => setFocusedField("search")}
+                                onBlur={() => setFocusedField(null)}
                                 onChangeText={setSearchQuery}
                                 clearButtonMode="while-editing"
                                 returnKeyType="search"
@@ -204,12 +208,12 @@ export default function ListingsScreen() {
                             <Image
                                 source={filterModalVisible ? require("../../../assets/images/options.png") : require("../../../assets/images/options-outline.png")}
                                 style={{ width: 24, height: 24 }}
-                                tintColor={colors.primary}
+                                tintColor="#ffffff"
                             />
                         </Pressable>
                     </View>
 
-                    {/* render the appropriate form based on which tab is selected */}
+                    {/* render the appropriate listings based on which tab is selected */}
                     {selectedTab === "found" ? (
                         <FoundItemsList
                             key={`listings-found-${resetKey}`}
@@ -235,6 +239,8 @@ export default function ListingsScreen() {
                     visible={filterModalVisible}
                     animationType="fade"
                     transparent={true}
+                    statusBarTranslucent={true}
+                    navigationBarTranslucent={true}
                     onRequestClose={closeModal}
                 >
                     <View style={PopupStyles.modalBackdrop}>
@@ -250,14 +256,17 @@ export default function ListingsScreen() {
                             <View style={PopupStyles.modalHeaderRow}>
                                 <Text style={PopupStyles.modalTitle}>Filter Options</Text>
                                 <Pressable onPress={closeModal}>
-                                    <Text style={PopupStyles.modalCloseButton}>Close</Text>
+                                    <Image
+                                        source={require("../../../assets/images/close.png")} 
+                                        style={{ width: 25, height: 25 }}
+                                        tintColor={colors.logoAccent}/>
                                 </Pressable>
                             </View>
 
                             <View style={PopupStyles.filterFormContainer}>
                                 <Text style={PopupStyles.filterLabelText}>Item Category</Text>
                                 <Dropdown
-                                    style={globalStyles.dropdown}
+                                    style={[globalStyles.dropdown, focusedField === "category" && {borderColor: colors.logoAccent}]}
                                     placeholderStyle={globalStyles.placeholderText}
                                     selectedTextStyle={[
                                         globalStyles.inputText,
@@ -267,11 +276,14 @@ export default function ListingsScreen() {
                                     data={categoryData}
                                     labelField="label"
                                     valueField="value"
+                                    activeColor={colors.logoAccent}
                                     placeholder="All Categories"
                                     value={tempCategory}
                                     dropdownPosition="top"
                                     inverted={false}
                                     onChange={item => setTempCategory(item.value)}
+                                    onFocus={() => setFocusedField("category")}
+                                    onBlur={() => setFocusedField(null)}
                                     containerStyle={PopupStyles.dropdownMenuPosition}
                                 />
                             </View>
@@ -279,7 +291,7 @@ export default function ListingsScreen() {
                             <View style={PopupStyles.filterFormContainer}>
                                 <Text style={PopupStyles.filterLabelText}>Location</Text>
                                 <Dropdown
-                                    style={globalStyles.dropdown}
+                                    style={[globalStyles.dropdown, focusedField === "location" && {borderColor: colors.logoAccent}]}
                                     placeholderStyle={globalStyles.placeholderText}
                                     selectedTextStyle={[
                                         globalStyles.inputText,
@@ -289,10 +301,13 @@ export default function ListingsScreen() {
                                     data={locationData}
                                     labelField="label"
                                     valueField="value"
+                                    activeColor={colors.logoAccent}
                                     placeholder="All Locations"
                                     value={tempLocation}
                                     dropdownPosition="top"
                                     inverted={false}
+                                    onFocus={() => setFocusedField("location")}
+                                    onBlur={() => setFocusedField(null)}
                                     onChange={item => setTempLocation(item.value)}
                                     containerStyle={PopupStyles.dropdownMenuPosition}
                                 />
@@ -304,7 +319,7 @@ export default function ListingsScreen() {
                                     <Pressable
                                         style={DateStyles.dualDatePickerBox}
                                         onPress={() => {
-                                            if (Platform.OS === "web") {
+                                            if (Platform.OS !== "web") {
                                                 setShowStartCalendar(true);
                                             }
                                         }}

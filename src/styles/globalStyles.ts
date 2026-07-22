@@ -43,7 +43,9 @@ export const globalStyles = StyleSheet.create({
     screen: {
         flex: 1,
         backgroundColor: colors.background,
-        padding: spacing.xl,
+        padding: spacing.lg,
+        paddingTop: spacing.xl,
+        paddingBottom: 0,
     },
 
     centeredScreen: {
@@ -83,14 +85,14 @@ export const globalStyles = StyleSheet.create({
     subtitle: {
         fontSize: 16,
         marginBottom: spacing.xxxl,
-        color: colors.textMuted,
+        color: colors.textPrimary,
         lineHeight: 22,
         textAlign: "center",
     },
 
     pageSubtitle: {
         fontSize: 15,
-        color: colors.textSecondary,
+        color: colors.logoAccent,
         marginBottom: spacing.xl,
         lineHeight: 21,
         textAlign: "center",
@@ -126,13 +128,18 @@ export const globalStyles = StyleSheet.create({
     input: {
         width: "100%",
         borderWidth: 1,
-        borderColor: colors.inputBorder,
+        borderColor: colors.border,
         borderRadius: 8,
         padding: spacing.md,
         marginBottom: spacing.lg,
         fontSize: 16,
         backgroundColor: colors.surface,
         color: colors.textInput,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.12,
+        shadowRadius: 10,
+        elevation: 4,
     },
 
     multilineInput: {
@@ -144,11 +151,16 @@ export const globalStyles = StyleSheet.create({
         width: "100%",
         height: 50,
         borderWidth: 1,
-        borderColor: colors.inputBorder,
+        borderColor: colors.border,
         borderRadius: 8,
         paddingHorizontal: spacing.md,
         marginBottom: spacing.lg,
         backgroundColor: colors.surface,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.12,
+        shadowRadius: 10,
+        elevation: 4,
     },
 
     placeholderText: {
@@ -168,6 +180,11 @@ export const globalStyles = StyleSheet.create({
         marginBottom: 14,
         borderWidth: 1,
         borderColor: colors.border,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.12,
+        shadowRadius: 10,
+        elevation: 4,
     },
 
     errorText: {
@@ -193,10 +210,11 @@ export const globalStyles = StyleSheet.create({
     },
     detailLabel: {
         fontWeight: "700",
-        color: "#4b5563",
+        color: colors.textPrimary,
         width: 135,
         fontSize: 16,
-        lineHeight: 30,
+        marginTop: 2,
+        lineHeight: 20,
     },
     detailValue: {
         color: colors.textPrimary,
@@ -269,14 +287,17 @@ export const screenOptions: NativeStackNavigationOptions = {
 
 export const PopupStyles = StyleSheet.create({
     buttonContainer: {
-        backgroundColor: colors.surface,
-        borderWidth: 1,
-        borderColor: colors.inputBorder,
+        backgroundColor: colors.logoAccent,
         borderRadius: 8,
         paddingHorizontal: spacing.lg,
         height: 50,
         justifyContent: "center",
         alignItems: "center",
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.12,
+        shadowRadius: 10,
+        elevation: 4,
     },
     buttonText: {
         fontSize: 15,
@@ -308,7 +329,7 @@ export const PopupStyles = StyleSheet.create({
     modalTitle: {
         fontSize: 20,
         fontWeight: "bold",
-        color: colors.textPrimary,
+        color: colors.logoAccent,
     },
     modalCloseButton: {
         fontSize: 20,
@@ -337,19 +358,34 @@ export const PopupStyles = StyleSheet.create({
         borderRadius: 10,
         alignItems: "center",
         justifyContent: "center",
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.12,
+        shadowRadius: 10,
+        elevation: 4,
     },
     resetButton: {
         backgroundColor: colors.surface,
         borderWidth: 1,
-        borderColor: colors.border,
+        borderColor: colors.logoAccent,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.12,
+        shadowRadius: 10,
+        elevation: 4,
     },
     resetButtonText: {
-        color: colors.textSecondary,
+        color: colors.logoAccent,
         fontSize: 15,
         fontWeight: "600",
     },
     applyButton: {
-        backgroundColor: colors.primary,
+        backgroundColor: colors.logoAccent,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.12,
+        shadowRadius: 10,
+        elevation: 4,
     },
     applyButtonText: {
         color: "#fff",
@@ -370,7 +406,7 @@ export const PopupStyles = StyleSheet.create({
     filterLabelText: {
         fontSize: 14,
         fontWeight: "700",
-        color: colors.textSecondary,
+        color: colors.logoAccent,
         marginBottom: spacing.sm,
     },
     dropdownMenuPosition: {
@@ -382,22 +418,32 @@ export const DateStyles = StyleSheet.create({
     datePickerBox: {
         width: "100%",
         borderWidth: 1,
-        borderColor: "#ccc",
+        borderColor: colors.border,
         borderRadius: 8,
         padding: 14,
         marginBottom: 16,
         backgroundColor: "#fffdf8",
         justifyContent: "center",
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.12,
+        shadowRadius: 10,
+        elevation: 4,
     },
     dualDatePickerBox: {
         flex: 1,
         borderWidth: 1,
-        borderColor: colors.inputBorder,
+        borderColor: colors.border,
         borderRadius: 8,
         paddingVertical: 10,
         paddingHorizontal: spacing.md,
         backgroundColor: colors.surface,
         justifyContent: "center",
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.12,
+        shadowRadius: 10,
+        elevation: 4,
     },
     dateRangeRow: {
         flexDirection: "row",
@@ -407,7 +453,7 @@ export const DateStyles = StyleSheet.create({
     datePickerLabel: {
         fontSize: 11,
         fontWeight: "600",
-        color: colors.textSecondary,
+        color: colors.logoAccent,
         marginBottom: 2,
     },
 });
@@ -419,9 +465,14 @@ export const ImageStyles = StyleSheet.create({
         marginBottom: 16,
         padding: 10,
         borderWidth: 1,
-        borderColor: colors.inputBorder,
+        borderColor: colors.border,
         borderRadius: 8,
         backgroundColor: colors.surface,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.12,
+        shadowRadius: 10,
+        elevation: 4,
     },
     image: {
         width: "100%",
@@ -432,7 +483,7 @@ export const ImageStyles = StyleSheet.create({
     deleteImage: {
         paddingVertical: 6,
         paddingHorizontal: 12,
-        backgroundColor: colors.error,
+        backgroundColor: colors.logoAccent,
         borderRadius: 6,
     },
     deleteImageText: {

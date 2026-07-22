@@ -18,6 +18,29 @@ import venuesData from "../constants/venues.json"; //file directly sourced from 
 
 import { LostItem } from "../types/items";
 
+const getPlaceholderImage = (category: string) => {
+    switch (category.toLowerCase()) {
+        case "id card": 
+            return require("../../assets/images/placeholder-id.png");
+        case "wallet": 
+            return require("../../assets/images/placeholder-wallet.png");
+        case "bottle": 
+            return require("../../assets/images/placeholder-bottle.png");
+        case "phone": 
+            return require("../../assets/images/placeholder-phone.png");
+        case "laptop": 
+            return require("../../assets/images/placeholder-laptop.png");
+        case "keys": 
+            return require("../../assets/images/placeholder-keys.png");
+        case "electronics": 
+            return require("../../assets/images/placeholder-electronics.png");
+        case "clothing": 
+            return require("../../assets/images/placeholder-clothing.png");
+        default: 
+            return require("../../assets/images/placeholder-other.png"); 
+    }
+};
+
 // screen component for listings page
 export default function LostItemsList({
     searchQuery,
@@ -157,32 +180,38 @@ export default function LostItemsList({
                         }} asChild>
                             <Pressable style={StyleSheet.flatten([globalStyles.card, styles.itemCard])}>
                                 <View style={styles.cardRow}>
-                                    {item.imageUrl ? (
+                                    <View style={styles.imageWrapper}>
                                         <Image
-                                            source={{uri: item.imageUrl}}
-                                            style={styles.thumbnail}/>
-                                    ) : null}
-
+                                            source={item.imageUrl ? {uri: item.imageUrl} : getPlaceholderImage(item.category)} 
+                                            style={[styles.thumbnail, !item.imageUrl && {opacity: 0.4}]}/>
+                                        
+                                        {!item.imageUrl && (
+                                            <View style={styles.placeholderBadge}>
+                                                <Text style={styles.placeholderBadgeText}>NO PHOTO</Text>
+                                            </View>
+                                        )}
+                                    </View>
                                     <View style={styles.textBox}>
                                         <View style={styles.titleRow}>
                                             <Text style={styles.itemName}>{item.itemName}</Text>
                                             <Image 
                                                 source={require("../../assets/images/right-arrow.png")} 
-                                                style={{width: 25, height: 25}}/>
+                                                style={{width: 25, height: 25}}
+                                                tintColor={colors.logoSecondary}/>
                                         </View>
                                         <View style={styles.detailsContainer}>
                                             <View style={globalStyles.detailRow}>
                                                 <Image 
                                                     source={require("../../assets/images/location.png")} 
                                                     style={{width: 25, height: 25}}
-                                                    tintColor={"#4b5563"}/>
+                                                    tintColor={colors.logoSecondary}/>
                                                 <Text style={globalStyles.detailLabel}>{item.locationLost}</Text>
                                             </View>
                                             <View style={globalStyles.detailRow}>
                                                 <Image 
                                                     source={require("../../assets/images/calendar.png")} 
                                                     style={{width: 25, height: 25}}
-                                                    tintColor={"#4b5563"}/>
+                                                    tintColor={colors.logoSecondary}/>
                                                 <Text style={globalStyles.detailLabel}>{item.dateLost}</Text>
                                             </View>
                                         </View>
@@ -250,8 +279,8 @@ const styles = StyleSheet.create({
         lineHeight: 22,
     },
     itemCard: {
-        width: "100%",
         alignSelf: "stretch",
+        marginHorizontal: 4,
     },
     cardRow: {
         flexDirection: "row",
@@ -264,7 +293,7 @@ const styles = StyleSheet.create({
         width: 100,
         height: 100,
         borderRadius: 8,
-        marginRight: 14,
+        backgroundColor: colors.surfaceSoft,
     },
     textBox: {
         flex: 1,
@@ -275,4 +304,25 @@ const styles = StyleSheet.create({
         alignItems: "center",
         marginBottom: 10,
     },
+    placeholderBadge: {
+        position: "absolute",
+        bottom: 0,
+        left: 0,
+        right: 0,
+        backgroundColor: "rgba(0, 0, 0, 0.5)",
+        paddingVertical: 4,
+        borderBottomLeftRadius: 8,
+        borderBottomRightRadius: 8,
+        alignItems: "center",
+    },
+    placeholderBadgeText: {
+        color: "#ffffff",
+        fontSize: 9,
+        fontWeight: "bold",
+        letterSpacing: 0.5,
+    },
+    imageWrapper: {
+        position: "relative",
+        marginRight: 14,
+    }
 });
