@@ -168,21 +168,22 @@ export default function FoundItemsList({
                                             <Text style={styles.itemName}>{item.itemName}</Text>
                                             <Image 
                                                 source={require("../../assets/images/right-arrow.png")} 
-                                                style={{width: 25, height: 25}}/>
+                                                style={{width: 25, height: 25}}
+                                                tintColor={colors.logoMain}/>
                                         </View>
                                         <View style={styles.detailsContainer}>
                                             <View style={globalStyles.detailRow}>
                                                 <Image 
                                                     source={require("../../assets/images/location.png")} 
                                                     style={{width: 25, height: 25}}
-                                                    tintColor={"#4b5563"}/>
+                                                    tintColor={colors.logoMain}/>
                                                 <Text style={globalStyles.detailLabel}>{item.locationFound}</Text>
                                             </View>
                                             <View style={globalStyles.detailRow}>
                                                 <Image 
                                                     source={require("../../assets/images/calendar.png")} 
                                                     style={{width: 25, height: 25}}
-                                                    tintColor={"#4b5563"}/>
+                                                    tintColor={colors.logoMain}/>
                                                 <Text style={globalStyles.detailLabel}>{item.dateFound}</Text>
                                             </View>
                                         </View>
@@ -229,7 +230,7 @@ const styles = StyleSheet.create({
     itemName: {
         fontSize: 20,
         fontWeight: "bold",
-        color: colors.textPrimary,
+        color: colors.logoMain,
         flex: 1,
     },
     detailsContainer: {
@@ -253,8 +254,8 @@ const styles = StyleSheet.create({
         lineHeight: 22,
     },
     itemCard: {
-        width: "100%",
         alignSelf: "stretch",
+        marginHorizontal: 4,
     },
     cardRow: {
         flexDirection: "row",

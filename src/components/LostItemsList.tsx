@@ -168,22 +168,23 @@ export default function LostItemsList({
                                             <Text style={styles.itemName}>{item.itemName}</Text>
                                             <Image 
                                                 source={require("../../assets/images/right-arrow.png")} 
-                                                style={{width: 25, height: 25}}/>
+                                                style={{width: 25, height: 25}}
+                                                tintColor={colors.logoSecondary}/>
                                         </View>
                                         <View style={styles.detailsContainer}>
                                             <View style={globalStyles.detailRow}>
                                                 <Image 
                                                     source={require("../../assets/images/location.png")} 
                                                     style={{width: 25, height: 25}}
-                                                    tintColor={"#4b5563"}/>
-                                                <Text style={globalStyles.detailLabel}>{item.locationLost}</Text>
+                                                    tintColor={colors.logoSecondary}/>
+                                                <Text style={[globalStyles.detailLabel, {color: colors.logoSecondary}]}>{item.locationLost}</Text>
                                             </View>
                                             <View style={globalStyles.detailRow}>
                                                 <Image 
                                                     source={require("../../assets/images/calendar.png")} 
                                                     style={{width: 25, height: 25}}
-                                                    tintColor={"#4b5563"}/>
-                                                <Text style={globalStyles.detailLabel}>{item.dateLost}</Text>
+                                                    tintColor={colors.logoSecondary}/>
+                                                <Text style={[globalStyles.detailLabel, {color: colors.logoSecondary}]}>{item.dateLost}</Text>
                                             </View>
                                         </View>
                                     </View>
@@ -230,7 +231,7 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: "bold",
         flex: 1,
-        color: colors.textPrimary,
+        color: colors.logoSecondary,
     },
     contactBox: {
         marginTop: 16,
@@ -250,8 +251,8 @@ const styles = StyleSheet.create({
         lineHeight: 22,
     },
     itemCard: {
-        width: "100%",
         alignSelf: "stretch",
+        marginHorizontal: 4,
     },
     cardRow: {
         flexDirection: "row",

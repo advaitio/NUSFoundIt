@@ -43,7 +43,8 @@ export const globalStyles = StyleSheet.create({
     screen: {
         flex: 1,
         backgroundColor: colors.background,
-        padding: spacing.xl,
+        padding: spacing.lg,
+        paddingTop: spacing.xl,
         paddingBottom: 0,
     },
 
@@ -179,6 +180,11 @@ export const globalStyles = StyleSheet.create({
         marginBottom: 14,
         borderWidth: 1,
         borderColor: colors.border,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.12,
+        shadowRadius: 10,
+        elevation: 4,
     },
 
     errorText: {
@@ -204,10 +210,11 @@ export const globalStyles = StyleSheet.create({
     },
     detailLabel: {
         fontWeight: "700",
-        color: "#4b5563",
+        color: colors.logoMain,
         width: 135,
         fontSize: 16,
-        lineHeight: 30,
+        marginTop: 2,
+        lineHeight: 20,
     },
     detailValue: {
         color: colors.textPrimary,
