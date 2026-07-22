@@ -279,9 +279,7 @@ export const screenOptions: NativeStackNavigationOptions = {
 
 export const PopupStyles = StyleSheet.create({
     buttonContainer: {
-        backgroundColor: colors.surface,
-        borderWidth: 1,
-        borderColor: colors.inputBorder,
+        backgroundColor: colors.logoAccent,
         borderRadius: 8,
         paddingHorizontal: spacing.lg,
         height: 50,
@@ -323,7 +321,7 @@ export const PopupStyles = StyleSheet.create({
     modalTitle: {
         fontSize: 20,
         fontWeight: "bold",
-        color: colors.textPrimary,
+        color: colors.logoAccent,
     },
     modalCloseButton: {
         fontSize: 20,
@@ -364,7 +362,12 @@ export const PopupStyles = StyleSheet.create({
         fontWeight: "600",
     },
     applyButton: {
-        backgroundColor: colors.primary,
+        backgroundColor: colors.logoAccent,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.12,
+        shadowRadius: 10,
+        elevation: 4,
     },
     applyButtonText: {
         color: "#fff",
@@ -385,7 +388,7 @@ export const PopupStyles = StyleSheet.create({
     filterLabelText: {
         fontSize: 14,
         fontWeight: "700",
-        color: colors.textSecondary,
+        color: colors.logoAccent,
         marginBottom: spacing.sm,
     },
     dropdownMenuPosition: {
@@ -412,12 +415,17 @@ export const DateStyles = StyleSheet.create({
     dualDatePickerBox: {
         flex: 1,
         borderWidth: 1,
-        borderColor: colors.inputBorder,
+        borderColor: colors.border,
         borderRadius: 8,
         paddingVertical: 10,
         paddingHorizontal: spacing.md,
         backgroundColor: colors.surface,
         justifyContent: "center",
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.12,
+        shadowRadius: 10,
+        elevation: 4,
     },
     dateRangeRow: {
         flexDirection: "row",
@@ -427,7 +435,7 @@ export const DateStyles = StyleSheet.create({
     datePickerLabel: {
         fontSize: 11,
         fontWeight: "600",
-        color: colors.textSecondary,
+        color: colors.logoAccent,
         marginBottom: 2,
     },
 });
