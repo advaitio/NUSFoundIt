@@ -213,7 +213,7 @@ export default function ListingsScreen() {
                         </Pressable>
                     </View>
 
-                    {/* render the appropriate form based on which tab is selected */}
+                    {/* render the appropriate listings based on which tab is selected */}
                     {selectedTab === "found" ? (
                         <FoundItemsList
                             key={`listings-found-${resetKey}`}
@@ -239,6 +239,8 @@ export default function ListingsScreen() {
                     visible={filterModalVisible}
                     animationType="fade"
                     transparent={true}
+                    statusBarTranslucent={true}
+                    navigationBarTranslucent={true}
                     onRequestClose={closeModal}
                 >
                     <View style={PopupStyles.modalBackdrop}>
