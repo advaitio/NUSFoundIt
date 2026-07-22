@@ -230,7 +230,7 @@ const styles = StyleSheet.create({
     itemName: {
         fontSize: 20,
         fontWeight: "bold",
-        color: colors.logoMain,
+        color: colors.textPrimary,
         flex: 1,
     },
     detailsContainer: {

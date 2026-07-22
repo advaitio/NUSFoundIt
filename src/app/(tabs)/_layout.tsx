@@ -1,5 +1,6 @@
 import { Image } from "expo-image";
 import { Tabs } from "expo-router";
+import { Text } from "react-native";
 import { colors } from "../../styles/globalStyles";
 
 export default function TabLayout() {
@@ -7,8 +8,6 @@ export default function TabLayout() {
         <Tabs
             initialRouteName="index"
             screenOptions={{
-                tabBarActiveTintColor: colors.logoMain,
-                tabBarInactiveTintColor: "#6b7280",
                 headerTitleAlign: "center",
 
                 tabBarStyle: {
@@ -24,11 +23,6 @@ export default function TabLayout() {
                     shadowRadius: 8,
                     elevation: 8,
                 },
-
-                tabBarLabelStyle: {
-                    fontSize: 12,
-                    fontWeight: "600",
-                },
             }}
         >
             <Tabs.Screen 
@@ -36,11 +30,14 @@ export default function TabLayout() {
                 options={{ 
                     title: "Report",
                     headerShown: false,
-                    tabBarIcon: ({ focused, color, size }) => (
+                    tabBarLabel: () => (
+                        <Text style={{fontSize: 12, fontWeight: 600, color: colors.logoSecondary}}>Report</Text>
+                    ),
+                    tabBarIcon: ({ focused, size }) => (
                         <Image
                             source={ focused ? require("../../../assets/images/add-circle.png") : require("../../../assets/images/add-circle-outline.png")}
                             style={{ width: size, height: size}}
-                            tintColor={color}
+                            tintColor={colors.logoSecondary}
                         />
                     ),
                 }} 
@@ -50,11 +47,14 @@ export default function TabLayout() {
                 options={{ 
                     title: "Home",
                     headerShown: false,
-                    tabBarIcon: ({ focused, color, size }) => (
+                    tabBarLabel: () => (
+                        <Text style={{fontSize: 12, fontWeight: 600, color: colors.logoMain}}>Home</Text>
+                    ),
+                    tabBarIcon: ({ focused, size }) => (
                         <Image
                             source={focused ? require("../../../assets/images/home.png") : require("../../../assets/images/home-outline.png")}
                             style={{ width: size, height: size}}
-                            tintColor={color}
+                            tintColor={colors.logoMain}
                         />
                     ),
                 }} 
@@ -64,11 +64,14 @@ export default function TabLayout() {
                 options={{ 
                     title: "Listings",
                     headerShown: false,
-                    tabBarIcon: ({ focused, color, size }) => (
+                    tabBarLabel: () => (
+                        <Text style={{fontSize: 12, fontWeight: 600, color: colors.logoAccent}}>Listings</Text>
+                    ),
+                    tabBarIcon: ({ focused, size }) => (
                         <Image
                             source={focused ? require("../../../assets/images/list-circle.png") : require("../../../assets/images/list-circle-outline.png")}
                             style={{ width: size, height: size}}
-                            tintColor={color}
+                            tintColor={colors.logoAccent}
                         />
                     ),
                 }} 

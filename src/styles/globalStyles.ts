@@ -85,7 +85,7 @@ export const globalStyles = StyleSheet.create({
     subtitle: {
         fontSize: 16,
         marginBottom: spacing.xxxl,
-        color: colors.logoMain,
+        color: colors.textPrimary,
         lineHeight: 22,
         textAlign: "center",
     },
@@ -210,7 +210,7 @@ export const globalStyles = StyleSheet.create({
     },
     detailLabel: {
         fontWeight: "700",
-        color: colors.logoMain,
+        color: colors.textPrimary,
         width: 135,
         fontSize: 16,
         marginTop: 2,
