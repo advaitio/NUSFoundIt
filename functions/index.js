@@ -1,7 +1,8 @@
 const {setGlobalOptions} = require("firebase-functions/v2");
 const {onDocumentCreated} = require("firebase-functions/v2/firestore");
 const logger = require("firebase-functions/logger");
-const admin = requre("firebase-admin");
+const admin = require("firebase-admin");
+const venuesData = require("./venuesCopy.json");
 
 admin.initializeApp();
 
@@ -128,21 +129,35 @@ exports.notifyItem = onDocumentCreated("foundItems/{itemId}", async (event) => {
         for (const document of lostItemsInstance.docs) {
             const lostItem = document.data();
 
-            if (!lostItem.telegramChatId || !isMatchableStatus(lostItem.status)) {
+            if (!lostItem.telegramChatId) {
+                continue;
+            }
+
+            if (!isMatchableStatus(lostItem.status)) {
                 continue;
             }
 
             const score = getMatchScore(newFoundItem, lostItem);
             const threshold = Number(lostItem.alertThreshold) || 4;
+
+            if (score >= threshold) {
+                const message =
+                `NUSFoundIt Match Alert!\n\nA newly reported found item ("${newFoundItem.itemName || "Item"}") matches your lost report with a Match Score of ${score}!\nCategory: ${newFoundItem.category || "N/A"}\nLocation: ${newFoundItem.locationFound || "N/A"}\nDate: ${newFoundItem.dateFound || "N/A"}\nOpen the NUSFoundIt app to view the details and contact the finder!`;
+
+                const response = await fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({chat_id: lostItem.telegramChatId, text: message})
+                });
+
+                if (response.ok) {
+                    logger.info(`Notified Chat ID: ${lostItem.telegramChatId} (Score: ${score}`);
+                } else {
+                    logger.error("Telegram delivery failed");
+                }
+            }
         }
     } catch (error) {
         logger.error("Error processing Telegram notifications:", error);
     }
 });
-// Create and deploy your first functions
-// https://firebase.google.com/docs/functions/get-started
-
-// exports.helloWorld = onRequest((request, response) => {
-//   logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });

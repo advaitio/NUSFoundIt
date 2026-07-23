@@ -169,11 +169,11 @@ export default function ItemDetails() {
         setIsSavingAlert(true);
         try {
             const collectionName = type === "lost" ? "lostItems" : "foundItems";
-            await updateDoc(doc(db, collectionName, id), {telegramChatID: telegramID, alertThreshold: parseInt(threshold) || 40});
+            await updateDoc(doc(db, collectionName, id), {telegramChatId: telegramID, alertThreshold: parseInt(threshold) || 40});
             Alert.alert("Success", "Telegram alerts enabled!");
         } catch (error) {
-            console.error("Error saving alerts");
-            Alert.alert("Error", "Could not save alert settings. ");
+            console.error("Error saving alerts:", error);
+            Alert.alert("Error", "Could not save alert settings");
         } finally {
             setIsSavingAlert(false);
         }
