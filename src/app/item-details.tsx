@@ -1,5 +1,5 @@
 import { Link, Stack, useLocalSearchParams } from "expo-router";
-import { collection, doc, getDoc, getDocs, orderBy, query, updateDoc } from "firebase/firestore";
+import { collection, deleteField, doc, getDoc, getDocs, orderBy, query, updateDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, Alert, Image, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { db } from "../firebase/firebaseConfig";
@@ -43,8 +43,8 @@ export default function ItemDetails() {
     const [errorMessage, setErrorMessage] = useState("");
     const [imageRatio, setImageRatio] = useState(1);
 
-    const [telegramID, setTelegramID] = useState("");
-    const [threshold, setThreshold] = useState("40");
+    const [telegramId, setTelegramId] = useState("");
+    const [threshold, setThreshold] = useState("");
     const [isSavingAlert, setIsSavingAlert] = useState(false);
 
     // Fetch item details and possible matches (if it's a lost item) when the component mounts
@@ -161,7 +161,12 @@ export default function ItemDetails() {
     }, [item]);
 
     const saveAlertSettings = async () => {
-        if (!telegramID) {
+        if (!telegramId) {
+            Alert.alert("Error", "Please enter your Telegram account ID.")
+            return;
+        }
+
+        if (!threshold) {
             Alert.alert("Error", "Please enter your Telegram account ID.")
             return;
         }
@@ -169,11 +174,26 @@ export default function ItemDetails() {
         setIsSavingAlert(true);
         try {
             const collectionName = type === "lost" ? "lostItems" : "foundItems";
-            await updateDoc(doc(db, collectionName, id), {telegramChatId: telegramID, alertThreshold: parseInt(threshold) || 40});
+            await updateDoc(doc(db, collectionName, id), {telegramChatId: telegramId, alertThreshold: parseInt(threshold)});
             Alert.alert("Success", "Telegram alerts enabled!");
         } catch (error) {
             console.error("Error saving alerts:", error);
             Alert.alert("Error", "Could not save alert settings");
+        } finally {
+            setIsSavingAlert(false);
+        }
+    };
+
+    const disableAlerts = async () => {
+        setIsSavingAlert(true);
+        try {
+            const collectionName = type === "lost" ? "lostItems" : "foundItems";
+            await updateDoc(doc(db, collectionName, id), {telegramChatId: deleteField(), alertThreshold: deleteField()});
+            setTelegramId("");
+            setThreshold("");
+            Alert.alert("Success", "Match Alerts have been successfully disabled for this item.");
+        } catch {
+            console.error("Error", "could not disable Match Alerts.")
         } finally {
             setIsSavingAlert(false);
         }
@@ -244,8 +264,8 @@ export default function ItemDetails() {
                         style={globalStyles.input}
                         placeholder="Paste your Telegram Chat ID"
                         placeholderTextColor={colors.placeholder}
-                        value={telegramID}
-                        onChangeText={setTelegramID}
+                        value={telegramId}
+                        onChangeText={setTelegramId}
                         keyboardType="number-pad"/>
                     
                     <TextInput
