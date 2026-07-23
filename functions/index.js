@@ -142,7 +142,7 @@ exports.notifyItem = onDocumentCreated("foundItems/{itemId}", async (event) => {
 
             if (score >= threshold) {
                 const message =
-                `NUSFoundIt Match Alert!\n\nA newly reported found item ("${newFoundItem.itemName || "Item"}") matches your lost report with a Match Score of ${score}!\nCategory: ${newFoundItem.category || "N/A"}\nLocation: ${newFoundItem.locationFound || "N/A"}\nDate: ${newFoundItem.dateFound || "N/A"}\nOpen the NUSFoundIt app to view the details and contact the finder!`;
+                `**🔴 NUSFoundIt Match Alert! 🔴**\n\n__A newly reported item ("${newFoundItem.itemName || "Item"}") matches your report with a Match Score of **${score}**__!\n\n• **Category:** ${newFoundItem.category || "N/A"}\n• **Location:** ${newFoundItem.locationFound || "N/A"}\n• **Date:** ${newFoundItem.dateFound || "N/A"}\n\nOpen the NUSFoundIt app to view more details and contact the finder! __(If you wish to opt out, go back to the same item report and disable Match Alerts.)__`;
 
                 const response = await fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
                     method: "POST",
