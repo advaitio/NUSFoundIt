@@ -1,7 +1,7 @@
 import { Link, Stack, useLocalSearchParams } from "expo-router";
 import { collection, doc, getDoc, getDocs, orderBy, query, updateDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, Alert, Image, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Alert, Image, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { db } from "../firebase/firebaseConfig";
 import { colors, globalStyles, spacing } from "../styles/globalStyles";
 import { FoundItem, LostItem, MatchedFoundItem, MatchedLostItem } from "../types/items";
@@ -163,6 +163,7 @@ export default function ItemDetails() {
     const saveAlertSettings = async () => {
         if (!telegramID) {
             Alert.alert("Error", "Please enter your Telegram account ID.")
+            return;
         }
 
         setIsSavingAlert(true);
@@ -231,6 +232,36 @@ export default function ItemDetails() {
                             </View>
                         )}
                     </View>
+                </View>
+
+                <View style={globalStyles.card}>
+                    <Text style={styles.heading}>Telegram Match Alerts</Text>
+                    <Text style={globalStyles.subtitle}>Get notified instantly when a new report matches this item.</Text>
+                    <Text style={styles.contactLabel}>1. Start our bot on Telegram: @NUSFoundIt_Alerts</Text>
+                    <Text style={[styles.contactLabel, {marginBottom: 15}]}>2. Search for @userinfobot on Telegram to copy your Chat ID.</Text>
+
+                    <TextInput
+                        style={globalStyles.input}
+                        placeholder="Paste your Telegram Chat ID"
+                        placeholderTextColor={colors.placeholder}
+                        value={telegramID}
+                        onChangeText={setTelegramID}
+                        keyboardType="number-pad"/>
+                    
+                    <TextInput
+                        style={globalStyles.input}
+                        placeholder="Minimum Match Score (e.g. 40)"
+                        placeholderTextColor={colors.placeholder}
+                        value={threshold}
+                        onChangeText={setThreshold}
+                        keyboardType="number-pad"
+                        maxLength={3}/>
+                    
+                    <Pressable
+                        style={[globalStyles.buttonContainer]}
+                        onPress={saveAlertSettings}>
+                        <Text style={styles.buttonText}>{isSavingAlert ? "Saving..." : "Enable Alerts"}</Text>
+                    </Pressable>
                 </View>
 
                 {/* render possible matches for lost/found items */}
