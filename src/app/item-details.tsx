@@ -1,7 +1,7 @@
 import { Link, Stack, useLocalSearchParams } from "expo-router";
-import { collection, doc, getDoc, getDocs, orderBy, query } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, orderBy, query, updateDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, Image, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Alert, Image, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { db } from "../firebase/firebaseConfig";
 import { colors, globalStyles, spacing } from "../styles/globalStyles";
 import { FoundItem, LostItem, MatchedFoundItem, MatchedLostItem } from "../types/items";
@@ -159,6 +159,24 @@ export default function ItemDetails() {
             });
         }
     }, [item]);
+
+    const saveAlertSettings = async () => {
+        if (!telegramID) {
+            Alert.alert("Error", "Please enter your Telegram account ID.")
+        }
+
+        setIsSavingAlert(true);
+        try {
+            const collectionName = type === "lost" ? "lostItems" : "foundItems";
+            await updateDoc(doc(db, collectionName, id), {telegramChatID: telegramID, alertThreshold: parseInt(threshold) || 40});
+            Alert.alert("Success", "Telegram alerts enabled!");
+        } catch (error) {
+            console.error("Error saving alerts");
+            Alert.alert("Error", "Could not save alert settings. ");
+        } finally {
+            setIsSavingAlert(false);
+        }
+    };
 
     // Render loading state, error state, or item details with possible matches
     if (loading) {
