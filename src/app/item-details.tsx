@@ -438,4 +438,15 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         letterSpacing: 1,
     },
+    contactLabel: {
+        fontWeight: "bold",
+        color: colors.textPrimary,
+        marginBottom: 6,
+        fontSize: 14,
+    },
+    buttonText: {
+        color: "#ffffff",
+        fontSize: 16,
+        fontWeight: "bold",
+    },
 })
