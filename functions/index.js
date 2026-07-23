@@ -113,6 +113,32 @@ function getMatchScore(foundItem, lostItem) {
     return score;
 }
 
+
+exports.notifyItem = onDocumentCreated("foundItems/{itemId}", async (event) => {
+    const instance = event.data;
+    if (!instance) {
+        return;
+    }
+
+    const newFoundItem = instance.data();
+    const newItemId = event.params.itemId;
+
+    try {
+        const lostItemsInstance = await admin.firestore().collection("lostItems").get();
+        for (const document of lostItemsInstance.docs) {
+            const lostItem = document.data();
+
+            if (!lostItem.telegramChatId || !isMatchableStatus(lostItem.status)) {
+                continue;
+            }
+
+            const score = getMatchScore(newFoundItem, lostItem);
+            const threshold = Number(lostItem.alertThreshold) || 4;
+        }
+    } catch (error) {
+        logger.error("Error processing Telegram notifications:", error);
+    }
+});
 // Create and deploy your first functions
 // https://firebase.google.com/docs/functions/get-started
 
