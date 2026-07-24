@@ -187,14 +187,19 @@ export default function ItemDetails() {
         try {
             const collectionName = type === "lost" ? "lostItems" : "foundItems";
             await updateDoc(doc(db, collectionName, id), {[`telegramAlerts.${telegramId}`]: parseInt(threshold)});
-            Alert.alert("Success", "Telegram alerts enabled!");
+            if (Platform.OS === "web") {
+                // Alert does not work on web interface, had to use the native alert() to implement deployment
+                alert("Success\nTelegram alerts enabled!");
+            } else {
+                Alert.alert("Success\n", "Telegram alerts enabled!");
+            }
         } catch (error) {
             console.error("Error saving alerts:", error);
             Alert.alert("Error", "Could not save alert settings");
         } finally {
             setIsSavingAlert(false);
         }
-
+        
         setTelegramId("");
         setThreshold("");
     };
@@ -216,7 +221,12 @@ export default function ItemDetails() {
             await updateDoc(doc(db, collectionName, id), {[`telegramAlerts.${telegramId}`]: deleteField()});
             setTelegramId("");
             setThreshold("");
-            Alert.alert("Success", "Match Alerts have been successfully disabled for this item.");
+            if (Platform.OS === "web") {
+                // Alert does not work on web interface, had to use the native alert() to implement deployment
+                alert("Success\nMatch Alerts have been successfully disabled for this item.");
+            } else {
+                Alert.alert("Success\n", "Match Alerts have been successfully disabled for this item.");
+            }
         } catch {
             console.error("Error", "could not disable Match Alerts.")
         } finally {
