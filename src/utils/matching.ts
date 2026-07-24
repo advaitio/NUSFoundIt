@@ -59,13 +59,17 @@ function isMatchableStatus(status?: string): boolean {
     return normalizedStatus === "active" || normalizedStatus === "claimed";
 }
 
+// create case insensitive lookup from venue name to venue category
+const venueCategoryByName = new Map<string, string | null>(
+    Object.entries(venuesData).map(([name, venue]) => [
+        normalize(name),
+        venue.category ?? null,
+    ])
+);
+
 // gets category of venue based on location
 function getVenueCategory(location: string): string | null {
-    if (location in venuesData) {
-        const venue = venuesData[location as keyof typeof venuesData];
-        return venue.category ?? null;
-    }
-    return null; // location not found
+    return venueCategoryByName.get(normalize(location)) ?? null;
 }
 
 // 3pts for matching categories

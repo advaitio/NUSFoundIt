@@ -132,7 +132,7 @@ export default function HomeScreen() {
               <>
                 <Text style={[styles.modalTitle, {color: colors.logoAccent}]}>Quick reporting tips</Text>
                 <Text style={[styles.modalBody, {color: colors.logoAccent}]}>- Add a clear photo where possible.</Text>
-                <Text style={[styles.modalBody, {color: colors.logoAccent}]}>- Use specific locations, such as "COM1 Level 2" instead of just "NUS".</Text>
+                <Text style={[styles.modalBody, {color: colors.logoAccent}]}>{'- Use specific locations, such as "COM1 Level 2" instead of just "NUS".'}</Text>
                 <Text style={[styles.modalBody, {color: colors.logoAccent}]}>- Include useful keywords like brand, color, size, and unique markings.</Text>
                 <Text style={[styles.modalBody, {color: colors.logoAccent}]}>- Provide a reliable way to contact you (email & phone number).</Text>
               </>

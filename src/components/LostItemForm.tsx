@@ -1,6 +1,5 @@
 import DateTimePicker, { DateTimePickerEvent } from "@react-native-community/datetimepicker";
 import * as ImagePicker from "expo-image-picker";
-import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Alert, Button, Image, Keyboard, Platform, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
@@ -15,7 +14,6 @@ import venuesData from "../constants/venues.json";
 
 //navigation functions
 export default function LostItemForm() {
-    const router = useRouter();
     // state variables for the form fields
     const [itemName, setItemName] = useState("");
     const [category, setCategory] = useState<string | null>(null);
@@ -105,7 +103,7 @@ export default function LostItemForm() {
             return;
         }
         //validation for non-empty fields
-        if (!itemName || !category || !description || !dateLost || !email || !phoneNumber) {
+        if (!itemName.trim() || !category || !description.trim() || !locationLost.trim() || !dateLost || !email.trim() || !phoneNumber) {
             if (Platform.OS === "web") {
                 alert("Error\nPlease fill in all required fields.");
             } else {
@@ -128,7 +126,7 @@ export default function LostItemForm() {
 
                     await uploadBytes(imageRef, blob)
                     uploadLink = await getDownloadURL(imageRef);
-                } catch (imageError) {
+                } catch {
                     Alert.alert("Upload Error", "Failed to upload the image to the server.");
                     setLoading(false);
                     return;
