@@ -1,7 +1,7 @@
 import { Link, Stack, useLocalSearchParams } from "expo-router";
 import { collection, deleteField, doc, getDoc, getDocs, orderBy, query, updateDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, Alert, Image, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { ActivityIndicator, Alert, Image, Linking, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { db } from "../firebase/firebaseConfig";
 import { colors, globalStyles, spacing } from "../styles/globalStyles";
 import { FoundItem, LostItem, MatchedFoundItem, MatchedLostItem } from "../types/items";
@@ -262,8 +262,8 @@ export default function ItemDetails() {
                 <View style={globalStyles.card}>
                     <Text style={styles.heading}>Telegram Match Alerts</Text>
                     <Text style={globalStyles.subtitle}>Get notified instantly when a new report matches this item.</Text>
-                    <Text style={styles.contactLabel}>1. Start our bot on Telegram: @NUSFoundIt_Alerts</Text>
-                    <Text style={styles.contactLabel}>2. Search for @userinfobot on Telegram to copy your Chat ID.</Text>
+                    <Text style={styles.contactLabel}>1. Start our bot on Telegram: <Text style={{color: colors.logoAccent, fontWeight: "bold", textDecorationLine: "underline"}} onPress={() => Linking.openURL("https://t.me/NUSFoundIt_Bot")}>@NUSFoundIt_Alerts</Text></Text>
+                    <Text style={styles.contactLabel}>2. Copy your Telegram Chat ID from <Text style={{color: colors.logoAccent, fontWeight: "bold", textDecorationLine: "underline"}} onPress={() => Linking.openURL("https://t.me/userinfobot")}>@userinfobot</Text>.</Text>
                     <Text style={[styles.contactLabel, {marginBottom: 15}]}>3. Enter your desired minimum match score. Chat ID is required to enable and disable alerts.</Text>
 
                     <TextInput

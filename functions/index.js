@@ -140,19 +140,22 @@ exports.notifyItem = onDocumentCreated("foundItems/{itemId}", async (event) => {
                 const threshold = Number(alertsMap[chatId]);
                 if (score >= threshold) {
                     const message =
-                    `**🔴 NUSFoundIt Match Alert! 🔴**\n\n
-                    __A newly reported item ("${newFoundItem.itemName || "Item"}") matches your report with a Match Score of **${score}**__!\n\n
-                    • **Category:** ${newFoundItem.category || "N/A"}\n
-                    • **Location:** ${newFoundItem.locationFound || "N/A"}\n
-                    • **Date:** ${newFoundItem.dateFound || "N/A"}\n\n
-                    Open the NUSFoundIt app to view more details and contact the finder! __(If you wish to opt out, go back to the same item report and disable Match Alerts.)__`;
+`<b>🔴 NUSFoundIt Match Alert! 🔴</b>
 
-                    fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({chat_id: lostItem.telegramChatId, text: message})
+A newly reported item <i>"${newFoundItem.itemName || "Item"}"</i> matches your report with a <b>Match Score of ${score}</b>!
+
+• <b>Category:</b> ${newFoundItem.category || "N/A"}
+• <b>Location:</b> ${newFoundItem.locationFound || "N/A"}
+• <b>Date:</b> ${newFoundItem.dateFound || "N/A"}
+
+Open the NUSFoundIt app to view more details and contact the finder! <i>(If you wish to opt out of Match Alerts, go back to the same item report and disable Match Alerts.)</i>`;
+
+                    fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({chat_id: chatId, text: message, parse_mode: "HTML"})
                     }).then(async (response) => {
                         if (response.ok) {
-                            logger.info(`Notified Chat ID: ${lostItem.telegramChatId} (Score: ${score}`);
+                            logger.info(`Notified Chat ID: ${chatId} (Score: ${score}`);
                         } else {
-                            logger.error("Telegram delivery failed");
+                            logger.error(`Telegram delivery failed for ${chatId}`);
                         }
                     }).catch(error => logger.error(`Error sending to ${chatId}`));
                 }
