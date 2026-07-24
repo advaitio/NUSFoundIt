@@ -105,7 +105,7 @@ export default function FoundItemForm() {
             return;
         }
         //validation for non-empty fields
-        if (!itemName || !category || !description || !locationFound || !dateFound || !email || !phoneNumber) {
+        if (!itemName.trim() || !category || !description.trim() || !locationFound.trim() || !dateFound || !email.trim() || !phoneNumber) {
             // Alert does not on web interface, had to use native alert() for deployment to work. 
             if (Platform.OS === "web") {
                 alert("Error\nPlease fill in all required fields.");
@@ -118,13 +118,21 @@ export default function FoundItemForm() {
         if (telegramId || threshold) {
             if (!telegramId) {
                 const message = "Please enter your Telegram Chat ID to receive alerts.";
-                Platform.OS === "web" ? alert("Error\n" + message) : Alert.alert("Error\n", message);
+                if (Platform.OS === "web") {
+                    alert("Error\n" + message);
+                } else {
+                    Alert.alert("Error\n", message);
+                }
                 return;
             }
 
             if (!threshold) {
                 const message = "Please enter a Minimum Match Score for the alerts.";
-                Platform.OS === "web" ? alert("Error\n" + message) : Alert.alert("Error\n", message);
+                if (Platform.OS === "web") {
+                    alert("Error\n" + message);
+                } else {
+                    Alert.alert("Error\n", message);
+                }
                 return;
             }
         }
@@ -142,7 +150,7 @@ export default function FoundItemForm() {
 
                     await uploadBytes(imageRef, blob)
                     uploadLink = await getDownloadURL(imageRef);
-                } catch (error) {
+                } catch {
                     Alert.alert("Upload Error", "Failed to upload the image to the server.");
                     setLoading(false);
                     return;

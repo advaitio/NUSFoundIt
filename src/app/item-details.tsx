@@ -272,7 +272,7 @@ export default function ItemDetails() {
                     </View>
 
                     <View style={[globalStyles.card, styles.alertsDropdown, {paddingBottom: 0}]}>
-                        <Pressable style={[styles.alertsHeader, showAlertsDropdown && {marginBottom: 0}]} onPress={() => {setShowAlertsDropdown(!showAlertsDropdown), setFocusedField(null)}}>
+                        <Pressable style={[styles.alertsHeader, showAlertsDropdown && {marginBottom: 0}]} onPress={() => {setShowAlertsDropdown(!showAlertsDropdown); setFocusedField(null)}}>
                             <View style={{flexDirection: "row", alignItems: "center", gap: 15}}>
                                 <Image
                                     source={require("../../assets/images/telegram.png")} 

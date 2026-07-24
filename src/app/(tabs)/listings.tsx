@@ -11,7 +11,6 @@ import { colors, DateStyles, globalStyles, PopupStyles, spacing } from "../../st
 export default function ListingsScreen() {
     // state variable to track which tab is currently selected (found or lost)
     const [selectedTab, setSelectedTab] = useState<"found" | "lost">("found");
-    const [resetKey] = useState(0);
     const [searchQuery, setSearchQuery] = useState("");
     const [filterModalVisible, setFilterModalVisible] = useState(false);
 
@@ -216,7 +215,6 @@ export default function ListingsScreen() {
                     {/* render the appropriate listings based on which tab is selected */}
                     {selectedTab === "found" ? (
                         <FoundItemsList
-                            key={`listings-found-${resetKey}`}
                             searchQuery={searchQuery}
                             categoryFilter={activeCategory}
                             locationFilter={activeLocation}
@@ -225,7 +223,6 @@ export default function ListingsScreen() {
                         />
                     ) : (
                         <LostItemsList
-                            key={`listings-lost-${resetKey}`}
                             searchQuery={searchQuery}
                             categoryFilter={activeCategory}
                             locationFilter={activeLocation}

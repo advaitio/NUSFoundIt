@@ -107,7 +107,7 @@ export default function LostItemForm() {
             return;
         }
         //validation for non-empty fields
-        if (!itemName || !category || !description || !dateLost || !email || !phoneNumber) {
+        if (!itemName.trim() || !category || !description.trim() || !locationLost.trim() || !dateLost || !email.trim() || !phoneNumber) {
             if (Platform.OS === "web") {
                 alert("Error\nPlease fill in all required fields.");
             } else {
@@ -119,13 +119,21 @@ export default function LostItemForm() {
         if (telegramId || threshold) {
             if (!telegramId) {
                 const message = "Please enter your Telegram Chat ID to receive alerts.";
-                Platform.OS === "web" ? alert("Error\n" + message) : Alert.alert("Error\n", message);
+                if (Platform.OS === "web") {
+                    alert("Error\n" + message);
+                } else {
+                    Alert.alert("Error\n", message);
+                }
                 return;
             }
 
             if (!threshold) {
                 const message = "Please enter a Minimum Match Score for the alerts.";
-                Platform.OS === "web" ? alert("Error\n" + message) : Alert.alert("Error\n", message);
+                if (Platform.OS === "web") {
+                    alert("Error\n" + message);
+                } else {
+                    Alert.alert("Error\n", message);
+                }
                 return;
             }
         }
@@ -144,8 +152,8 @@ export default function LostItemForm() {
 
                     await uploadBytes(imageRef, blob)
                     uploadLink = await getDownloadURL(imageRef);
-                } catch (error) {
-                    Alert.alert("Upload Error", "Failed to upload the image to the server.");
+                } catch {
+                    Alert.alert("Upload Error", "Failed to upload the image to the server:");
                     setLoading(false);
                     return;
                 }
