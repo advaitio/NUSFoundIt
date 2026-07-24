@@ -1,7 +1,7 @@
 import { Link, Stack, useLocalSearchParams } from "expo-router";
 import { collection, deleteField, doc, getDoc, getDocs, orderBy, query, updateDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, Alert, Image, Linking, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { ActivityIndicator, Alert, Image, KeyboardAvoidingView, Linking, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { db } from "../firebase/firebaseConfig";
 import { colors, globalStyles, spacing } from "../styles/globalStyles";
 import { FoundItem, LostItem, MatchedFoundItem, MatchedLostItem } from "../types/items";
@@ -247,139 +247,142 @@ export default function ItemDetails() {
                     title: isLostItem ? "Lost Item Details" : "Found Item Details",
                 }}
             />
+            <KeyboardAvoidingView
+                behavior={Platform.OS === "ios" ? "padding" : "height"}
+                keyboardVerticalOffset={focusedField ? 100 : 0}
+                style={{ flex: 1, backgroundColor: colors.background }}>
+                <ScrollView style={globalStyles.screen} contentContainerStyle={styles.content}>
+                    <View style={globalStyles.card}>
+                        <Text style={styles.heading}>{item.itemName}</Text>
 
-            <ScrollView style={globalStyles.screen} contentContainerStyle={styles.content}>
-                <View style={globalStyles.card}>
-                    <Text style={styles.heading}>{item.itemName}</Text>
+                        <DetailRow label="Category" value={item.category} />
+                        <DetailRow label={isLostItem ? "Location Lost" : "Location Found"} value={location} />
+                        <DetailRow label={isLostItem ? "Date Lost" : "Date Found"} value={date} />
+                        <DetailRow label="Description" value={item.description} />
+                        <DetailRow label="Contact Email" value={item.contactEmail} />
+                        <DetailRow label="Phone Number" value={item.contactPhoneNumber} />
+                        <View style={styles.imageBox}>
+                            <Image source={item.imageUrl ? {uri: item.imageUrl} : getPlaceholderImage(item.category)} style={[styles.imageDetails, item.imageUrl ? {aspectRatio: imageRatio} : {height: 400, resizeMode: "contain", opacity: 0.4}]}/>
+                            {!item.imageUrl && (
+                                <View style={styles.placeholderBadge}>
+                                    <Text style={styles.placeholderBadgeText}>NO PHOTO</Text>
+                                </View>
+                            )}
+                        </View>
+                    </View>
 
-                    <DetailRow label="Category" value={item.category} />
-                    <DetailRow label={isLostItem ? "Location Lost" : "Location Found"} value={location} />
-                    <DetailRow label={isLostItem ? "Date Lost" : "Date Found"} value={date} />
-                    <DetailRow label="Description" value={item.description} />
-                    <DetailRow label="Contact Email" value={item.contactEmail} />
-                    <DetailRow label="Phone Number" value={item.contactPhoneNumber} />
-                    <View style={styles.imageBox}>
-                        <Image source={item.imageUrl ? {uri: item.imageUrl} : getPlaceholderImage(item.category)} style={[styles.imageDetails, item.imageUrl ? {aspectRatio: imageRatio} : {height: 400, resizeMode: "contain", opacity: 0.4}]}/>
-                        {!item.imageUrl && (
-                            <View style={styles.placeholderBadge}>
-                                <Text style={styles.placeholderBadgeText}>NO PHOTO</Text>
+                    <View style={[globalStyles.card, styles.alertsDropdown, {paddingBottom: 0}]}>
+                        <Pressable style={[styles.alertsHeader, showAlertsDropdown && {marginBottom: 0}]} onPress={() => {setShowAlertsDropdown(!showAlertsDropdown), setFocusedField(null)}}>
+                            <View style={{flexDirection: "row", alignItems: "center", gap: 15}}>
+                                <Image
+                                    source={require("../../assets/images/telegram.png")} 
+                                    style={{width: 30, height: 30}}/>
+                                <Text style={[styles.heading, {marginTop: 10}]}>Match Alerts</Text>
+                            </View>
+        
+                            <Image 
+                                source={require("../../assets/images/right-arrow.png")} 
+                                style={{width: 30, height: 30, transform: [{rotate: showAlertsDropdown ? "-90deg" : "90deg"}]}}/>
+                        </Pressable>
+
+                        {showAlertsDropdown && (
+                            <View style={styles.alertsBody}>
+                                <Text style={[styles.contactLabel, {fontStyle: "italic", marginBottom: 10, color: colors.textSecondary}]}>Get notified when new reports match this item.</Text>
+                                <Text style={styles.contactLabel}>1. Start our Telegram bot: <Text style={{color: colors.logoAccent, fontWeight: "bold", textDecorationLine: "underline"}} onPress={() => Linking.openURL("https://t.me/NUSFoundIt_Bot")}>@NUSFoundIt_Alerts</Text></Text>
+                                <Text style={styles.contactLabel}>2. Get your Telegram Chat ID from <Text style={{color: colors.logoAccent, fontWeight: "bold", textDecorationLine: "underline"}} onPress={() => Linking.openURL("https://t.me/userinfobot")}>@userinfobot</Text>.</Text>
+                                <Text style={[styles.contactLabel, {marginBottom: 15}]}>3. Enter your desired minimum match score.</Text>
+
+                                <TextInput
+                                    style={[globalStyles.input, focusedField === "telegramId" && {borderColor: colors.textPrimary}]}
+                                    placeholder="Telegram Chat ID"
+                                    placeholderTextColor={colors.placeholder}
+                                    value={telegramId}
+                                    onChangeText={setTelegramId}
+                                    keyboardType="number-pad"
+                                    onFocus={() => {setFocusedField("telegramId");}}
+                                    onBlur={() => setFocusedField(null)}/>
+                                
+                                <TextInput
+                                    style={[globalStyles.input, {marginBottom: 10}, focusedField === "threshold" && {borderColor: colors.textPrimary}]}
+                                    placeholder="Minimum Match Score (e.g. 8)"
+                                    placeholderTextColor={colors.placeholder}
+                                    value={threshold}
+                                    onChangeText={setThreshold}
+                                    keyboardType="number-pad"
+                                    maxLength={3}
+                                    onFocus={() => {setFocusedField("threshold");}}
+                                    onBlur={() => setFocusedField(null)}/>
+                                
+                                <View style={{flexDirection: "row", gap: 10, marginBottom: 15}}>
+                                    <Pressable
+                                        style={[globalStyles.buttonContainer, {flex: 1, backgroundColor: colors.textPrimary}]}
+                                        onPress={saveAlertSettings}>
+                                        <Text style={[styles.buttonText, isSavingAlert && {opacity: 0.4}]}>{isSavingAlert ? "Saving..." : "Enable"}</Text>
+                                    </Pressable>
+
+                                    <Pressable
+                                        style={[globalStyles.buttonContainer, {flex: 1, backgroundColor: colors.textPrimary}]}
+                                        onPress={disableAlerts}>
+                                        <Text style={[styles.buttonText, isSavingAlert && {opacity: 0.4}]}>{isSavingAlert ? "Saving..." : "Disable"}</Text>
+                                    </Pressable>
+                                </View>
                             </View>
                         )}
                     </View>
-                </View>
 
-                <View style={[globalStyles.card, styles.alertsDropdown, {paddingBottom: 0}]}>
-                    <Pressable style={[styles.alertsHeader, showAlertsDropdown && {marginBottom: 0}]} onPress={() => setShowAlertsDropdown(!showAlertsDropdown)}>
-                        <View style={{flexDirection: "row", alignItems: "center", gap: 15}}>
-                            <Image
-                                source={require("../../assets/images/telegram.png")} 
-                                style={{width: 30, height: 30}}/>
-                            <Text style={[styles.heading, {marginTop: 10}]}>Match Alerts</Text>
-                        </View>
-    
-                        <Image 
-                            source={require("../../assets/images/right-arrow.png")} 
-                            style={{width: 25, height: 25, transform: [{rotate: showAlertsDropdown ? "-90deg" : "90deg"}]}}
-                            tintColor={colors.logoMain}/>
-                    </Pressable>
+                    {/* render possible matches for lost/found items */}
+                    <View style={globalStyles.card}>
+                        <Text style={styles.heading}>{isLostItem ? "Possible Found Item Matches" : "Possible Lost Item Matches"}</Text>
+                        {matches.length === 0 ? (
+                            <Text style={globalStyles.placeholderText}>
+                                {isLostItem
+                                    ? "No matching found items yet. Check back later!"
+                                    : "No matching lost item reports yet. Check back later!"}
+                            </Text>
+                        ) : (
+                            matches.map((match) => {
+                                const matchType = isLostItem ? "found" : "lost";
+                                const matchLocation = isLostItem ? (match as FoundItem).locationFound : (match as LostItem).locationLost;
+                                const matchDate = isLostItem ? (match as FoundItem).dateFound : (match as LostItem).dateLost;
 
-                    {showAlertsDropdown && (
-                        <View style={styles.alertsBody}>
-                            <Text style={[styles.contactLabel, {fontStyle: "italic", marginBottom: 10}]}>Get notified when new reports match this item.</Text>
-                            <Text style={styles.contactLabel}>1. Start our Telegram bot: <Text style={{color: colors.logoAccent, fontWeight: "bold", textDecorationLine: "underline"}} onPress={() => Linking.openURL("https://t.me/NUSFoundIt_Bot")}>@NUSFoundIt_Alerts</Text></Text>
-                            <Text style={styles.contactLabel}>2. Get your Telegram Chat ID from <Text style={{color: colors.logoAccent, fontWeight: "bold", textDecorationLine: "underline"}} onPress={() => Linking.openURL("https://t.me/userinfobot")}>@userinfobot</Text>.</Text>
-                            <Text style={[styles.contactLabel, {marginBottom: 15}]}>3. Enter your desired minimum match score.</Text>
+                                return (
+                                    <Link
+                                        key={match.id}
+                                        push
+                                        href={{
+                                            pathname: "/item-details",
+                                            params: { type: matchType, id: match.id },
+                                        }}
+                                        asChild
+                                    >
+                                        <Pressable style={styles.matchCard}>
+                                            <View style={styles.matchHeader}>
+                                                <Text style={styles.matchName}>{match.itemName}</Text>
 
-                            <TextInput
-                                style={[globalStyles.input, focusedField === "telegramId" && {borderColor: colors.logoMain}]}
-                                placeholder="Telegram Chat ID"
-                                placeholderTextColor={colors.placeholder}
-                                value={telegramId}
-                                onChangeText={setTelegramId}
-                                keyboardType="number-pad"
-                                onFocus={() => {setFocusedField("telegramId");}}
-                                onBlur={() => setFocusedField(null)}/>
-                            
-                            <TextInput
-                                style={[globalStyles.input, {marginBottom: 10}, focusedField === "threshold" && {borderColor: colors.logoMain}]}
-                                placeholder="Minimum Match Score (e.g. 8)"
-                                placeholderTextColor={colors.placeholder}
-                                value={threshold}
-                                onChangeText={setThreshold}
-                                keyboardType="number-pad"
-                                maxLength={3}
-                                onFocus={() => {setFocusedField("threshold");}}
-                                onBlur={() => setFocusedField(null)}/>
-                            
-                            <View style={{flexDirection: "row", gap: 10, marginBottom: 15}}>
-                                <Pressable
-                                    style={[globalStyles.buttonContainer, {flex: 1}]}
-                                    onPress={saveAlertSettings}>
-                                    <Text style={[styles.buttonText, isSavingAlert && {opacity: 0.4}]}>{isSavingAlert ? "Saving..." : "Enable"}</Text>
-                                </Pressable>
-
-                                <Pressable
-                                    style={[globalStyles.buttonContainer, {flex: 1}]}
-                                    onPress={disableAlerts}>
-                                    <Text style={[styles.buttonText, isSavingAlert && {opacity: 0.4}]}>{isSavingAlert ? "Saving..." : "Disable"}</Text>
-                                </Pressable>
-                            </View>
-                        </View>
-                    )}
-                </View>
-
-                {/* render possible matches for lost/found items */}
-                <View style={globalStyles.card}>
-                    <Text style={styles.heading}>{isLostItem ? "Possible Found Item Matches" : "Possible Lost Item Matches"}</Text>
-                    {matches.length === 0 ? (
-                        <Text style={globalStyles.placeholderText}>
-                            {isLostItem
-                                ? "No matching found items yet. Check back later!"
-                                : "No matching lost item reports yet. Check back later!"}
-                        </Text>
-                    ) : (
-                        matches.map((match) => {
-                            const matchType = isLostItem ? "found" : "lost";
-                            const matchLocation = isLostItem ? (match as FoundItem).locationFound : (match as LostItem).locationLost;
-                            const matchDate = isLostItem ? (match as FoundItem).dateFound : (match as LostItem).dateLost;
-
-                            return (
-                                <Link
-                                    key={match.id}
-                                    push
-                                    href={{
-                                        pathname: "/item-details",
-                                        params: { type: matchType, id: match.id },
-                                    }}
-                                    asChild
-                                >
-                                    <Pressable style={styles.matchCard}>
-                                        <View style={styles.matchHeader}>
-                                            <Text style={styles.matchName}>{match.itemName}</Text>
-
-                                            <View style={styles.scorePill}>
-                                                <Text style={styles.scorePillText}>Score {match.matchScore}</Text>
+                                                <View style={styles.scorePill}>
+                                                    <Text style={styles.scorePillText}>Score {match.matchScore}</Text>
+                                                </View>
                                             </View>
-                                        </View>
 
-                                        <View style={styles.matchReasonsContainer}>
-                                            <Text style={styles.matchReasonsTitle}>Why this matched:</Text>
-                                            {match.matchReasons.map((reason, index) => (
-                                                <Text key={index} style={styles.matchReasonText}>
-                                                    - {reason.label} ({reason.points > 0 ? "+" : ""}{reason.points}) {/* Display the reason and its points */}
-                                                </Text>
-                                            ))}
-                                        </View>
+                                            <View style={styles.matchReasonsContainer}>
+                                                <Text style={styles.matchReasonsTitle}>Why this matched:</Text>
+                                                {match.matchReasons.map((reason, index) => (
+                                                    <Text key={index} style={styles.matchReasonText}>
+                                                        - {reason.label} ({reason.points > 0 ? "+" : ""}{reason.points}) {/* Display the reason and its points */}
+                                                    </Text>
+                                                ))}
+                                            </View>
 
-                                        <Text style={styles.viewDetailsText}>Tap to view full item details.</Text>
-                                    </Pressable>
-                                </Link>
-                            )
-                        })
-                    )}
-                </View>
+                                            <Text style={styles.viewDetailsText}>Tap to view full item details.</Text>
+                                        </Pressable>
+                                    </Link>
+                                )
+                            })
+                        )}
+                    </View>
 
-            </ScrollView>
+                </ScrollView>
+            </KeyboardAvoidingView>
         </>
     )
 }
