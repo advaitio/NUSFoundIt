@@ -164,12 +164,22 @@ export default function ItemDetails() {
 
     const saveAlertSettings = async () => {
         if (!telegramId) {
-            Alert.alert("Error", "Please enter your Telegram account ID.")
+            const message = "Please enter your Telegram account ID.";
+            if (Platform.OS === "web") {
+                alert("Error\n" + message);
+            } else {
+                Alert.alert("Error\n", message);
+            }
             return;
         }
 
-        if (!threshold) {
-            Alert.alert("Error", "Please enter your Telegram account ID.")
+        if (!telegramId) {
+            const message = "Please enter your minimum Match Score.";
+            if (Platform.OS === "web") {
+                alert("Error\n" + message);
+            } else {
+                Alert.alert("Error\n", message);
+            }
             return;
         }
 
@@ -191,7 +201,12 @@ export default function ItemDetails() {
 
     const disableAlerts = async () => {
         if (!telegramId) {
-            Alert.alert("Error", "Please enter your Telegram account ID.")
+            const message = "Please enter your Telegram account ID.";
+            if (Platform.OS === "web") {
+                alert("Error\n" + message);
+            } else {
+                Alert.alert("Error\n", message);
+            }
             return;
         }
 
