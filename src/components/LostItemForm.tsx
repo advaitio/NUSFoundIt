@@ -105,7 +105,7 @@ export default function LostItemForm() {
             return;
         }
         //validation for non-empty fields
-        if (!itemName || !category || !description || !dateLost || !email || !phoneNumber) {
+        if (!itemName.trim() || !category || !description.trim() || !locationLost.trim() || !dateLost || !email.trim() || !phoneNumber) {
             if (Platform.OS === "web") {
                 alert("Error\nPlease fill in all required fields.");
             } else {
