@@ -174,7 +174,7 @@ export default function ItemDetails() {
         setIsSavingAlert(true);
         try {
             const collectionName = type === "lost" ? "lostItems" : "foundItems";
-            await updateDoc(doc(db, collectionName, id), {telegramChatId: telegramId, alertThreshold: parseInt(threshold)});
+            await updateDoc(doc(db, collectionName, id), {[`telegramAlerts.${telegramId}`]: parseInt(threshold)});
             Alert.alert("Success", "Telegram alerts enabled!");
         } catch (error) {
             console.error("Error saving alerts:", error);
@@ -188,7 +188,7 @@ export default function ItemDetails() {
         setIsSavingAlert(true);
         try {
             const collectionName = type === "lost" ? "lostItems" : "foundItems";
-            await updateDoc(doc(db, collectionName, id), {telegramChatId: deleteField(), alertThreshold: deleteField()});
+            await updateDoc(doc(db, collectionName, id), {[`telegramAlerts.${telegramId}`]: deleteField()});
             setTelegramId("");
             setThreshold("");
             Alert.alert("Success", "Match Alerts have been successfully disabled for this item.");
