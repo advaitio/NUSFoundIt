@@ -5,8 +5,6 @@ import { Alert, Button, Image, Keyboard, Linking, Platform, Pressable, StyleShee
 import { Dropdown } from "react-native-element-dropdown";
 import { colors, DateStyles, globalStyles, ImageStyles, Suggestions } from "../styles/globalStyles";
 
-import { useRouter } from "expo-router";
-
 //Importing of Firebase tools and firebaseConfig file.
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
@@ -15,7 +13,6 @@ import { db, storage } from "../firebase/firebaseConfig";
 import venuesData from "../constants/venues.json";
 //navigation functions
 export default function FoundItemForm() {
-    const router = useRouter();
     // state variables for the form fields
     const [itemName, setItemName] = useState("");
     const [category, setCategory] = useState<string | null>(null);
@@ -145,7 +142,7 @@ export default function FoundItemForm() {
 
                     await uploadBytes(imageRef, blob)
                     uploadLink = await getDownloadURL(imageRef);
-                } catch (imageError) {
+                } catch (error) {
                     Alert.alert("Upload Error", "Failed to upload the image to the server.");
                     setLoading(false);
                     return;

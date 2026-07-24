@@ -11,7 +11,7 @@ import { colors, DateStyles, globalStyles, PopupStyles, spacing } from "../../st
 export default function ListingsScreen() {
     // state variable to track which tab is currently selected (found or lost)
     const [selectedTab, setSelectedTab] = useState<"found" | "lost">("found");
-    const [resetKey, setResetKey] = useState(0);
+    const [resetKey] = useState(0);
     const [searchQuery, setSearchQuery] = useState("");
     const [filterModalVisible, setFilterModalVisible] = useState(false);
 
@@ -68,7 +68,7 @@ export default function ListingsScreen() {
         } else {
             slideAnim.setValue(600);
         }
-    }, [filterModalVisible]);
+    }, [filterModalVisible, slideAnim]);
 
     const closeModal = () => {
         Animated.timing(slideAnim, {
