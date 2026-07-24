@@ -221,9 +221,6 @@ export default function ItemDetails() {
                     ) : (
                         matches.map((match) => {
                             const matchType = isLostItem ? "found" : "lost";
-                            const matchLocation = isLostItem ? (match as FoundItem).locationFound : (match as LostItem).locationLost;
-                            const matchDate = isLostItem ? (match as FoundItem).dateFound : (match as LostItem).dateLost;
-
                             return (
                                 <Link
                                     key={match.id}
