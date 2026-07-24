@@ -477,7 +477,7 @@ const styles = StyleSheet.create({
     },
     contactLabel: {
         fontSize: 15,
-        color: colors.logoMain,
+        color: colors.textPrimary,
         marginBottom: 5,
     }
 });

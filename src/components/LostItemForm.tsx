@@ -382,14 +382,14 @@ export default function LostItemForm() {
                         <Image
                             source={require("../../assets/images/telegram.png")} 
                             style={{width: 25, height: 25}}
-                            tintColor={colors.logoMain}/>
+                            tintColor={colors.logoSecondary}/>
                         <Text style={styles.alertsTitle}>Match Alerts (Optional)</Text>
                     </View>
 
                     <Image 
                         source={require("../../assets/images/right-arrow.png")} 
                         style={{width: 25, height: 25, transform: [{rotate: showAlertsDropdown ? "-90deg" : "90deg"}]}}
-                        tintColor={colors.logoMain}/>
+                        tintColor={colors.logoSecondary}/>
                 </Pressable>
 
                 {showAlertsDropdown && (
@@ -399,7 +399,7 @@ export default function LostItemForm() {
                         <Text style={[styles.contactLabel, {marginBottom: 15}]}>3. Enter your desired minimum match score.</Text>
 
                         <TextInput
-                            style={[globalStyles.input, focusedField === "telegramId" && {borderColor: colors.logoMain}]}
+                            style={[globalStyles.input, focusedField === "telegramId" && {borderColor: colors.logoSecondary}]}
                             placeholder="Telegram Chat ID"
                             placeholderTextColor={colors.placeholder}
                             value={telegramId}
@@ -409,7 +409,7 @@ export default function LostItemForm() {
                             onBlur={() => setFocusedField(null)}/>
 
                         <TextInput
-                            style={[globalStyles.input, focusedField === "threshold" && {borderColor: colors.logoMain}]}
+                            style={[globalStyles.input, focusedField === "threshold" && {borderColor: colors.logoSecondary}]}
                             placeholder="Minimum Match Score (e.g. 8)"
                             placeholderTextColor={colors.placeholder}
                             value={threshold}
@@ -481,14 +481,14 @@ const styles = StyleSheet.create({
     alertsTitle: {
         fontSize: 16,
         fontWeight: "bold",
-        color: colors.logoMain,
+        color: colors.logoSecondary,
     },
     alertsBody: {
         paddingTop: 0,
     },
     contactLabel: {
         fontSize: 15,
-        color: colors.logoMain,
+        color: colors.textPrimary,
         marginBottom: 5,
     },
 });
