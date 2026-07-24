@@ -1,7 +1,7 @@
 import DateTimePicker, { DateTimePickerEvent } from "@react-native-community/datetimepicker";
 import * as ImagePicker from "expo-image-picker";
 import { useState } from "react";
-import { Alert, Button, Image, Keyboard, Platform, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { Alert, Button, Image, Keyboard, Linking, Platform, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import { colors, DateStyles, globalStyles, ImageStyles, Suggestions } from "../styles/globalStyles";
 
@@ -374,6 +374,55 @@ export default function FoundItemForm() {
                 onFocus={() => {setShowSuggestions(false); setFocusedField("phone");}}
                 onBlur={() => setFocusedField(null)}
             />
+
+            <View style={styles.alertsDropdown}>
+                <Pressable style={styles.alertsHeader} onPress={() => setShowAlertsDropdown(!showAlertsDropdown)}>
+                    <Text style={styles.alertsTitle}>Telegram Match Alerts (Optional)</Text>
+                    {!showAlertsDropdown && (
+                        <Image 
+                        source={require("../../assets/images/right-arrow.png")} 
+                        style={{width: 25, height: 25, transform: [{rotate: "-90deg"}]}}
+                        tintColor={colors.logoMain}/>
+                    )}
+
+                    {showAlertsDropdown && (
+                        <Image 
+                        source={require("../../assets/images/right-arrow.png")} 
+                        style={{width: 25, height: 25, transform: [{rotate: "90deg"}]}}
+                        tintColor={colors.logoMain}/>
+                    )}
+                </Pressable>
+
+                {showAlertsDropdown && (
+                    <View style={styles.alertsBody}>
+                        <Text style={styles.contactLabel}>1. Start our Telegram bot: <Text style={{color: colors.logoAccent, fontWeight: "bold", textDecorationLine: "underline"}} onPress={() => Linking.openURL("https://t.me/NUSFoundIt_Bot")}>@NUSFoundIt_Alerts</Text></Text>
+                        <Text style={styles.contactLabel}>2. Get your Telegram Chat ID from <Text style={{color: colors.logoAccent, fontWeight: "bold", textDecorationLine: "underline"}} onPress={() => Linking.openURL("https://t.me/userinfobot")}>@userinfobot</Text>.</Text>
+                        <Text style={[styles.contactLabel, {marginBottom: 15}]}>3. Enter your desired minimum match score.</Text>
+
+                        <TextInput
+                            style={[globalStyles.input, focusedField === "telegramId" && {borderColor: colors.logoMain}]}
+                            placeholder="Telegram Chat ID"
+                            placeholderTextColor={colors.placeholder}
+                            value={telegramId}
+                            onChangeText={setTelegramId}
+                            keyboardType="number-pad"
+                            onFocus={() => { setShowSuggestions(false); setFocusedField("telegramId"); }}
+                            onBlur={() => setFocusedField(null)}/>
+
+                        <TextInput
+                            style={[globalStyles.input, focusedField === "threshold" && {borderColor: colors.logoMain}]}
+                            placeholder="Minimum Match Score (e.g. 8)"
+                            placeholderTextColor={colors.placeholder}
+                            value={threshold}
+                            onChangeText={setThreshold}
+                            keyboardType="number-pad"
+                            maxLength={3}
+                            onFocus={() => { setShowSuggestions(false); setFocusedField("threshold"); }}
+                            onBlur={() => setFocusedField(null)}/>
+                    </View>
+                )}
+            </View>
+
             {!image && (
                 <Pressable style={globalStyles.input} onPress={pickImage}>
                     <Text style={[globalStyles.inputText, {color: image ? colors.textInput : colors.placeholder}]}>
@@ -410,4 +459,27 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: "bold",
     },
+    alertsDropdown: {
+        backgroundColor: colors.surfaceSoft,
+        width: "100%",
+    },
+    alertsHeader: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginBottom: 16,
+    },
+    alertsTitle: {
+        fontSize: 16,
+        fontWeight: "bold",
+        color: colors.logoMain,
+    },
+    alertsBody: {
+        paddingTop: 0,
+    },
+    contactLabel: {
+        fontSize: 15,
+        color: colors.logoMain,
+        marginBottom: 5,
+    }
 });
