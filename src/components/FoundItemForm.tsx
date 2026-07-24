@@ -31,6 +31,10 @@ export default function FoundItemForm() {
     const [loading, setLoading] = useState(false);
     const [focusedField, setFocusedField] = useState<string | null>(null);
 
+    const [showAlertsDropdown, setShowAlertsDropdown] = useState(false);
+    const [telegramId, setTelegramId] = useState("");
+    const [threshold, setThreshold] = useState("");
+
     const categoryData = [
         { label: "ID Card / Matric Card", value: "ID card" },
         { label: "Wallet / Purse", value: "wallet" },
@@ -114,6 +118,19 @@ export default function FoundItemForm() {
             return;
         }
 
+        if (telegramId || threshold) {
+            if (!telegramId) {
+                const message = "Please enter your Telegram Chat ID to receive alerts.";
+                Platform.OS === "web" ? alert("Error\n" + message) : Alert.alert("Error\n", message);
+                return;
+            }
+
+            if (!threshold) {
+                const message = "Please enter a Minimum Match Score for the alerts.";
+                Platform.OS === "web" ? alert("Error\n" + message) : Alert.alert("Error\n", message);
+                return;
+            }
+        }
         // send data to Firestore
         try {
             setLoading(true);
@@ -135,17 +152,23 @@ export default function FoundItemForm() {
                 }
             }
 
-            await addDoc(collection(db, "foundItems"), {
+            const docData: any = {
                 itemName,
                 category,
                 description,
                 locationFound,
-                dateFound: formatDateLabel(dateFound), // convert date to string format
+                dateFound: formatDateLabel(dateFound),
                 contactEmail: email,
                 contactPhoneNumber: phoneNumber,
                 imageUrl: uploadLink,
                 createdAt: serverTimestamp(),
-            });
+            };
+
+            if (telegramId && threshold) {
+                docData.telegramAlerts = {[telegramId]: parseInt(threshold, 10),};
+            }
+
+            await addDoc(collection(db, "foundItems"), docData);
 
             // send user the success alert
             if (Platform.OS === "web") {
@@ -164,6 +187,9 @@ export default function FoundItemForm() {
             setEmail("");
             setPhoneNumber("");
             setImage(null);
+            setTelegramId("");
+            setThreshold("");
+            setShowAlertsDropdown(false);
         
         // general error handling for issues during submission process.
         } catch (error) {

@@ -31,6 +31,10 @@ export default function LostItemForm() {
     const [loading, setLoading] = useState(false);
     const [focusedField, setFocusedField] = useState<string | null>(null);
 
+    const [showAlertsDropdown, setShowAlertsDropdown] = useState(false);
+    const [telegramId, setTelegramId] = useState("");
+    const [threshold, setThreshold] = useState("");
+
     const categoryData = [
         { label: "ID Card / Matric Card", value: "ID card" },
         { label: "Wallet / Purse", value: "wallet" },
@@ -114,6 +118,20 @@ export default function LostItemForm() {
             return;
         }
 
+        if (telegramId || threshold) {
+            if (!telegramId) {
+                const message = "Please enter your Telegram Chat ID to receive alerts.";
+                Platform.OS === "web" ? alert("Error\n" + message) : Alert.alert("Error\n", message);
+                return;
+            }
+
+            if (!threshold) {
+                const message = "Please enter a Minimum Match Score for the alerts.";
+                Platform.OS === "web" ? alert("Error\n" + message) : Alert.alert("Error\n", message);
+                return;
+            }
+        }
+
         // send data to Firestore
         try {
             setLoading(true);
@@ -134,17 +152,24 @@ export default function LostItemForm() {
                     return;
                 }
             }
-            await addDoc(collection(db, "lostItems"), {
+
+            const docData: any = {
                 itemName,
                 category,
                 description,
                 locationLost,
-                dateLost: formatDateLabel(dateLost), // convert date to string format
+                dateFound: formatDateLabel(dateLost),
                 contactEmail: email,
                 contactPhoneNumber: phoneNumber,
-                imageUrl: uploadLink,  
+                imageUrl: uploadLink,
                 createdAt: serverTimestamp(),
-            });
+            };
+
+            if (telegramId && threshold) {
+                docData.telegramAlerts = {[telegramId]: parseInt(threshold, 10),};
+            }
+
+            await addDoc(collection(db, "lostItems"), docData);
 
             // show success message
             if (Platform.OS === "web") {
@@ -163,6 +188,9 @@ export default function LostItemForm() {
             setEmail("");
             setPhoneNumber("");
             setImage(null);
+            setTelegramId("");
+            setThreshold("");
+            setShowAlertsDropdown(false);
         
         // general error handling for issues during submission process.
         } catch (error) {
