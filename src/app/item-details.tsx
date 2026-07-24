@@ -185,6 +185,11 @@ export default function ItemDetails() {
     };
 
     const disableAlerts = async () => {
+        if (!telegramId) {
+            Alert.alert("Error", "Please enter your Telegram account ID.")
+            return;
+        }
+
         setIsSavingAlert(true);
         try {
             const collectionName = type === "lost" ? "lostItems" : "foundItems";
@@ -258,7 +263,8 @@ export default function ItemDetails() {
                     <Text style={styles.heading}>Telegram Match Alerts</Text>
                     <Text style={globalStyles.subtitle}>Get notified instantly when a new report matches this item.</Text>
                     <Text style={styles.contactLabel}>1. Start our bot on Telegram: @NUSFoundIt_Alerts</Text>
-                    <Text style={[styles.contactLabel, {marginBottom: 15}]}>2. Search for @userinfobot on Telegram to copy your Chat ID.</Text>
+                    <Text style={styles.contactLabel}>2. Search for @userinfobot on Telegram to copy your Chat ID.</Text>
+                    <Text style={[styles.contactLabel, {marginBottom: 15}]}>3. Enter your desired minimum match score. Chat ID is required to enable and disable alerts.</Text>
 
                     <TextInput
                         style={globalStyles.input}
