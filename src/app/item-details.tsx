@@ -182,6 +182,9 @@ export default function ItemDetails() {
         } finally {
             setIsSavingAlert(false);
         }
+
+        setTelegramId("");
+        setThreshold("");
     };
 
     const disableAlerts = async () => {
@@ -202,6 +205,9 @@ export default function ItemDetails() {
         } finally {
             setIsSavingAlert(false);
         }
+
+        setTelegramId("");
+        setThreshold("");
     };
 
     // Render loading state, error state, or item details with possible matches

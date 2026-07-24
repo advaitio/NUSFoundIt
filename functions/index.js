@@ -114,15 +114,13 @@ function getMatchScore(foundItem, lostItem) {
     return score;
 }
 
-
-exports.notifyItem = onDocumentCreated("foundItems/{itemId}", async (event) => {
+exports.notifyFoundItem = onDocumentCreated("foundItems/{itemId}", async (event) => {
     const instance = event.data;
     if (!instance) {
         return;
     }
 
     const newFoundItem = instance.data();
-    const newItemId = event.params.itemId;
 
     try {
         const lostItemsInstance = await admin.firestore().collection("lostItems").get();
@@ -142,13 +140,63 @@ exports.notifyItem = onDocumentCreated("foundItems/{itemId}", async (event) => {
                     const message =
 `<b>🔴 NUSFoundIt Match Alert! 🔴</b>
 
-A newly reported item <i>"${newFoundItem.itemName || "Item"}"</i> matches your report with a <b>Match Score of ${score}</b>!
+A newly reported found item <i>"${newFoundItem.itemName || "Item"}"</i> matches your lost item report with a <b>Match Score of ${score}</b>!
 
 • <b>Category:</b> ${newFoundItem.category || "N/A"}
 • <b>Location:</b> ${newFoundItem.locationFound || "N/A"}
 • <b>Date:</b> ${newFoundItem.dateFound || "N/A"}
 
 Open the NUSFoundIt app to view more details and contact the finder! <i>(If you wish to opt out of Match Alerts, go back to the same item report and disable Match Alerts.)</i>`;
+
+                    fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({chat_id: chatId, text: message, parse_mode: "HTML"})
+                    }).then(async (response) => {
+                        if (response.ok) {
+                            logger.info(`Notified Chat ID: ${chatId} (Score: ${score}`);
+                        } else {
+                            logger.error(`Telegram delivery failed for ${chatId}`);
+                        }
+                    }).catch(error => logger.error(`Error sending to ${chatId}`));
+                }
+            }
+        }
+    } catch (error) {
+        logger.error("Error processing Telegram notifications:", error);
+    }
+});
+
+exports.notifyLostItem = onDocumentCreated("lostItems/{itemId}", async (event) => {
+    const instance = event.data;
+    if (!instance) {
+        return;
+    }
+
+    const newLostItem = instance.data();
+
+    try {
+        const foundItemsInstance = await admin.firestore().collection("foundItems").get();
+        for (const document of foundItemsInstance.docs) {
+            const foundItem = document.data();
+            const alertsMap = foundItem.telegramAlerts || {};
+            const subscriberIds = Object.keys(alertsMap);
+            
+            if (subscriberIds.length === 0 || !isMatchableStatus(foundItem.status)) {
+                continue;
+            }
+
+            const score = getMatchScore(foundItem, newLostItem);
+            for (const chatId of subscriberIds) {
+                const threshold = Number(alertsMap[chatId]);
+                if (score >= threshold) {
+                    const message =
+`<b>🔴 NUSFoundIt Match Alert! 🔴</b>
+
+A newly reported lost item <i>"${newLostItem.itemName || "Item"}"</i> matches your found item report with a <b>Match Score of ${score}</b>!
+
+• <b>Category:</b> ${newLostItem.category || "N/A"}
+• <b>Location:</b> ${newLostItem.locationLost || "N/A"}
+• <b>Date:</b> ${newLostItem.dateLost || "N/A"}
+
+Open the NUSFoundIt app to view more details and contact the owner! <i>(If you wish to opt out of Match Alerts, go back to the same item report and disable Match Alerts.)</i>`;
 
                     fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({chat_id: chatId, text: message, parse_mode: "HTML"})
                     }).then(async (response) => {
