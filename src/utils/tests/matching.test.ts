@@ -75,4 +75,26 @@ describe("matching utilities", () => {
             expect(matches[i-1].matchScore).toBeGreaterThanOrEqual(matches[i].matchScore);
         }
     });
+    test("recognises different venues in the same general location group", () => {
+        const lostAtLT17: LostItem = {
+            ...lostItem,
+            itemName: "wallet",
+            description: "leather wallet",
+            locationLost: "LT17",
+        };
+
+        const foundAtLT16: FoundItem = {
+            ...foundItem,
+            itemName: "keys",
+            description: "metal keys",
+            locationFound: "LT16",
+        };
+
+        const result = getMatchDetails(foundAtLT16, lostAtLT17);
+
+        expect(result.reasons).toContainEqual({
+            label: "Same general location group",
+            points: 1,
+        });
+    });
 });
