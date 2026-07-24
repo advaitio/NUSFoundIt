@@ -270,18 +270,26 @@ export default function ItemDetails() {
                     
                     <TextInput
                         style={globalStyles.input}
-                        placeholder="Minimum Match Score (e.g. 40)"
+                        placeholder="Minimum Match Score (e.g. 8)"
                         placeholderTextColor={colors.placeholder}
                         value={threshold}
                         onChangeText={setThreshold}
                         keyboardType="number-pad"
                         maxLength={3}/>
                     
-                    <Pressable
-                        style={[globalStyles.buttonContainer]}
-                        onPress={saveAlertSettings}>
-                        <Text style={styles.buttonText}>{isSavingAlert ? "Saving..." : "Enable Alerts"}</Text>
-                    </Pressable>
+                    <View style={{flexDirection: "row", gap: 10}}>
+                        <Pressable
+                            style={[globalStyles.buttonContainer]}
+                            onPress={saveAlertSettings}>
+                            <Text style={styles.buttonText}>{isSavingAlert ? "Saving..." : "Enable Alerts"}</Text>
+                        </Pressable>
+
+                        <Pressable
+                            style={[globalStyles.buttonContainer]}
+                            onPress={disableAlerts}>
+                            <Text style={styles.buttonText}>Disable</Text>
+                        </Pressable>
+                    </View>
                 </View>
 
                 {/* render possible matches for lost/found items */}
