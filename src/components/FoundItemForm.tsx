@@ -1,7 +1,7 @@
 import DateTimePicker, { DateTimePickerEvent } from "@react-native-community/datetimepicker";
 import * as ImagePicker from "expo-image-picker";
 import { useState } from "react";
-import { Alert, Button, Image, Keyboard, Platform, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { Alert, Button, Image, Keyboard, Linking, Platform, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import { colors, DateStyles, globalStyles, ImageStyles, Suggestions } from "../styles/globalStyles";
 
@@ -27,6 +27,10 @@ export default function FoundItemForm() {
     const [image, setImage] = useState<string | null>(null); //Optional field, might not implement yet.
     const [loading, setLoading] = useState(false);
     const [focusedField, setFocusedField] = useState<string | null>(null);
+
+    const [showAlertsDropdown, setShowAlertsDropdown] = useState(false);
+    const [telegramId, setTelegramId] = useState("");
+    const [threshold, setThreshold] = useState("");
 
     const categoryData = [
         { label: "ID Card / Matric Card", value: "ID card" },
@@ -111,6 +115,27 @@ export default function FoundItemForm() {
             return;
         }
 
+        if (telegramId || threshold) {
+            if (!telegramId) {
+                const message = "Please enter your Telegram Chat ID to receive alerts.";
+                if (Platform.OS === "web") {
+                    alert("Error\n" + message);
+                } else {
+                    Alert.alert("Error\n", message);
+                }
+                return;
+            }
+
+            if (!threshold) {
+                const message = "Please enter a Minimum Match Score for the alerts.";
+                if (Platform.OS === "web") {
+                    alert("Error\n" + message);
+                } else {
+                    Alert.alert("Error\n", message);
+                }
+                return;
+            }
+        }
         // send data to Firestore
         try {
             setLoading(true);
@@ -132,17 +157,23 @@ export default function FoundItemForm() {
                 }
             }
 
-            await addDoc(collection(db, "foundItems"), {
+            const docData: any = {
                 itemName,
                 category,
                 description,
                 locationFound,
-                dateFound: formatDateLabel(dateFound), // convert date to string format
+                dateFound: formatDateLabel(dateFound),
                 contactEmail: email,
                 contactPhoneNumber: phoneNumber,
                 imageUrl: uploadLink,
                 createdAt: serverTimestamp(),
-            });
+            };
+
+            if (telegramId && threshold) {
+                docData.telegramAlerts = {[telegramId]: parseInt(threshold, 10),};
+            }
+
+            await addDoc(collection(db, "foundItems"), docData);
 
             // send user the success alert
             if (Platform.OS === "web") {
@@ -161,6 +192,9 @@ export default function FoundItemForm() {
             setEmail("");
             setPhoneNumber("");
             setImage(null);
+            setTelegramId("");
+            setThreshold("");
+            setShowAlertsDropdown(false);
         
         // general error handling for issues during submission process.
         } catch (error) {
@@ -345,6 +379,54 @@ export default function FoundItemForm() {
                 onFocus={() => {setShowSuggestions(false); setFocusedField("phone");}}
                 onBlur={() => setFocusedField(null)}
             />
+
+            <View style={styles.alertsDropdown}>
+                <Pressable style={styles.alertsHeader} onPress={() => setShowAlertsDropdown(!showAlertsDropdown)}>
+                    <View style={{flexDirection: "row", alignItems: "center", gap: 8}}>
+                        <Image
+                            source={require("../../assets/images/telegram.png")} 
+                            style={{width: 25, height: 25}}
+                            tintColor={colors.logoMain}/>
+                        <Text style={styles.alertsTitle}>Match Alerts (Optional)</Text>
+                    </View>
+
+                    <Image 
+                        source={require("../../assets/images/right-arrow.png")} 
+                        style={{width: 25, height: 25, transform: [{rotate: showAlertsDropdown ? "-90deg" : "90deg"}]}}
+                        tintColor={colors.logoMain}/>
+                </Pressable>
+
+                {showAlertsDropdown && (
+                    <View style={styles.alertsBody}>
+                        <Text style={[styles.contactLabel, {fontStyle: "italic", marginBottom: 10}]}>Get notified when new reports match this item.</Text>
+                        <Text style={styles.contactLabel}>1. Start our Telegram bot: <Text style={{color: colors.logoAccent, fontWeight: "bold", textDecorationLine: "underline"}} onPress={() => Linking.openURL("https://t.me/NUSFoundIt_Bot")}>@NUSFoundIt_Alerts</Text></Text>
+                        <Text style={styles.contactLabel}>2. Get your Telegram Chat ID from <Text style={{color: colors.logoAccent, fontWeight: "bold", textDecorationLine: "underline"}} onPress={() => Linking.openURL("https://t.me/userinfobot")}>@userinfobot</Text>.</Text>
+                        <Text style={[styles.contactLabel, {marginBottom: 15}]}>3. Enter your desired minimum match score.</Text>
+
+                        <TextInput
+                            style={[globalStyles.input, focusedField === "telegramId" && {borderColor: colors.logoMain}]}
+                            placeholder="Telegram Chat ID"
+                            placeholderTextColor={colors.placeholder}
+                            value={telegramId}
+                            onChangeText={setTelegramId}
+                            keyboardType="number-pad"
+                            onFocus={() => { setShowSuggestions(false); setFocusedField("telegramId"); }}
+                            onBlur={() => setFocusedField(null)}/>
+
+                        <TextInput
+                            style={[globalStyles.input, focusedField === "threshold" && {borderColor: colors.logoMain}]}
+                            placeholder="Minimum Match Score (e.g. 8)"
+                            placeholderTextColor={colors.placeholder}
+                            value={threshold}
+                            onChangeText={setThreshold}
+                            keyboardType="number-pad"
+                            maxLength={3}
+                            onFocus={() => { setShowSuggestions(false); setFocusedField("threshold"); }}
+                            onBlur={() => setFocusedField(null)}/>
+                    </View>
+                )}
+            </View>
+
             {!image && (
                 <Pressable style={globalStyles.input} onPress={pickImage}>
                     <Text style={[globalStyles.inputText, {color: image ? colors.textInput : colors.placeholder}]}>
@@ -381,4 +463,27 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: "bold",
     },
+    alertsDropdown: {
+        backgroundColor: colors.surfaceSoft,
+        width: "100%",
+    },
+    alertsHeader: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginBottom: 16,
+    },
+    alertsTitle: {
+        fontSize: 16,
+        fontWeight: "bold",
+        color: colors.logoMain,
+    },
+    alertsBody: {
+        paddingTop: 0,
+    },
+    contactLabel: {
+        fontSize: 15,
+        color: colors.textPrimary,
+        marginBottom: 5,
+    }
 });
