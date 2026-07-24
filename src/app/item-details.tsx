@@ -46,6 +46,8 @@ export default function ItemDetails() {
     const [telegramId, setTelegramId] = useState("");
     const [threshold, setThreshold] = useState("");
     const [isSavingAlert, setIsSavingAlert] = useState(false);
+    const [showAlertsDropdown, setShowAlertsDropdown] = useState(false);
+    const [focusedField, setFocusedField] = useState<string | null>(null);
 
     // Fetch item details and possible matches (if it's a lost item) when the component mounts
     useEffect(() => {
@@ -208,6 +210,7 @@ export default function ItemDetails() {
 
         setTelegramId("");
         setThreshold("");
+        setShowAlertsDropdown(false);
     };
 
     // Render loading state, error state, or item details with possible matches
@@ -265,43 +268,64 @@ export default function ItemDetails() {
                     </View>
                 </View>
 
-                <View style={[globalStyles.card, styles.alertsDropdown]}>
-                    <Text style={styles.heading}>Telegram Match Alerts</Text>
-                    <Text style={globalStyles.subtitle}>Get notified instantly when a new report matches this item.</Text>
-                    <Text style={styles.contactLabel}>1. Start our bot on Telegram: <Text style={{color: colors.logoAccent, fontWeight: "bold", textDecorationLine: "underline"}} onPress={() => Linking.openURL("https://t.me/NUSFoundIt_Bot")}>@NUSFoundIt_Alerts</Text></Text>
-                    <Text style={styles.contactLabel}>2. Copy your Telegram Chat ID from <Text style={{color: colors.logoAccent, fontWeight: "bold", textDecorationLine: "underline"}} onPress={() => Linking.openURL("https://t.me/userinfobot")}>@userinfobot</Text>.</Text>
-                    <Text style={[styles.contactLabel, {marginBottom: 15}]}>3. Enter your desired minimum match score. Chat ID is required to enable and disable alerts.</Text>
+                <View style={[globalStyles.card, styles.alertsDropdown, {paddingBottom: 0}]}>
+                    <Pressable style={[styles.alertsHeader, showAlertsDropdown && {marginBottom: 0}]} onPress={() => setShowAlertsDropdown(!showAlertsDropdown)}>
+                        <View style={{flexDirection: "row", alignItems: "center", gap: 15}}>
+                            <Image
+                                source={require("../../assets/images/telegram.png")} 
+                                style={{width: 30, height: 30}}/>
+                            <Text style={[styles.heading, {marginTop: 10}]}>Match Alerts</Text>
+                        </View>
+    
+                        <Image 
+                            source={require("../../assets/images/right-arrow.png")} 
+                            style={{width: 25, height: 25, transform: [{rotate: showAlertsDropdown ? "-90deg" : "90deg"}]}}
+                            tintColor={colors.logoMain}/>
+                    </Pressable>
 
-                    <TextInput
-                        style={globalStyles.input}
-                        placeholder="Paste your Telegram Chat ID"
-                        placeholderTextColor={colors.placeholder}
-                        value={telegramId}
-                        onChangeText={setTelegramId}
-                        keyboardType="number-pad"/>
-                    
-                    <TextInput
-                        style={globalStyles.input}
-                        placeholder="Minimum Match Score (e.g. 8)"
-                        placeholderTextColor={colors.placeholder}
-                        value={threshold}
-                        onChangeText={setThreshold}
-                        keyboardType="number-pad"
-                        maxLength={3}/>
-                    
-                    <View style={{flexDirection: "row", gap: 10}}>
-                        <Pressable
-                            style={[globalStyles.buttonContainer]}
-                            onPress={saveAlertSettings}>
-                            <Text style={styles.buttonText}>{isSavingAlert ? "Saving..." : "Enable Alerts"}</Text>
-                        </Pressable>
+                    {showAlertsDropdown && (
+                        <View style={styles.alertsBody}>
+                            <Text style={[styles.contactLabel, {fontStyle: "italic", marginBottom: 10}]}>Get notified when new reports match this item.</Text>
+                            <Text style={styles.contactLabel}>1. Start our Telegram bot: <Text style={{color: colors.logoAccent, fontWeight: "bold", textDecorationLine: "underline"}} onPress={() => Linking.openURL("https://t.me/NUSFoundIt_Bot")}>@NUSFoundIt_Alerts</Text></Text>
+                            <Text style={styles.contactLabel}>2. Get your Telegram Chat ID from <Text style={{color: colors.logoAccent, fontWeight: "bold", textDecorationLine: "underline"}} onPress={() => Linking.openURL("https://t.me/userinfobot")}>@userinfobot</Text>.</Text>
+                            <Text style={[styles.contactLabel, {marginBottom: 15}]}>3. Enter your desired minimum match score.</Text>
 
-                        <Pressable
-                            style={[globalStyles.buttonContainer]}
-                            onPress={disableAlerts}>
-                            <Text style={styles.buttonText}>Disable</Text>
-                        </Pressable>
-                    </View>
+                            <TextInput
+                                style={[globalStyles.input, focusedField === "telegramId" && {borderColor: colors.logoMain}]}
+                                placeholder="Telegram Chat ID"
+                                placeholderTextColor={colors.placeholder}
+                                value={telegramId}
+                                onChangeText={setTelegramId}
+                                keyboardType="number-pad"
+                                onFocus={() => {setFocusedField("telegramId");}}
+                                onBlur={() => setFocusedField(null)}/>
+                            
+                            <TextInput
+                                style={[globalStyles.input, {marginBottom: 10}, focusedField === "threshold" && {borderColor: colors.logoMain}]}
+                                placeholder="Minimum Match Score (e.g. 8)"
+                                placeholderTextColor={colors.placeholder}
+                                value={threshold}
+                                onChangeText={setThreshold}
+                                keyboardType="number-pad"
+                                maxLength={3}
+                                onFocus={() => {setFocusedField("threshold");}}
+                                onBlur={() => setFocusedField(null)}/>
+                            
+                            <View style={{flexDirection: "row", gap: 10, marginBottom: 15}}>
+                                <Pressable
+                                    style={[globalStyles.buttonContainer, {flex: 1}]}
+                                    onPress={saveAlertSettings}>
+                                    <Text style={[styles.buttonText, isSavingAlert && {opacity: 0.4}]}>{isSavingAlert ? "Saving..." : "Enable"}</Text>
+                                </Pressable>
+
+                                <Pressable
+                                    style={[globalStyles.buttonContainer, {flex: 1}]}
+                                    onPress={disableAlerts}>
+                                    <Text style={[styles.buttonText, isSavingAlert && {opacity: 0.4}]}>{isSavingAlert ? "Saving..." : "Disable"}</Text>
+                                </Pressable>
+                            </View>
+                        </View>
+                    )}
                 </View>
 
                 {/* render possible matches for lost/found items */}
@@ -482,7 +506,7 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         color: colors.textPrimary,
         marginBottom: 6,
-        fontSize: 14,
+        fontSize: 15,
     },
     buttonText: {
         color: "#ffffff",
