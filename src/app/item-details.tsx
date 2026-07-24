@@ -265,7 +265,7 @@ export default function ItemDetails() {
                     </View>
                 </View>
 
-                <View style={globalStyles.card}>
+                <View style={[globalStyles.card, styles.alertsDropdown]}>
                     <Text style={styles.heading}>Telegram Match Alerts</Text>
                     <Text style={globalStyles.subtitle}>Get notified instantly when a new report matches this item.</Text>
                     <Text style={styles.contactLabel}>1. Start our bot on Telegram: <Text style={{color: colors.logoAccent, fontWeight: "bold", textDecorationLine: "underline"}} onPress={() => Linking.openURL("https://t.me/NUSFoundIt_Bot")}>@NUSFoundIt_Alerts</Text></Text>
@@ -488,5 +488,23 @@ const styles = StyleSheet.create({
         color: "#ffffff",
         fontSize: 16,
         fontWeight: "bold",
+    },
+    alertsDropdown: {
+        backgroundColor: colors.surfaceSoft,
+        width: "100%",
+    },
+    alertsHeader: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginBottom: 16,
+    },
+    alertsTitle: {
+        fontSize: 16,
+        fontWeight: "bold",
+        color: colors.logoMain,
+    },
+    alertsBody: {
+        paddingTop: 0,
     },
 })
