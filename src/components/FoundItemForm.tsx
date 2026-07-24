@@ -377,20 +377,18 @@ export default function FoundItemForm() {
 
             <View style={styles.alertsDropdown}>
                 <Pressable style={styles.alertsHeader} onPress={() => setShowAlertsDropdown(!showAlertsDropdown)}>
-                    <Text style={styles.alertsTitle}>Telegram Match Alerts (Optional)</Text>
-                    {!showAlertsDropdown && (
-                        <Image 
-                        source={require("../../assets/images/right-arrow.png")} 
-                        style={{width: 25, height: 25, transform: [{rotate: "-90deg"}]}}
-                        tintColor={colors.logoMain}/>
-                    )}
+                    <View style={{flexDirection: "row", alignItems: "center", gap: 8}}>
+                        <Image
+                            source={require("../../assets/images/telegram.png")} 
+                            style={{width: 25, height: 25}}
+                            tintColor={colors.logoMain}/>
+                        <Text style={styles.alertsTitle}>Match Alerts (Optional)</Text>
+                    </View>
 
-                    {showAlertsDropdown && (
-                        <Image 
+                    <Image 
                         source={require("../../assets/images/right-arrow.png")} 
-                        style={{width: 25, height: 25, transform: [{rotate: "90deg"}]}}
+                        style={{width: 25, height: 25, transform: [{rotate: showAlertsDropdown ? "-90deg" : "90deg"}]}}
                         tintColor={colors.logoMain}/>
-                    )}
                 </Pressable>
 
                 {showAlertsDropdown && (
