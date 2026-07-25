@@ -111,4 +111,19 @@ describe("matching utilities", () => {
             points: -2,
         })
     });
+    test("excludes matches below the minimum score", () => {
+        const weakMatch: FoundItem = {
+            ...foundItem,
+            id: "weak-match",
+            itemName: "unbrella",
+            category: "Electronics",
+            description: "blue folding umbrella",
+            locationFound: "UTown",
+            dateFound: "30/07/2026",
+        };
+
+        const matches = getPossibleFoundMatches(lostItem, [weakMatch]);
+
+        expect(matches).toHaveLength(0);
+    });
 });
