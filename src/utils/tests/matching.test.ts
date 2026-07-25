@@ -126,4 +126,30 @@ describe("matching utilities", () => {
 
         expect(matches).toHaveLength(0);
     });
+    test("awards 2pts for each shared item-name keyword", () => {
+        const keywordFoundItem: FoundItem = {
+            ...foundItem,
+            itemName: "white laptop charger",
+            category: "Other",
+            description: "unrelated description",
+            locationFound: "UTown",
+            dateFound: "30/07/2026",
+        };
+
+        const keywordLostItem: LostItem = {
+            ...lostItem,
+            itemName: "laptop charger",
+            category: "Electronics",
+            description: "different words",
+            locationLost: "COM3",
+            dateLost: "20/07/2026",
+        };
+
+        const result = getMatchDetails(keywordFoundItem, keywordLostItem);
+
+        expect(result.reasons).toContainEqual({
+            label: "Shared item name keywords",
+            points: 4,
+        });
+    });
 });
