@@ -157,6 +157,9 @@ export default function FoundItemForm() {
                 }
             }
 
+            const expirationDate = new Date();
+            expirationDate.setDate(expirationDate.getDate() + 30);
+
             const docData: any = {
                 itemName,
                 category,
@@ -167,6 +170,7 @@ export default function FoundItemForm() {
                 contactPhoneNumber: phoneNumber,
                 imageUrl: uploadLink,
                 createdAt: serverTimestamp(),
+                expireAt: expirationDate
             };
 
             if (telegramId && threshold) {
