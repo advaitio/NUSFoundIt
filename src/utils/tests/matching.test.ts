@@ -1,3 +1,4 @@
+import { Label } from "expo-router";
 import {
     getMatchDetails,
     getMatchScore,
@@ -96,5 +97,18 @@ describe("matching utilities", () => {
             label: "Same general location group",
             points: 1,
         });
+    });
+    test("penalises an item found before the lost date", () => {
+        const earlyFoundItem: FoundItem = {
+            ...foundItem,
+            dateFound: "19/07/2026",
+        };
+
+        const result = getMatchDetails(earlyFoundItem, lostItem);
+
+        expect(result.reasons).toContainEqual({
+            label: "Found date is before lost date",
+            points: -2,
+        })
     });
 });
