@@ -164,12 +164,22 @@ export default function ItemDetails() {
 
     const saveAlertSettings = async () => {
         if (!telegramId) {
-            Alert.alert("Error", "Please enter your Telegram account ID.")
+            const message = "Please enter your Telegram account ID.";
+            if (Platform.OS === "web") {
+                alert("Error\n" + message);
+            } else {
+                Alert.alert("Error\n", message);
+            }
             return;
         }
 
-        if (!threshold) {
-            Alert.alert("Error", "Please enter your Telegram account ID.")
+        if (!telegramId) {
+            const message = "Please enter your minimum Match Score.";
+            if (Platform.OS === "web") {
+                alert("Error\n" + message);
+            } else {
+                Alert.alert("Error\n", message);
+            }
             return;
         }
 
@@ -177,21 +187,31 @@ export default function ItemDetails() {
         try {
             const collectionName = type === "lost" ? "lostItems" : "foundItems";
             await updateDoc(doc(db, collectionName, id), {[`telegramAlerts.${telegramId}`]: parseInt(threshold)});
-            Alert.alert("Success", "Telegram alerts enabled!");
+            if (Platform.OS === "web") {
+                // Alert does not work on web interface, had to use the native alert() to implement deployment
+                alert("Success\nTelegram alerts enabled!");
+            } else {
+                Alert.alert("Success\n", "Telegram alerts enabled!");
+            }
         } catch (error) {
             console.error("Error saving alerts:", error);
             Alert.alert("Error", "Could not save alert settings");
         } finally {
             setIsSavingAlert(false);
         }
-
+        
         setTelegramId("");
         setThreshold("");
     };
 
     const disableAlerts = async () => {
         if (!telegramId) {
-            Alert.alert("Error", "Please enter your Telegram account ID.")
+            const message = "Please enter your Telegram account ID.";
+            if (Platform.OS === "web") {
+                alert("Error\n" + message);
+            } else {
+                Alert.alert("Error\n", message);
+            }
             return;
         }
 
@@ -201,7 +221,12 @@ export default function ItemDetails() {
             await updateDoc(doc(db, collectionName, id), {[`telegramAlerts.${telegramId}`]: deleteField()});
             setTelegramId("");
             setThreshold("");
-            Alert.alert("Success", "Match Alerts have been successfully disabled for this item.");
+            if (Platform.OS === "web") {
+                // Alert does not work on web interface, had to use the native alert() to implement deployment
+                alert("Success\nMatch Alerts have been successfully disabled for this item.");
+            } else {
+                Alert.alert("Success\n", "Match Alerts have been successfully disabled for this item.");
+            }
         } catch {
             console.error("Error", "could not disable Match Alerts.")
         } finally {
