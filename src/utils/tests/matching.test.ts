@@ -152,4 +152,30 @@ describe("matching utilities", () => {
             points: 4,
         });
     });
+    test("counts repeated keywords only one", () => {
+        const repeatedFoundItem: FoundItem = {
+            ...foundItem,
+            itemName: "charger charger charger",
+            category: "Other",
+            description: "unrelated description",
+            locationFound: "UTown",
+            dateFound: "30/07/2026",
+        };
+
+        const repeatedLostItem: LostItem = {
+            ...lostItem,
+            itemName: "charger",
+            category: "Electronics",
+            description: "different words",
+            locationLost: "COM3",
+            dateLost: "20/07/2026",
+        };
+
+        const result = getMatchDetails(repeatedFoundItem, repeatedLostItem);
+
+        expect(result.reasons).toContainEqual({
+            label: "Shared item name keywords",
+            points: 2,
+        });
+    });
 });
