@@ -70,9 +70,10 @@ describe("matching utilities", () => {
 
         const matches = getPossibleFoundMatches(lostItem, [weakerMatch, foundItem]);
 
-        for (let i = 1; i < matches.length; i++) {
-            expect(matches[i-1].matchScore).toBeGreaterThanOrEqual(matches[i].matchScore);
-        }
+        // both reports pass threshold, stronger comes first, descending scores
+        expect(matches).toHaveLength(2);
+        expect(matches[0].id).toBe("found-1");
+        expect(matches[0].matchScore).toBeGreaterThanOrEqual(matches[1].matchScore);
     });
     test("recognises different venues in the same general location group", () => {
         const lostAtLT17: LostItem = {
