@@ -1,3 +1,4 @@
+import { Label } from "expo-router";
 import {
     getMatchDetails,
     getMatchScore,
@@ -70,9 +71,10 @@ describe("matching utilities", () => {
 
         const matches = getPossibleFoundMatches(lostItem, [weakerMatch, foundItem]);
 
-        for (let i = 1; i < matches.length; i++) {
-            expect(matches[i-1].matchScore).toBeGreaterThanOrEqual(matches[i].matchScore);
-        }
+        // both reports pass threshold, stronger comes first, descending scores
+        expect(matches).toHaveLength(2);
+        expect(matches[0].id).toBe("found-1");
+        expect(matches[0].matchScore).toBeGreaterThanOrEqual(matches[1].matchScore);
     });
     test("recognises different venues in the same general location group", () => {
         const lostAtLT17: LostItem = {
@@ -94,6 +96,86 @@ describe("matching utilities", () => {
         expect(result.reasons).toContainEqual({
             label: "Same general location group",
             points: 1,
+        });
+    });
+    test("penalises an item found before the lost date", () => {
+        const earlyFoundItem: FoundItem = {
+            ...foundItem,
+            dateFound: "19/07/2026",
+        };
+
+        const result = getMatchDetails(earlyFoundItem, lostItem);
+
+        expect(result.reasons).toContainEqual({
+            label: "Found date is before lost date",
+            points: -2,
+        })
+    });
+    test("excludes matches below the minimum score", () => {
+        const weakMatch: FoundItem = {
+            ...foundItem,
+            id: "weak-match",
+            itemName: "unbrella",
+            category: "Electronics",
+            description: "blue folding umbrella",
+            locationFound: "UTown",
+            dateFound: "30/07/2026",
+        };
+
+        const matches = getPossibleFoundMatches(lostItem, [weakMatch]);
+
+        expect(matches).toHaveLength(0);
+    });
+    test("awards 2pts for each shared item-name keyword", () => {
+        const keywordFoundItem: FoundItem = {
+            ...foundItem,
+            itemName: "white laptop charger",
+            category: "Other",
+            description: "unrelated description",
+            locationFound: "UTown",
+            dateFound: "30/07/2026",
+        };
+
+        const keywordLostItem: LostItem = {
+            ...lostItem,
+            itemName: "laptop charger",
+            category: "Electronics",
+            description: "different words",
+            locationLost: "COM3",
+            dateLost: "20/07/2026",
+        };
+
+        const result = getMatchDetails(keywordFoundItem, keywordLostItem);
+
+        expect(result.reasons).toContainEqual({
+            label: "Shared item name keywords",
+            points: 4,
+        });
+    });
+    test("counts repeated keywords only one", () => {
+        const repeatedFoundItem: FoundItem = {
+            ...foundItem,
+            itemName: "charger charger charger",
+            category: "Other",
+            description: "unrelated description",
+            locationFound: "UTown",
+            dateFound: "30/07/2026",
+        };
+
+        const repeatedLostItem: LostItem = {
+            ...lostItem,
+            itemName: "charger",
+            category: "Electronics",
+            description: "different words",
+            locationLost: "COM3",
+            dateLost: "20/07/2026",
+        };
+
+        const result = getMatchDetails(repeatedFoundItem, repeatedLostItem);
+
+        expect(result.reasons).toContainEqual({
+            label: "Shared item name keywords",
+            points: 2,
         });
     });
 });
