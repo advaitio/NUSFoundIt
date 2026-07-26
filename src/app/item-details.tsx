@@ -276,27 +276,27 @@ export default function ItemDetails() {
                 behavior={Platform.OS === "ios" ? "padding" : "height"}
                 keyboardVerticalOffset={focusedField ? 100 : 0}
                 style={{ flex: 1, backgroundColor: colors.background }}>
-                <ScrollView style={globalStyles.screen} contentContainerStyle={styles.content}>
-                    <View style={globalStyles.card}>
-                        <Text style={styles.heading}>{item.itemName}</Text>
-
-                        <DetailRow label="Category" value={item.category} />
-                        <DetailRow label={isLostItem ? "Location Lost" : "Location Found"} value={location} />
-                        <DetailRow label={isLostItem ? "Date Lost" : "Date Found"} value={date} />
-                        <DetailRow label="Description" value={item.description} />
-                        <DetailRow label="Contact Email" value={item.contactEmail} />
-                        <DetailRow label="Phone Number" value={item.contactPhoneNumber} />
-                        <View style={styles.imageBox}>
-                            <Image source={item.imageUrl ? {uri: item.imageUrl} : getPlaceholderImage(item.category)} style={[styles.imageDetails, item.imageUrl ? {aspectRatio: imageRatio} : {height: 400, resizeMode: "contain", opacity: 0.4}]}/>
-                            {!item.imageUrl && (
-                                <View style={styles.placeholderBadge}>
-                                    <Text style={styles.placeholderBadgeText}>NO PHOTO</Text>
-                                </View>
-                            )}
-                        </View>
+                <ScrollView style={[globalStyles.screen, {paddingHorizontal: spacing.xxl}]} contentContainerStyle={styles.content}>
+                    <View style={styles.imageBox}>
+                        <Image source={item.imageUrl ? {uri: item.imageUrl} : getPlaceholderImage(item.category)} style={[styles.imageDetails, item.imageUrl ? {aspectRatio: imageRatio} : {height: 400, resizeMode: "contain", opacity: 0.4}]}/>
+                        {!item.imageUrl && (
+                            <View style={styles.placeholderBadge}>
+                                <Text style={styles.placeholderBadgeText}>NO PHOTO</Text>
+                            </View>
+                        )}
+                    </View>
+                    <View style={{flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingHorizontal: 8}}>
+                        <Text style={[styles.heading, {marginTop: 10}]}>{item.itemName}</Text>
+                        <Text style={{fontSize: 16, fontWeight: "bold"}}>{item.category}</Text>
                     </View>
 
-                    <View style={[globalStyles.card, styles.alertsDropdown, {paddingBottom: 0}]}>
+                    <DetailRow label={isLostItem ? "Location Lost" : "Location Found"} value={location} />
+                    <DetailRow label={isLostItem ? "Date Lost" : "Date Found"} value={date} />
+                    <DetailRow label="Description" value={item.description} />
+                    <DetailRow label="Contact Email" value={item.contactEmail} />
+                    <DetailRow label="Phone Number" value={item.contactPhoneNumber} />
+
+                    <View style={[styles.alertsDropdown, {paddingBottom: 0}]}>
                         <Pressable style={[styles.alertsHeader, showAlertsDropdown && {marginBottom: 0}]} onPress={() => {setShowAlertsDropdown(!showAlertsDropdown); setFocusedField(null)}}>
                             <View style={{flexDirection: "row", alignItems: "center", gap: 15}}>
                                 <Image
@@ -356,7 +356,7 @@ export default function ItemDetails() {
                     </View>
 
                     {/* render possible matches for lost/found items */}
-                    <View style={globalStyles.card}>
+                    <View style={{paddingHorizontal: 8}}>
                         <Text style={styles.heading}>{isLostItem ? "Possible Found Item Matches" : "Possible Lost Item Matches"}</Text>
                         {matches.length === 0 ? (
                             <Text style={globalStyles.placeholderText}>
@@ -463,7 +463,7 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         marginBottom: 14,
         color: colors.textPrimary,
-        alignSelf: "center",
+        alignSelf: "flex-start",
     },
     matchReasonsContainer: {
         marginTop: spacing.md,
@@ -542,6 +542,7 @@ const styles = StyleSheet.create({
     alertsDropdown: {
         backgroundColor: colors.surfaceSoft,
         width: "100%",
+        paddingHorizontal: 6,
     },
     alertsHeader: {
         flexDirection: "row",
