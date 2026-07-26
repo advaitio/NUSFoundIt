@@ -1,5 +1,6 @@
 const {setGlobalOptions} = require("firebase-functions/v2");
 const {onDocumentCreated} = require("firebase-functions/v2/firestore");
+const {defineSecret} = require("firebase-functions/params");
 const logger = require("firebase-functions/logger");
 const admin = require("firebase-admin");
 const venuesData = require("./venuesCopy.json");
@@ -7,7 +8,7 @@ const venuesData = require("./venuesCopy.json");
 admin.initializeApp();
 
 setGlobalOptions({maxInstances: 1, timeoutSeconds: 15, memory: "256MiB"});
-const telegramBotToken = "8652620881:AAGJEkITPOYiQSJI0C3RiE6s3BOYFFGZw8s"
+const telegramBotToken = defineSecret("TELEGRAM_BOT_TOKEN");
 
 // the directly replicated matching system from matching.ts that has also been converted to javascript for compatibility. all of the exact same matching functions were directly imported and changed to javascript. 
 const IGNORED_WORDS = new Set([
