@@ -285,9 +285,35 @@ export default function ItemDetails() {
                             </View>
                         )}
                     </View>
-                    <View style={{flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingHorizontal: 8}}>
-                        <Text style={[styles.heading, {marginTop: 10}]}>{item.itemName}</Text>
-                        <Text style={{fontSize: 16, fontWeight: "bold"}}>{item.category}</Text>
+
+                    <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 8, marginTop: 10}}>
+                        <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 5}}>
+                            <Image
+                                source={require("../../assets/images/location.png")} 
+                                style={{width: 25, height: 25}}
+                                tintColor={colors.textPrimary}/>
+                            <Text style={{fontSize: 16, fontWeight: "bold", color: colors.textPrimary}}>{location}</Text>
+                        </View>
+
+                        <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 5}}>
+                            <Image
+                                source={require("../../assets/images/calendar.png")} 
+                                style={{width: 25, height: 25}}
+                                tintColor={colors.textPrimary}/>
+                            <Text style={{fontSize: 16, fontWeight: "bold", color: colors.textPrimary}}>{date}</Text>
+                        </View>
+                    </View>
+
+                    <View style={{flexDirection: "row", alignItems: "center", paddingHorizontal: 8, gap: 10}}>
+                        <Text style={[styles.heading, {fontSize: 30}]}>{item.itemName}</Text>
+
+                        <View style={{flexDirection: "row", justifyContent: "space-between", alignItems: "center", gap: 5, marginBottom: 5}}>
+                            <Image
+                                source={require("../../assets/images/pricetag.png")} 
+                                style={{width: 25, height: 25}}
+                                tintColor={colors.logoAccent}/>
+                            <Text style={{fontSize: 16, fontWeight: "bold", color: colors.logoAccent, marginBottom: 5}}>{item.category}</Text>
+                        </View>
                     </View>
 
                     <DetailRow label={isLostItem ? "Location Lost" : "Location Found"} value={location} />
