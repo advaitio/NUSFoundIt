@@ -39,3 +39,15 @@ export async function fetchFoundItems(
         ...document.data(),
     })) as FoundItem[];
 }
+
+export async function fetchLostItems(
+    database: Firestore,
+): Promise<LostItem[]> {
+    const snapshot = await getDocs(
+        query(collection(database, "lostItems"), orderBy("createdAt", "desc"))
+    );
+    return snapshot.docs.map((document) => ({
+        id: document.id,
+        ...document.data(),
+    })) as LostItem[];
+}
