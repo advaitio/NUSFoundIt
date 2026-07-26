@@ -315,12 +315,10 @@ export default function ItemDetails() {
                             <Text style={{fontSize: 16, fontWeight: "bold", color: colors.logoAccent, marginBottom: 5}}>{item.category}</Text>
                         </View>
                     </View>
-
-                    <DetailRow label={isLostItem ? "Location Lost" : "Location Found"} value={location} />
-                    <DetailRow label={isLostItem ? "Date Lost" : "Date Found"} value={date} />
-                    <DetailRow label="Description" value={item.description} />
-                    <DetailRow label="Contact Email" value={item.contactEmail} />
-                    <DetailRow label="Phone Number" value={item.contactPhoneNumber} />
+                    <Text style={{fontSize: 16, color: colors.textPrimary, marginBottom: 10, paddingHorizontal: 15}}>{item.description}</Text>
+                    <Text style={{fontSize: 18, fontWeight: "bold", color: colors.textPrimary, marginBottom: 10, paddingHorizontal: 8}}>Contacts</Text>
+                    <Text style={{fontSize: 16, color: colors.textPrimary, marginBottom: 10, paddingHorizontal: 15}}>{item.contactEmail}</Text>
+                    <Text style={{fontSize: 16, color: colors.textPrimary, marginBottom: 10, paddingHorizontal: 15}}>{item.contactPhoneNumber}</Text>
 
                     <View style={[styles.alertsDropdown, {paddingBottom: 0}]}>
                         <Pressable style={[styles.alertsHeader, showAlertsDropdown && {marginBottom: 0}]} onPress={() => {setShowAlertsDropdown(!showAlertsDropdown); setFocusedField(null)}}>
