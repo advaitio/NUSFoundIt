@@ -6,7 +6,7 @@ import { Dropdown } from "react-native-element-dropdown";
 import { colors, DateStyles, globalStyles, ImageStyles, Suggestions } from "../styles/globalStyles";
 
 //Importing of Firebase tools and firebaseConfig file.
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { createLostItem } from "@/services/itemsService";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { db, storage } from "../firebase/firebaseConfig";
 //file directly sourced from NUSMods public Github Repository. Refer to README for full reference.
@@ -162,7 +162,7 @@ export default function LostItemForm() {
             const expirationDate = new Date();
             expirationDate.setDate(expirationDate.getDate() + 30);
 
-            const docData: any = {
+            await createLostItem(db, {
                 itemName,
                 category,
                 description,
@@ -171,15 +171,14 @@ export default function LostItemForm() {
                 contactEmail: email,
                 contactPhoneNumber: phoneNumber,
                 imageUrl: uploadLink,
-                createdAt: serverTimestamp(),
-                expireAt: expirationDate
-            };
-
-            if (telegramId && threshold) {
-                docData.telegramAlerts = {[telegramId]: parseInt(threshold, 10),};
-            }
-
-            await addDoc(collection(db, "lostItems"), docData);
+                expireAt: expirationDate,
+                ...(telegramId && threshold
+                    ? {
+                        telegramAlerts: {
+                            [telegramId]: parseInt(threshold, 10),
+                        },
+                    } : {}),
+            });
 
             // show success message
             if (Platform.OS === "web") {

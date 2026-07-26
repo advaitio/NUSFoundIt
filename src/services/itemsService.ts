@@ -19,7 +19,7 @@ type NewItemBase = {
     contactEmail: string;
     contactPhoneNumber: string;
     imageUrl?: string;
-    expierAt: Date;
+    expireAt: Date;
     telegramAlerts?: TelegramAlerts;
 };
 
