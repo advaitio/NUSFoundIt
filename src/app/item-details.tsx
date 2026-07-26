@@ -316,9 +316,24 @@ export default function ItemDetails() {
                         </View>
                     </View>
                     <Text style={{fontSize: 16, color: colors.textPrimary, marginBottom: 10, paddingHorizontal: 15}}>{item.description}</Text>
-                    <Text style={{fontSize: 18, fontWeight: "bold", color: colors.textPrimary, marginBottom: 10, paddingHorizontal: 8}}>Contacts</Text>
-                    <Text style={{fontSize: 16, color: colors.textPrimary, marginBottom: 10, paddingHorizontal: 15}}>{item.contactEmail}</Text>
-                    <Text style={{fontSize: 16, color: colors.textPrimary, marginBottom: 10, paddingHorizontal: 15}}>{item.contactPhoneNumber}</Text>
+                    <Text style={{fontSize: 18, fontWeight: "bold", color: colors.textPrimary, marginTop: 5, paddingHorizontal: 8}}>Contacts</Text>
+                    <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 8, marginTop: 10, marginBottom: 20}}>
+                        <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 5}}>
+                            <Image
+                                source={require("../../assets/images/mail.png")} 
+                                style={{width: 25, height: 25}}
+                                tintColor={colors.textPrimary}/>
+                            <Text style={{fontSize: 16, fontWeight: "bold", color: colors.textPrimary}}>{item.contactEmail}</Text>
+                        </View>
+
+                        <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 5}}>
+                            <Image
+                                source={require("../../assets/images/call.png")} 
+                                style={{width: 25, height: 25}}
+                                tintColor={colors.textPrimary}/>
+                            <Text style={{fontSize: 16, fontWeight: "bold", color: colors.textPrimary}}>{item.contactPhoneNumber}</Text>
+                        </View>
+                    </View>
 
                     <View style={[styles.alertsDropdown, {paddingBottom: 0}]}>
                         <Pressable style={[styles.alertsHeader, showAlertsDropdown && {marginBottom: 0}]} onPress={() => {setShowAlertsDropdown(!showAlertsDropdown); setFocusedField(null)}}>
