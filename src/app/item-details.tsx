@@ -286,7 +286,7 @@ export default function ItemDetails() {
                         )}
                     </View>
 
-                    <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 8, marginTop: 10}}>
+                    <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 8, marginVertical: 15}}>
                         <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 5}}>
                             <Image
                                 source={require("../../assets/images/location.png")} 
@@ -475,8 +475,6 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         borderWidth: 1,
         borderColor: colors.border,
-        borderLeftWidth: 4,
-        borderLeftColor: colors.logoAccent,
     },
     matchHeader: {
         flexDirection: "row",
@@ -535,7 +533,7 @@ const styles = StyleSheet.create({
     },
     viewDetailsText: {
         marginTop: spacing.md,
-        color: colors.logoSecondary,
+        color: colors.logoAccent,
         fontSize: 13,
         fontWeight: "700",
     },
