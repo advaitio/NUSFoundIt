@@ -276,27 +276,66 @@ export default function ItemDetails() {
                 behavior={Platform.OS === "ios" ? "padding" : "height"}
                 keyboardVerticalOffset={focusedField ? 100 : 0}
                 style={{ flex: 1, backgroundColor: colors.background }}>
-                <ScrollView style={globalStyles.screen} contentContainerStyle={styles.content}>
-                    <View style={globalStyles.card}>
-                        <Text style={styles.heading}>{item.itemName}</Text>
+                <ScrollView style={[globalStyles.screen, {paddingHorizontal: spacing.xxl}]} contentContainerStyle={styles.content}>
+                    <View style={styles.imageBox}>
+                        <Image source={item.imageUrl ? {uri: item.imageUrl} : getPlaceholderImage(item.category)} style={[styles.imageDetails, item.imageUrl ? {aspectRatio: imageRatio} : {height: 400, resizeMode: "contain", opacity: 0.4}]}/>
+                        {!item.imageUrl && (
+                            <View style={styles.placeholderBadge}>
+                                <Text style={styles.placeholderBadgeText}>NO PHOTO</Text>
+                            </View>
+                        )}
+                    </View>
 
-                        <DetailRow label="Category" value={item.category} />
-                        <DetailRow label={isLostItem ? "Location Lost" : "Location Found"} value={location} />
-                        <DetailRow label={isLostItem ? "Date Lost" : "Date Found"} value={date} />
-                        <DetailRow label="Description" value={item.description} />
-                        <DetailRow label="Contact Email" value={item.contactEmail} />
-                        <DetailRow label="Phone Number" value={item.contactPhoneNumber} />
-                        <View style={styles.imageBox}>
-                            <Image source={item.imageUrl ? {uri: item.imageUrl} : getPlaceholderImage(item.category)} style={[styles.imageDetails, item.imageUrl ? {aspectRatio: imageRatio} : {height: 400, resizeMode: "contain", opacity: 0.4}]}/>
-                            {!item.imageUrl && (
-                                <View style={styles.placeholderBadge}>
-                                    <Text style={styles.placeholderBadgeText}>NO PHOTO</Text>
-                                </View>
-                            )}
+                    <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 8, marginVertical: 15}}>
+                        <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 5}}>
+                            <Image
+                                source={require("../../assets/images/location.png")} 
+                                style={{width: 25, height: 25}}
+                                tintColor={colors.textPrimary}/>
+                            <Text style={{fontSize: 16, fontWeight: "bold", color: colors.textPrimary}}>{location}</Text>
+                        </View>
+
+                        <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 5}}>
+                            <Image
+                                source={require("../../assets/images/calendar.png")} 
+                                style={{width: 25, height: 25}}
+                                tintColor={colors.textPrimary}/>
+                            <Text style={{fontSize: 16, fontWeight: "bold", color: colors.textPrimary}}>{date}</Text>
                         </View>
                     </View>
 
-                    <View style={[globalStyles.card, styles.alertsDropdown, {paddingBottom: 0}]}>
+                    <View style={{flexDirection: "row", alignItems: "center", paddingHorizontal: 8, gap: 10}}>
+                        <Text style={[styles.heading, {fontSize: 30}]}>{item.itemName}</Text>
+
+                        <View style={{flexDirection: "row", justifyContent: "space-between", alignItems: "center", gap: 5, marginBottom: 5}}>
+                            <Image
+                                source={require("../../assets/images/pricetag.png")} 
+                                style={{width: 25, height: 25}}
+                                tintColor={colors.logoAccent}/>
+                            <Text style={{fontSize: 16, fontWeight: "bold", color: colors.logoAccent, marginBottom: 5}}>{item.category}</Text>
+                        </View>
+                    </View>
+                    <Text style={{fontSize: 16, color: colors.textPrimary, marginBottom: 10, paddingHorizontal: 15}}>{item.description}</Text>
+                    <Text style={{fontSize: 18, fontWeight: "bold", color: colors.textPrimary, marginTop: 5, paddingHorizontal: 8}}>Contacts</Text>
+                    <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 8, marginTop: 10, marginBottom: 20}}>
+                        <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 5}}>
+                            <Image
+                                source={require("../../assets/images/mail.png")} 
+                                style={{width: 25, height: 25}}
+                                tintColor={colors.textPrimary}/>
+                            <Text style={{fontSize: 16, fontWeight: "bold", color: colors.textPrimary}}>{item.contactEmail}</Text>
+                        </View>
+
+                        <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 5}}>
+                            <Image
+                                source={require("../../assets/images/call.png")} 
+                                style={{width: 25, height: 25}}
+                                tintColor={colors.textPrimary}/>
+                            <Text style={{fontSize: 16, fontWeight: "bold", color: colors.textPrimary}}>{item.contactPhoneNumber}</Text>
+                        </View>
+                    </View>
+
+                    <View style={[styles.alertsDropdown, {paddingBottom: 0}]}>
                         <Pressable style={[styles.alertsHeader, showAlertsDropdown && {marginBottom: 0}]} onPress={() => {setShowAlertsDropdown(!showAlertsDropdown); setFocusedField(null)}}>
                             <View style={{flexDirection: "row", alignItems: "center", gap: 15}}>
                                 <Image
@@ -356,7 +395,7 @@ export default function ItemDetails() {
                     </View>
 
                     {/* render possible matches for lost/found items */}
-                    <View style={globalStyles.card}>
+                    <View style={{paddingHorizontal: 8}}>
                         <Text style={styles.heading}>{isLostItem ? "Possible Found Item Matches" : "Possible Lost Item Matches"}</Text>
                         {matches.length === 0 ? (
                             <Text style={globalStyles.placeholderText}>
@@ -436,8 +475,6 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         borderWidth: 1,
         borderColor: colors.border,
-        borderLeftWidth: 4,
-        borderLeftColor: colors.logoAccent,
     },
     matchHeader: {
         flexDirection: "row",
@@ -463,7 +500,7 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         marginBottom: 14,
         color: colors.textPrimary,
-        alignSelf: "center",
+        alignSelf: "flex-start",
     },
     matchReasonsContainer: {
         marginTop: spacing.md,
@@ -496,7 +533,7 @@ const styles = StyleSheet.create({
     },
     viewDetailsText: {
         marginTop: spacing.md,
-        color: colors.logoSecondary,
+        color: colors.logoAccent,
         fontSize: 13,
         fontWeight: "700",
     },
@@ -542,6 +579,7 @@ const styles = StyleSheet.create({
     alertsDropdown: {
         backgroundColor: colors.surfaceSoft,
         width: "100%",
+        paddingHorizontal: 6,
     },
     alertsHeader: {
         flexDirection: "row",
