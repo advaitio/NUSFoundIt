@@ -3,7 +3,7 @@ import {doc, getDoc, type Firestore} from "firebase/firestore";
 import { createFoundItem, createLostItem, fetchFoundItems, fetchLostItems } from "@/services/itemsService";
 import { getPossibleFoundMatches } from "@/utils/matching";
 
-const TEST_PROJECT_ID = "demo-nusfoundit-integration";
+const TEST_PROJECT_ID = "demo-nusfoundit-integration"; // demo id so tests never connect to the app's real firebase project
 
 let testEnvironment: RulesTestEnvironment;
 
@@ -12,6 +12,7 @@ function getTestDatabase(): Firestore {
     return testEnvironment.unauthenticatedContext().firestore() as unknown as Firestore;
 }
 
+// creates firebase rules test env before any tests run
 beforeAll(async () => {
     testEnvironment = await initializeTestEnvironment({
         projectId: TEST_PROJECT_ID,
@@ -22,8 +23,8 @@ beforeAll(async () => {
     });
 });
 
-beforeEach(async () => {await testEnvironment.clearFirestore();});
-afterAll(async () => {await testEnvironment.cleanup();});
+beforeEach(async () => {await testEnvironment.clearFirestore();}); // clears emulator data before each test
+afterAll(async () => {await testEnvironment.cleanup();}); // closes emulator connection after test suite finishes
 
 describe("Firestore integration", () => {
     test("creates and retreives a found-item report", async () => {
@@ -44,10 +45,11 @@ describe("Firestore integration", () => {
             },
         });
 
-        const documentSnapshot = await getDoc(doc(database, "foundItems", documentId));
+        const documentSnapshot = await getDoc(doc(database, "foundItems", documentId)); // read doc directly from firestore
 
-        expect(documentSnapshot.exists()).toBe(true);
+        expect(documentSnapshot.exists()).toBe(true); // verify doc creation
         
+        // verify submitted fields stored correctly
         expect(documentSnapshot.data()).toMatchObject({
             itemName: "Integration Test Laptop Charger",
             category: "electronics",
@@ -64,11 +66,10 @@ describe("Firestore integration", () => {
 
         expect(documentSnapshot.data()?.createdAt).toBeDefined();
         expect(documentSnapshot.data()?.expireAt).toBeDefined;
-
         const fetchedItems = await fetchFoundItems(database);
-
         expect(fetchedItems).toHaveLength(1);
 
+        // verify fetched obj matches stored report
         expect(fetchedItems[0]).toMatchObject({
             id: documentId,
             itemName: "Integration Test Laptop Charger",
@@ -82,5 +83,79 @@ describe("Firestore integration", () => {
         });
 
         expect(fetchedItems[0].createdAt).toBeDefined();
+    });
+    test("creates and retreives a lost item report using dateLost", async () => {
+        const database = getTestDatabase();
+
+        // create a lost item report
+        const documentId = await createLostItem(database, {
+            itemName: "Integration Test Laptop Charger",
+            category: "electronics",
+            description: "White Apple laptop charger",
+            locationLost: "COM3",
+            dateLost: "20/07/2026",
+            contactEmail: "integration@example.com",
+            contactPhoneNumber: "00000000",
+            imageUrl: "",
+            expireAt: new Date("2026-08-20T00:00:00Z"),
+        });
+
+        const documentSnapshot = await getDoc(doc(database, "lostItems", documentId)); // retreive exact doc from emulator
+        expect(documentSnapshot.exists()).toBe(true);
+        const storedData = documentSnapshot.data();
+        
+        expect(storedData).toMatchObject({
+            itemName: "Integration Test Laptop Charger",
+            locationLost: "COM3",
+            dateLost: "20/07/2026",
+        });
+
+        expect(documentSnapshot.data()?.dateFound).toBeUndefined();
+        expect(documentSnapshot.data()?.createdAt).toBeDefined();
+        const fetchedItems = await fetchLostItems(database);
+        expect(fetchedItems).toHaveLength(1);
+        expect(fetchedItems[0].id).toBe(documentId);
+        expect(fetchedItems[0].dateLost).toBe("20/07/2026");
+    });
+    test("matches reports retreived from firestore", async () => {
+        const database = getTestDatabase();
+
+        // create strongly related found report
+        const foundDocumentId = await createFoundItem(database, {
+            itemName: "Laptop Charger",
+            category: "electronics",
+            description: "White Apple laptop charger",
+            locationFound: "COM3",
+            dateFound: "20/07/2026",
+            contactEmail: "integration@example.com",
+            contactPhoneNumber: "00000000",
+            imageUrl: "",
+            expireAt: new Date("2026-08-20T00:00:00Z"),
+        });
+
+        // create lost report with matching details
+        await createLostItem(database, {
+            itemName: "Laptop Charger",
+            category: "electronics",
+            description: "White Apple laptop charger",
+            locationLost: "COM3",
+            dateLost: "20/07/2026",
+            contactEmail: "integration@example.com",
+            contactPhoneNumber: "00000000",
+            imageUrl: "",
+            expireAt: new Date("2026-08-20T00:00:00Z"),
+        })
+
+        const [foundItems, lostItems] = await Promise.all([fetchFoundItems(database), fetchLostItems(database)]); // fetch both collections
+        expect(foundItems).toHaveLength(1);
+        expect(lostItems).toHaveLength(1);
+
+        const matches = getPossibleFoundMatches(lostItems[0], foundItems); // pass retrieved reports into matching logic
+
+        // verify that corresponging report is returned as a match
+        expect(matches.length).toBeGreaterThan(0);
+        expect(matches[0].id).toBe(foundDocumentId);
+        expect(matches[0].matchScore).toBeGreaterThanOrEqual(4);
+        expect(matches[0].matchReasons.length).toBeGreaterThan(0);
     });
 })
