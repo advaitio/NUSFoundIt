@@ -1,4 +1,3 @@
-import { Label } from "expo-router";
 import {
     getMatchDetails,
     getMatchScore,

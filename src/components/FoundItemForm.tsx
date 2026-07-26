@@ -6,7 +6,7 @@ import { Dropdown } from "react-native-element-dropdown";
 import { colors, DateStyles, globalStyles, ImageStyles, Suggestions } from "../styles/globalStyles";
 
 //Importing of Firebase tools and firebaseConfig file.
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { createFoundItem } from "@/services/itemsService";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { db, storage } from "../firebase/firebaseConfig";
 //file directly sourced from NUSMods public Github Repository. Refer to README for full reference.
@@ -160,7 +160,7 @@ export default function FoundItemForm() {
             const expirationDate = new Date();
             expirationDate.setDate(expirationDate.getDate() + 30);
 
-            const docData: any = {
+            await createFoundItem(db, {
                 itemName,
                 category,
                 description,
@@ -169,15 +169,14 @@ export default function FoundItemForm() {
                 contactEmail: email,
                 contactPhoneNumber: phoneNumber,
                 imageUrl: uploadLink,
-                createdAt: serverTimestamp(),
-                expireAt: expirationDate
-            };
-
-            if (telegramId && threshold) {
-                docData.telegramAlerts = {[telegramId]: parseInt(threshold, 10),};
-            }
-
-            await addDoc(collection(db, "foundItems"), docData);
+                expireAt: expirationDate,
+                ...(telegramId && threshold
+                    ? {
+                        telegramAlerts: {
+                            [telegramId]: parseInt(threshold, 10),
+                        },
+                    } : {}),
+            });
 
             // send user the success alert
             if (Platform.OS === "web") {
@@ -199,8 +198,8 @@ export default function FoundItemForm() {
             setTelegramId("");
             setThreshold("");
             setShowAlertsDropdown(false);
-        
-        // general error handling for issues during submission process.
+
+            // general error handling for issues during submission process.
         } catch (error) {
             console.error("Error adding document: ", error);
             Alert.alert("Error\n", "Something went wrong. Please try again.");
@@ -211,26 +210,26 @@ export default function FoundItemForm() {
 
     return (
         <View style={globalStyles.formContainer}>
-            <Text style={[globalStyles.pageTitle, {color: colors.primary}]}>Item Details</Text>
-            <Text style={[globalStyles.pageSubtitle, {color: colors.logoAccent}]}>Tell us what you found so the owner can find it.</Text>
+            <Text style={[globalStyles.pageTitle, { color: colors.primary }]}>Item Details</Text>
+            <Text style={[globalStyles.pageSubtitle, { color: colors.logoAccent }]}>Tell us what you found so the owner can find it.</Text>
             <TextInput
-                style={[globalStyles.input, focusedField === "itemName" && {borderColor: colors.primary}]}
+                style={[globalStyles.input, focusedField === "itemName" && { borderColor: colors.primary }]}
                 placeholder="Item Name (Max 30 char.)"
                 placeholderTextColor={colors.placeholder}
                 value={itemName}
                 onChangeText={setItemName}
                 maxLength={30} // limit item name to 30 characters to prevent excessively long entries.
-                onFocus={() => {setShowSuggestions(false); setFocusedField("itemName");}}
+                onFocus={() => { setShowSuggestions(false); setFocusedField("itemName"); }}
                 onBlur={() => setFocusedField(null)}
             />
             <Dropdown
-                style={[globalStyles.dropdown, focusedField === "category" && {borderColor: colors.primary}]}
+                style={[globalStyles.dropdown, focusedField === "category" && { borderColor: colors.primary }]}
                 placeholderStyle={globalStyles.placeholderText}
                 selectedTextStyle={[
                     globalStyles.inputText,
-                    { color: category ? colors.textInput : colors.placeholder} // implement placeholder similar to other input fields.
+                    { color: category ? colors.textInput : colors.placeholder } // implement placeholder similar to other input fields.
                 ]}
-                containerStyle={{backgroundColor: colors.logoCream}}
+                containerStyle={{ backgroundColor: colors.logoCream }}
                 activeColor={colors.logoAccent}
                 itemTextStyle={globalStyles.inputText}
                 data={categoryData}
@@ -246,8 +245,8 @@ export default function FoundItemForm() {
                 onBlur={() => setFocusedField(null)}
             />
             <TextInput
-            // multiline input to allow for more detailed descriptions of found items.
-                style={[globalStyles.input, globalStyles.multilineInput, focusedField === "description" && {borderColor: colors.primary}]}
+                // multiline input to allow for more detailed descriptions of found items.
+                style={[globalStyles.input, globalStyles.multilineInput, focusedField === "description" && { borderColor: colors.primary }]}
                 placeholder="Description"
                 placeholderTextColor={colors.placeholder}
                 value={description}
@@ -259,7 +258,7 @@ export default function FoundItemForm() {
                 }}
                 multiline
                 numberOfLines={3}
-                onFocus={() => {setShowSuggestions(false); setFocusedField("description");}}
+                onFocus={() => { setShowSuggestions(false); setFocusedField("description"); }}
                 onBlur={() => setFocusedField(null)}
             />
             <View style={Suggestions.searchContainer}>
@@ -288,13 +287,13 @@ export default function FoundItemForm() {
                 )}
 
                 <TextInput
-                    style={[globalStyles.input, focusedField === "location" && {borderColor: colors.primary}]}
+                    style={[globalStyles.input, focusedField === "location" && { borderColor: colors.primary }]}
                     placeholder="Location Found (e.g. LT17, The Deck)"
                     placeholderTextColor={colors.placeholder}
                     value={locationFound}
 
                     onChangeText={handleLocationSelect}
-                    onFocus={() => { if(locationFound) setShowSuggestions(true); setFocusedField("location");}}
+                    onFocus={() => { if (locationFound) setShowSuggestions(true); setFocusedField("location"); }}
                     onBlur={() => setFocusedField(null)}
                     onSubmitEditing={() => setShowSuggestions(false)}
                     returnKeyType="done"
@@ -302,7 +301,7 @@ export default function FoundItemForm() {
             </View>
 
             <Pressable
-                style={[DateStyles.datePickerBox, focusedField === "date" && {borderColor: colors.primary}]}
+                style={[DateStyles.datePickerBox, focusedField === "date" && { borderColor: colors.primary }]}
                 onPress={() => {
                     // separate condition handling for mobile to ensure its continuity. 
                     if (Platform.OS !== "web") {
@@ -313,7 +312,7 @@ export default function FoundItemForm() {
             >
                 <Text style={[
                     globalStyles.inputText,
-                    {color: dateFound ? colors.textInput : colors.placeholder}
+                    { color: dateFound ? colors.textInput : colors.placeholder }
                 ]}>
                     {/* Made sure to implement placeholder similar to other input fields. */}
                     {dateFound ? `Date Found: ${formatDateLabel(dateFound)}` : "Date Found (select date)"}
@@ -331,7 +330,7 @@ export default function FoundItemForm() {
                             const val = e.target.value;
                             setDateFound(val ? new Date(val) : null);
                         }}
-                        max = {new Date().toISOString().split("T")[0]}
+                        max={new Date().toISOString().split("T")[0]}
                         style={{
                             position: "absolute",
                             opacity: 0, // makes HTML raw field invisible
@@ -363,62 +362,62 @@ export default function FoundItemForm() {
                 <Button title="Confirm Date" onPress={() => setShowCalendar(false)} />
             )}
             <TextInput
-                style={[globalStyles.input, focusedField === "email" && {borderColor: colors.primary}]}
+                style={[globalStyles.input, focusedField === "email" && { borderColor: colors.primary }]}
                 placeholder="Contact Email"
                 placeholderTextColor={colors.placeholder}
                 value={email}
                 onChangeText={setEmail}
                 keyboardType="email-address"
-                onFocus={() => {setShowSuggestions(false); setFocusedField("email");}}
+                onFocus={() => { setShowSuggestions(false); setFocusedField("email"); }}
                 onBlur={() => setFocusedField(null)}
             />
             <TextInput
-                style={[globalStyles.input, focusedField === "phone" && {borderColor: colors.primary}]}
+                style={[globalStyles.input, focusedField === "phone" && { borderColor: colors.primary }]}
                 placeholder="Contact Phone Number"
                 placeholderTextColor={colors.placeholder}
                 value={phoneNumber}
                 onChangeText={(text) => setPhoneNumber(text.replace(/[^0-9]/g, ""))}
                 keyboardType="phone-pad"
                 maxLength={8}
-                onFocus={() => {setShowSuggestions(false); setFocusedField("phone");}}
+                onFocus={() => { setShowSuggestions(false); setFocusedField("phone"); }}
                 onBlur={() => setFocusedField(null)}
             />
 
             <View style={styles.alertsDropdown}>
                 <Pressable style={styles.alertsHeader} onPress={() => setShowAlertsDropdown(!showAlertsDropdown)}>
-                    <View style={{flexDirection: "row", alignItems: "center", gap: 8}}>
+                    <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
                         <Image
-                            source={require("../../assets/images/telegram.png")} 
-                            style={{width: 25, height: 25}}
-                            tintColor={colors.logoMain}/>
+                            source={require("../../assets/images/telegram.png")}
+                            style={{ width: 25, height: 25 }}
+                            tintColor={colors.logoMain} />
                         <Text style={styles.alertsTitle}>Match Alerts (Optional)</Text>
                     </View>
 
-                    <Image 
-                        source={require("../../assets/images/right-arrow.png")} 
-                        style={{width: 25, height: 25, transform: [{rotate: showAlertsDropdown ? "-90deg" : "90deg"}]}}
-                        tintColor={colors.logoMain}/>
+                    <Image
+                        source={require("../../assets/images/right-arrow.png")}
+                        style={{ width: 25, height: 25, transform: [{ rotate: showAlertsDropdown ? "-90deg" : "90deg" }] }}
+                        tintColor={colors.logoMain} />
                 </Pressable>
 
                 {showAlertsDropdown && (
                     <View style={styles.alertsBody}>
-                        <Text style={[styles.contactLabel, {fontStyle: "italic", marginBottom: 10}]}>Get notified when new reports match this item.</Text>
-                        <Text style={styles.contactLabel}>1. Start our Telegram bot: <Text style={{color: colors.logoAccent, fontWeight: "bold", textDecorationLine: "underline"}} onPress={() => Linking.openURL("https://t.me/NUSFoundIt_Bot")}>@NUSFoundIt_Alerts</Text></Text>
-                        <Text style={styles.contactLabel}>2. Get your Telegram Chat ID from <Text style={{color: colors.logoAccent, fontWeight: "bold", textDecorationLine: "underline"}} onPress={() => Linking.openURL("https://t.me/userinfobot")}>@userinfobot</Text>.</Text>
-                        <Text style={[styles.contactLabel, {marginBottom: 15}]}>3. Enter your desired minimum match score.</Text>
+                        <Text style={[styles.contactLabel, { fontStyle: "italic", marginBottom: 10 }]}>Get notified when new reports match this item.</Text>
+                        <Text style={styles.contactLabel}>1. Start our Telegram bot: <Text style={{ color: colors.logoAccent, fontWeight: "bold", textDecorationLine: "underline" }} onPress={() => Linking.openURL("https://t.me/NUSFoundIt_Bot")}>@NUSFoundIt_Alerts</Text></Text>
+                        <Text style={styles.contactLabel}>2. Get your Telegram Chat ID from <Text style={{ color: colors.logoAccent, fontWeight: "bold", textDecorationLine: "underline" }} onPress={() => Linking.openURL("https://t.me/userinfobot")}>@userinfobot</Text>.</Text>
+                        <Text style={[styles.contactLabel, { marginBottom: 15 }]}>3. Enter your desired minimum match score.</Text>
 
                         <TextInput
-                            style={[globalStyles.input, focusedField === "telegramId" && {borderColor: colors.logoMain}]}
+                            style={[globalStyles.input, focusedField === "telegramId" && { borderColor: colors.logoMain }]}
                             placeholder="Telegram Chat ID"
                             placeholderTextColor={colors.placeholder}
                             value={telegramId}
                             onChangeText={setTelegramId}
                             keyboardType="number-pad"
                             onFocus={() => { setShowSuggestions(false); setFocusedField("telegramId"); }}
-                            onBlur={() => setFocusedField(null)}/>
+                            onBlur={() => setFocusedField(null)} />
 
                         <TextInput
-                            style={[globalStyles.input, focusedField === "threshold" && {borderColor: colors.logoMain}]}
+                            style={[globalStyles.input, focusedField === "threshold" && { borderColor: colors.logoMain }]}
                             placeholder="Minimum Match Score (e.g. 8)"
                             placeholderTextColor={colors.placeholder}
                             value={threshold}
@@ -426,21 +425,21 @@ export default function FoundItemForm() {
                             keyboardType="number-pad"
                             maxLength={3}
                             onFocus={() => { setShowSuggestions(false); setFocusedField("threshold"); }}
-                            onBlur={() => setFocusedField(null)}/>
+                            onBlur={() => setFocusedField(null)} />
                     </View>
                 )}
             </View>
 
             {!image && (
                 <Pressable style={globalStyles.input} onPress={pickImage}>
-                    <Text style={[globalStyles.inputText, {color: image ? colors.textInput : colors.placeholder}]}>
+                    <Text style={[globalStyles.inputText, { color: image ? colors.textInput : colors.placeholder }]}>
                         {image ? "Change Image..." : "Upload Image (optional)"}
                     </Text>
                 </Pressable>
-                )}
+            )}
             {image && (
                 <View style={ImageStyles.imageBox}>
-                    <Image source={{uri: image}} style={ImageStyles.image} />
+                    <Image source={{ uri: image }} style={ImageStyles.image} />
                     <Pressable
                         style={ImageStyles.deleteImage}
                         onPress={() => setImage(null)}
@@ -450,7 +449,7 @@ export default function FoundItemForm() {
                 </View>
             )}
 
-            <Pressable style={[globalStyles.buttonContainer, loading && {opacity: 0.5}]} onPress={handleSubmit} disabled={loading}>
+            <Pressable style={[globalStyles.buttonContainer, loading && { opacity: 0.5 }]} onPress={handleSubmit} disabled={loading}>
                 <Text style={styles.buttonText}>{loading ? "Sending..." : "Submit"}</Text>
             </Pressable>
         </View>

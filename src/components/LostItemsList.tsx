@@ -1,5 +1,5 @@
 import { Link } from "expo-router";
-import { collection, getDocs, orderBy, query } from "firebase/firestore";
+import { fetchLostItems as fetchLostItemsFromFirestore } from "@/services/itemsService";
 import { useCallback, useEffect, useState } from "react";
 import {
     ActivityIndicator,
@@ -64,27 +64,7 @@ export default function LostItemsList({
     async function fetchLostItems() {
         try {
             setErrorMessage("");
-
-            const lostItemsQuery = query(collection(db, "lostItems"), orderBy("createdAt", "desc"));
-            const querySnapshot = await getDocs(lostItemsQuery);
-            const fetchedItems: LostItem[] = querySnapshot.docs.map((doc) => {
-                const data = doc.data();
-
-                return {
-                    id: doc.id,
-                    itemName: data.itemName ?? "",
-                    category: data.category ?? "",
-                    description: data.description ?? "",
-                    locationLost: data.locationLost ?? "",
-                    dateLost: data.dateLost ?? "",
-                    contactEmail: data.contactEmail ?? "",
-                    contactPhoneNumber: data.contactPhoneNumber ?? "",
-                    imageUrl: data.imageUrl ?? "",
-                    status: data.status ?? "active",
-                    createdAt: data.createdAt,
-                };
-            });
-
+            const fetchedItems = await fetchLostItemsFromFirestore(db);
             setItems(fetchedItems);
         } catch (error) {
             console.error("Error fetching lost items: ", error);
