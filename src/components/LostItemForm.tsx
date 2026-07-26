@@ -167,7 +167,7 @@ export default function LostItemForm() {
                 category,
                 description,
                 locationLost,
-                dateFound: formatDateLabel(dateLost),
+                dateLost: formatDateLabel(dateLost),
                 contactEmail: email,
                 contactPhoneNumber: phoneNumber,
                 imageUrl: uploadLink,
