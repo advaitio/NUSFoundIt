@@ -113,4 +113,42 @@ describe("Firestore integration", () => {
         expect(fetchedItems[0].id).toBe(documentId);
         expect(fetchedItems[0].dateLost).toBe("20/07/2026");
     });
+    test("matches reports retreived from firestore", async () => {
+        const database = getTestDatabase();
+
+        const foundDocumentId = await createFoundItem(database, {
+            itemName: "Laptop Charger",
+            category: "electronics",
+            description: "White Apple laptop charger",
+            locationFound: "COM3",
+            dateFound: "20/07/2026",
+            contactEmail: "integration@example.com",
+            contactPhoneNumber: "00000000",
+            imageUrl: "",
+            expireAt: new Date("2026-08-20T00:00:00Z"),
+        });
+
+        await createLostItem(database, {
+            itemName: "Laptop Charger",
+            category: "electronics",
+            description: "White Apple laptop charger",
+            locationLost: "COM3",
+            dateLost: "20/07/2026",
+            contactEmail: "integration@example.com",
+            contactPhoneNumber: "00000000",
+            imageUrl: "",
+            expireAt: new Date("2026-08-20T00:00:00Z"),
+        })
+
+        const [foundItems, lostItems] = await Promise.all([fetchFoundItems(database), fetchLostItems(database)]);
+        expect(foundItems).toHaveLength(1);
+        expect(lostItems).toHaveLength(1);
+
+        const matches = getPossibleFoundMatches(lostItems[0], foundItems);
+
+        expect(matches.length).toBeGreaterThan(0);
+        expect(matches[0].id).toBe(foundDocumentId);
+        expect(matches[0].matchScore).toBeGreaterThanOrEqual(4);
+        expect(matches[0].matchReasons.length).toBeGreaterThan(0);
+    });
 })
