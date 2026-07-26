@@ -55,6 +55,8 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:ci": "jest --ci --runInBand",
+    "test:integration:jest": "jest --config jest.integration.config.js --runInBand",
+    "test:integration": "firebase emulators:exec --only firestore --project demo-nusfoundit-integration \"npm run test:integration:jest\"",
     "build:web": "expo export --platform web"
   },
   "jest": {
