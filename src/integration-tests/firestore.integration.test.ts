@@ -64,9 +64,7 @@ describe("Firestore integration", () => {
 
         expect(documentSnapshot.data()?.createdAt).toBeDefined();
         expect(documentSnapshot.data()?.expireAt).toBeDefined;
-
         const fetchedItems = await fetchFoundItems(database);
-
         expect(fetchedItems).toHaveLength(1);
 
         expect(fetchedItems[0]).toMatchObject({
@@ -82,5 +80,37 @@ describe("Firestore integration", () => {
         });
 
         expect(fetchedItems[0].createdAt).toBeDefined();
+    });
+    test("creates and retreives a lost item report using dateLost", async () => {
+        const database = getTestDatabase();
+
+        const documentId = await createLostItem(database, {
+            itemName: "Integration Test Laptop Charger",
+            category: "electronics",
+            description: "White Apple laptop charger",
+            locationLost: "COM3",
+            dateLost: "20/07/2026",
+            contactEmail: "integration@example.com",
+            contactPhoneNumber: "00000000",
+            imageUrl: "",
+            expireAt: new Date("2026-08-20T00:00:00Z"),
+        });
+
+        const documentSnapshot = await getDoc(doc(database, "lostItems", documentId));
+        expect(documentSnapshot.exists()).toBe(true);
+        const storedData = documentSnapshot.data();
+        
+        expect(storedData).toMatchObject({
+            itemName: "Integration Test Laptop Charger",
+            locationLost: "COM3",
+            dateLost: "20/07/2026",
+        });
+
+        expect(documentSnapshot.data()?.dateFound).toBeUndefined();
+        expect(documentSnapshot.data()?.createdAt).toBeDefined();
+        const fetchedItems = await fetchLostItems(database);
+        expect(fetchedItems).toHaveLength(1);
+        expect(fetchedItems[0].id).toBe(documentId);
+        expect(fetchedItems[0].dateLost).toBe("20/07/2026");
     });
 })
