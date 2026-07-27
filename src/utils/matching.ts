@@ -25,7 +25,6 @@ function countSharedWords(textA: string, textB: string): number {
     return wordsA.size + wordsB.size - new Set([...wordsA, ...wordsB]).size; 
 }
 
-
 // parse date str in dd/mm//yyyy format to date object
 function parseDate(dateString: string): Date | null {
     if (!dateString) return null;
