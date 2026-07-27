@@ -449,17 +449,6 @@ export default function ItemDetails() {
     )
 }
 
-// Reusable component to display a label and value for item details
-function DetailRow({ label, value }: { label: string; value?: string }) {
-    if (!value) return null;
-    return (
-        <View style={globalStyles.detailRow}>
-            <Text style={globalStyles.detailLabel}>{label}:</Text>
-            <Text style={globalStyles.detailValue}>{value}</Text>
-        </View>
-    )
-}
-
 const styles = StyleSheet.create({
     loadingText: {
         marginTop: spacing.md,
