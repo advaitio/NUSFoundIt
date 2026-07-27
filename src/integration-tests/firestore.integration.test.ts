@@ -3,12 +3,13 @@ import {doc, getDoc, type Firestore} from "firebase/firestore";
 import { createFoundItem, createLostItem, fetchFoundItems, fetchLostItems } from "@/services/itemsService";
 import { getPossibleFoundMatches } from "@/utils/matching";
 
-const TEST_PROJECT_ID = "demo-nusfoundit-integration"; // demo id so tests never connect to the app's real firebase project
+// demo id so tests never connect to the app's real firebase project
+const TEST_PROJECT_ID = "demo-nusfoundit-integration"; 
 
 let testEnvironment: RulesTestEnvironment;
 
-// return firestore instance connected to local emulator
 function getTestDatabase(): Firestore {
+    // casting to unknown because firebase type mismatch in test runner
     return testEnvironment.unauthenticatedContext().firestore() as unknown as Firestore;
 }
 
@@ -23,8 +24,8 @@ beforeAll(async () => {
     });
 });
 
-beforeEach(async () => {await testEnvironment.clearFirestore();}); // clears emulator data before each test
-afterAll(async () => {await testEnvironment.cleanup();}); // closes emulator connection after test suite finishes
+beforeEach(async () => {await testEnvironment.clearFirestore();});
+afterAll(async () => {await testEnvironment.cleanup();});
 
 describe("Firestore integration", () => {
     test("creates and retreives a found-item report", async () => {
@@ -47,9 +48,8 @@ describe("Firestore integration", () => {
 
         const documentSnapshot = await getDoc(doc(database, "foundItems", documentId)); // read doc directly from firestore
 
-        expect(documentSnapshot.exists()).toBe(true); // verify doc creation
+        expect(documentSnapshot.exists()).toBe(true);
         
-        // verify submitted fields stored correctly
         expect(documentSnapshot.data()).toMatchObject({
             itemName: "Integration Test Laptop Charger",
             category: "electronics",
@@ -65,11 +65,10 @@ describe("Firestore integration", () => {
         });
 
         expect(documentSnapshot.data()?.createdAt).toBeDefined();
-        expect(documentSnapshot.data()?.expireAt).toBeDefined;
+        expect(documentSnapshot.data()?.expireAt).toBeDefined();
         const fetchedItems = await fetchFoundItems(database);
         expect(fetchedItems).toHaveLength(1);
 
-        // verify fetched obj matches stored report
         expect(fetchedItems[0]).toMatchObject({
             id: documentId,
             itemName: "Integration Test Laptop Charger",
@@ -146,15 +145,15 @@ describe("Firestore integration", () => {
             expireAt: new Date("2026-08-20T00:00:00Z"),
         })
 
-        const [foundItems, lostItems] = await Promise.all([fetchFoundItems(database), fetchLostItems(database)]); // fetch both collections
+        const [foundItems, lostItems] = await Promise.all([fetchFoundItems(database), fetchLostItems(database)]);
         expect(foundItems).toHaveLength(1);
         expect(lostItems).toHaveLength(1);
 
-        const matches = getPossibleFoundMatches(lostItems[0], foundItems); // pass retrieved reports into matching logic
+        const matches = getPossibleFoundMatches(lostItems[0], foundItems);
 
-        // verify that corresponging report is returned as a match
         expect(matches.length).toBeGreaterThan(0);
         expect(matches[0].id).toBe(foundDocumentId);
+        // hardcoded score cutoff from matching logic
         expect(matches[0].matchScore).toBeGreaterThanOrEqual(4);
         expect(matches[0].matchReasons.length).toBeGreaterThan(0);
     });
