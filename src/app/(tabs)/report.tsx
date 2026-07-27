@@ -7,13 +7,14 @@ import LostItemForm from "../../components/LostItemForm";
 import { colors, globalStyles, spacing } from "../../styles/globalStyles";
 
 export default function ReportScreen() {
-    // state variable to track which tab is currently selected (found or lost)
     const [selectedTab, setSelectedTab] = useState<"found" | "lost">("found");
+    // force clear fields if switching out
     const [resetKey, setResetKey] = useState(0);
     const scrollViewRef = useRef<ScrollView>(null);
 
     useFocusEffect(
         useCallback(() => {
+            // moves back to top when switching out
             if (scrollViewRef.current) {
                 scrollViewRef.current.scrollTo({ y: 0, animated: false });
             }
@@ -40,16 +41,13 @@ export default function ReportScreen() {
                     contentContainerStyle={ styles.content }
                     keyboardShouldPersistTaps="handled"
                 >
-                    {/* tab buttons to switch between found and lost item forms */}
                     <View style={styles.tabContainer}>
-                        {/* tab button for found item form */}
                         <Pressable
                             style={[styles.tabButton, selectedTab === "found" && styles.activeTabButton]}
                             onPress={() => setSelectedTab("found")}
                         >
                             <Text style={[styles.tabText, selectedTab === "found" && styles.activeTabText]}>Found Item</Text>
                         </Pressable>
-                        {/* tab button for lost item form */}
                         <Pressable
                             style={[styles.tabButton, selectedTab === "lost" && {...styles.activeTabButton, backgroundColor: colors.logoSecondary}]}
                             onPress={() => setSelectedTab("lost")}
@@ -58,7 +56,7 @@ export default function ReportScreen() {
                         </Pressable>
                     </View>
 
-                    {/* render the appropriate form based on which tab is selected */}
+                    {/* changes form when switching tabs */}
                     {selectedTab === "found" ? (
                         <FoundItemForm key={`found-${resetKey}`} />
                     ) : (
