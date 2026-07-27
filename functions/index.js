@@ -10,7 +10,7 @@ admin.initializeApp();
 setGlobalOptions({maxInstances: 1, timeoutSeconds: 15, memory: "256MiB"});
 const telegramBotToken = defineSecret("TELEGRAM_BOT_TOKEN");
 
-// the directly replicated matching system from matching.ts that has also been converted to javascript for compatibility. all of the exact same matching functions were directly imported and changed to javascript. 
+// copied over matching system from matching.ts, which is already converted to js for compatibility. all the same matching functions were brought over.
 const IGNORED_WORDS = new Set([
     "the", "and", "for", "with", "from", "that", "this", "these", "those", "a", "an", "of", "in", "on", "at",
     "item", "items", "lost", "found", "near", "around",
@@ -39,6 +39,7 @@ function parseDate(dateString) {
     const month = Number(parts[1]);
     const year = Number(parts[2]);
     if (!day || !month || !year) return null;
+    // purposefully only comparing actual days
     const date = new Date(year, month - 1, day);
     date.setHours(0, 0, 0, 0);
     return date;
@@ -48,6 +49,7 @@ function getDateDifferenceInDays(lostDateStr, foundDateStr) {
     const lostDate = parseDate(lostDateStr);
     const foundDate = parseDate(foundDateStr);
     if (!lostDate || !foundDate) return null;
+    // milliseconds is used as base to compare
     const oneDayMs = 24 * 60 * 60 * 1000;
     return Math.round((foundDate.getTime() - lostDate.getTime()) / oneDayMs);
 }
@@ -73,9 +75,9 @@ function scoreLocation(foundItem, lostItem) {
     const lostLocation = normalize(lostItem.locationLost);
     const foundLocation = normalize(foundItem.locationFound);
     if (!lostLocation || !foundLocation) return 0;
-    
+    // strongest is an exact match
     if (lostLocation.includes(foundLocation) || foundLocation.includes(lostLocation)) return 2;
-    
+    // secondary check for venues
     const lostVenueCategory = getVenueCategory(lostLocation);
     const foundVenueCategory = getVenueCategory(foundLocation);
     if (lostVenueCategory && foundVenueCategory && lostVenueCategory === foundVenueCategory) return 1;
@@ -86,7 +88,7 @@ function scoreLocation(foundItem, lostItem) {
 function scoreDate(foundItem, lostItem) {
     const diffDays = getDateDifferenceInDays(lostItem.dateLost, foundItem.dateFound);
     if (diffDays === null) return 0;
-    
+    // needed to account for items found before it was lost, and vice versa. Penalise points. 
     if (diffDays < 0) return -2;
     if (diffDays <= 1) return 3;
     if (diffDays <= 3) return 2;
@@ -129,7 +131,7 @@ exports.notifyFoundItem = onDocumentCreated("foundItems/{itemId}", async (event)
             const lostItem = document.data();
             const alertsMap = lostItem.telegramAlerts || {};
             const subscriberIds = Object.keys(alertsMap);
-            
+            // skip if no one is looking or already closed, saving bandwith
             if (subscriberIds.length === 0 || !isMatchableStatus(lostItem.status)) {
                 continue;
             }
@@ -139,6 +141,7 @@ exports.notifyFoundItem = onDocumentCreated("foundItems/{itemId}", async (event)
                 const threshold = Number(alertsMap[chatId]);
                 if (score >= threshold) {
                     const message =
+// had to switch to html formatting because API req was being sent through html method
 `<b>🔴 NUSFoundIt Match Alert! 🔴</b>
 
 A newly reported found item <i>"${newFoundItem.itemName || "Item"}"</i> matches your lost item report with a <b>Match Score of ${score}</b>!
