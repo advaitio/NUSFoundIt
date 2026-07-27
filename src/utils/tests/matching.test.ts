@@ -177,4 +177,22 @@ describe("matching utilities", () => {
             points: 2,
         });
     });
+    test("ignores punctuation beside keywords", () => {
+        const punctuationFoundItem: FoundItem = {
+            ...foundItem,
+            itemName: "laptop charger."
+        };
+
+        const punctuationLostItem: LostItem = {
+            ...lostItem,
+            itemName: "laptop charger"
+        };
+
+        const result = getMatchDetails(punctuationFoundItem, punctuationLostItem);
+
+        expect(result.reasons).toContainEqual({
+            label: "Shared item name keywords",
+            points: 4,
+        });
+    });
 });
