@@ -178,7 +178,7 @@ export default function FoundItemForm() {
 
             // send user the success alert
             if (Platform.OS === "web") {
-                // Alert does not work on web interface, had to use the native alert() to implement deployment
+                // had to use the native alert() for web deployment to work
                 alert("Success\nYour report has been submitted successfully.");
             } else {
                 Alert.alert("Success\n", "Your report has been submitted successfully.");
@@ -217,8 +217,7 @@ export default function FoundItemForm() {
                 onChangeText={setItemName}
                 maxLength={30} // stops long names breaking UI
                 onFocus={() => { setShowSuggestions(false); setFocusedField("itemName"); }}
-                onBlur={() => setFocusedField(null)}
-            />
+                onBlur={() => setFocusedField(null)}/>
             <Dropdown
                 style={[globalStyles.dropdown, focusedField === "category" && { borderColor: colors.primary }]}
                 placeholderStyle={globalStyles.placeholderText}
@@ -239,8 +238,7 @@ export default function FoundItemForm() {
                     setShowSuggestions(false);
                 }}
                 onFocus={() => setFocusedField("category")}
-                onBlur={() => setFocusedField(null)}
-            />
+                onBlur={() => setFocusedField(null)}/>
             <TextInput
                 style={[globalStyles.input, globalStyles.multilineInput, focusedField === "description" && { borderColor: colors.primary }]}
                 placeholder="Description"
@@ -255,8 +253,7 @@ export default function FoundItemForm() {
                 multiline
                 numberOfLines={3}
                 onFocus={() => { setShowSuggestions(false); setFocusedField("description"); }}
-                onBlur={() => setFocusedField(null)}
-            />
+                onBlur={() => setFocusedField(null)}/>
             <View style={Suggestions.searchContainer}>
                 {showSuggestions && filteredVenues.length > 0 && (
                     <View style={[
@@ -292,14 +289,13 @@ export default function FoundItemForm() {
                     onFocus={() => { if (locationFound) setShowSuggestions(true); setFocusedField("location"); }}
                     onBlur={() => setFocusedField(null)}
                     onSubmitEditing={() => setShowSuggestions(false)}
-                    returnKeyType="done"
-                />
+                    returnKeyType="done"/>
             </View>
 
             <Pressable
                 style={[DateStyles.datePickerBox, focusedField === "date" && { borderColor: colors.primary }]}
                 onPress={() => {
-                    // separate condition handling for mobile to ensure its continuity. 
+                    // to prevent crashing on web
                     if (Platform.OS !== "web") {
                         setShowCalendar(true);
                         setShowSuggestions(false);
@@ -310,7 +306,7 @@ export default function FoundItemForm() {
                     globalStyles.inputText,
                     { color: dateFound ? colors.textInput : colors.placeholder }
                 ]}>
-                    {/* Made sure to implement placeholder similar to other input fields. */}
+                    {/* maintains uniformity even though not text input */}
                     {dateFound ? `Date Found: ${formatDateLabel(dateFound)}` : "Date Found (select date)"}
                 </Text>
 
@@ -362,8 +358,7 @@ export default function FoundItemForm() {
                 onChangeText={setEmail}
                 keyboardType="email-address"
                 onFocus={() => { setShowSuggestions(false); setFocusedField("email"); }}
-                onBlur={() => setFocusedField(null)}
-            />
+                onBlur={() => setFocusedField(null)}/>
             <TextInput
                 style={[globalStyles.input, focusedField === "phone" && { borderColor: colors.primary }]}
                 placeholder="Contact Phone Number"
@@ -373,8 +368,7 @@ export default function FoundItemForm() {
                 keyboardType="phone-pad"
                 maxLength={8}
                 onFocus={() => { setShowSuggestions(false); setFocusedField("phone"); }}
-                onBlur={() => setFocusedField(null)}
-            />
+                onBlur={() => setFocusedField(null)}/>
 
             <View style={styles.alertsDropdown}>
                 <Pressable style={styles.alertsHeader} onPress={() => setShowAlertsDropdown(!showAlertsDropdown)}>
