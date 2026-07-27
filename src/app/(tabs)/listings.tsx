@@ -9,12 +9,13 @@ import LostItemsList from "../../components/LostItemsList";
 import { colors, DateStyles, globalStyles, PopupStyles, spacing } from "../../styles/globalStyles";
 
 export default function ListingsScreen() {
-    // state variable to track which tab is currently selected (found or lost)
+    // tracking if tab is on lost or found, for displaying info and styling. 
     const [selectedTab, setSelectedTab] = useState<"found" | "lost">("found");
     const [searchQuery, setSearchQuery] = useState("");
     const [filterModalVisible, setFilterModalVisible] = useState(false);
 
     const [activeCategory, setActiveCategory] = useState<string | null>(null);
+    // for choosing filter options before its applied. 
     const [tempCategory, setTempCategory] = useState<string | null>(null);
     const [activeLocation, setActiveLocation] = useState<string | null>(null);
     const [tempLocation, setTempLocation] = useState<string | null>(null);
@@ -25,11 +26,13 @@ export default function ListingsScreen() {
     const [tempEndDate, setTempEndDate] = useState<Date | null>(null);
     const [showStartCalendar, setShowStartCalendar] = useState(false);
     const [showEndCalendar, setShowEndCalendar] = useState(false);
-
+    // keeps filter popup off the screen at the start
     const slideAnim = useRef(new Animated.Value(600)).current;
 
+    // lights up borders of field being used
     const [focusedField, setFocusedField] = useState<string | null>(null);
 
+    // keeps same values as report form input fields
     const categoryData = [
         { label: "ID Card / Matric Card", value: "ID card" },
         { label: "Wallet / Purse", value: "wallet" },
@@ -42,6 +45,7 @@ export default function ListingsScreen() {
         { label: "Other", value: "other" },
     ];
 
+    //to group venues dataset with new category key
     const locationData = [
         { label: "Computing", value: "Computing" },
         { label: "UTown", value: "UTown" },
@@ -82,6 +86,7 @@ export default function ListingsScreen() {
     };
 
     const pickStartDate = (event: DateTimePickerEvent, selectedDate?: Date) => {
+        // android closes picker automatically, unlike ios
         if (Platform.OS === "android") {
             setShowStartCalendar(false);
         }
@@ -112,6 +117,7 @@ export default function ListingsScreen() {
             duration: 250,
             useNativeDriver: true,
         }).start(() => {
+            // actually applies the chosen filters to the active search
             setActiveCategory(tempCategory === "All" ? null : tempCategory);
             setActiveLocation(tempLocation === "All" ? null : tempLocation);
             setFilterModalVisible(false);
@@ -126,6 +132,7 @@ export default function ListingsScreen() {
             duration: 250,
             useNativeDriver: true,
         }).start(() => {
+            // clear everything
             setTempCategory(null);
             setActiveCategory(null);
             setTempLocation(null);
@@ -141,15 +148,15 @@ export default function ListingsScreen() {
         <SafeAreaView edges={["top"]} style={globalStyles.safeArea}>
             <View style={styles.container}>
                 <View style={styles.customHeader}>
+                    {/* switch button between theme colours */}
                     <Text style={[styles.customHeaderTitle, {color: selectedTab === "found" ? colors.logoMain : colors.logoSecondary}]}>Listings</Text>
                 </View>
                 <View style={styles.content}>
-                    {/* tab buttons to switch between found and lost item forms */}
                     <View style={styles.tabContainer}>
-                        {/* tab button for found item form */}
                         <Pressable
                             style={[styles.tabButton, selectedTab === "found" && styles.activeTabButton]}
                             onPress={() => {
+                                // resets everything when switching
                                 setSelectedTab("found");
                                 setSearchQuery("");
                                 setActiveCategory(null);
@@ -160,7 +167,6 @@ export default function ListingsScreen() {
                         >
                             <Text style={[styles.tabText, selectedTab === "found" && styles.activeTabText]}>Found Items</Text>
                         </Pressable>
-                        {/* tab button for lost item form */}
                         <Pressable
                             style={[styles.tabButton, selectedTab === "lost" && {...styles.activeTabButton, backgroundColor: colors.logoSecondary}]}
                             onPress={() => {
@@ -176,9 +182,8 @@ export default function ListingsScreen() {
                         </Pressable>
                     </View>
 
-                    {/* page subtitle */}
                     <Text style={globalStyles.pageSubtitle}>Browse recently reported items.</Text>
-
+                    {/* search and filter put on same row together */}
                     <View style={styles.searchRowContainer}>
                         <View style={styles.searchBarContainer}>
                             <TextInput
@@ -212,7 +217,7 @@ export default function ListingsScreen() {
                         </Pressable>
                     </View>
 
-                    {/* render the appropriate listings based on which tab is selected */}
+                    {/* swap lists based on tab */}
                     {selectedTab === "found" ? (
                         <FoundItemsList
                             searchQuery={searchQuery}
@@ -301,6 +306,7 @@ export default function ListingsScreen() {
                                     activeColor={colors.logoAccent}
                                     placeholder="All Locations"
                                     value={tempLocation}
+                                    // put dropdown on top
                                     dropdownPosition="top"
                                     inverted={false}
                                     onFocus={() => setFocusedField("location")}
@@ -313,20 +319,16 @@ export default function ListingsScreen() {
                             <View style={PopupStyles.filterFormContainer}>
                                 <Text style={PopupStyles.filterLabelText}>Date Range</Text>
                                 <View style={DateStyles.dateRangeRow}>
-                                    <Pressable
-                                        style={DateStyles.dualDatePickerBox}
-                                        onPress={() => {
+                                    <Pressable style={DateStyles.dualDatePickerBox} onPress={() => {
                                             if (Platform.OS !== "web") {
                                                 setShowStartCalendar(true);
                                             }
-                                        }}
-                                    >
+                                        }}>
                                         <Text style={DateStyles.datePickerLabel}>Start Date</Text>
                                         <Text style={[globalStyles.inputText, { color: tempStartDate ? colors.textInput : colors.placeholder, fontSize: 14 }]}>
                                             {formatDateLabel(tempStartDate)}
                                         </Text>
-                                        {/* Replicated from report forms to implement invisible raw HTML input for web, 
-                                        as Date Picker is incompatible. */}
+                                        {/* web doesn't support native datepicker so had to use invisible html date input to handle clicks */}
                                         {Platform.OS === "web" && (
                                             <input
                                                 type="date"
@@ -337,33 +339,31 @@ export default function ListingsScreen() {
                                                 max={new Date().toISOString().split("T")[0]}
                                                 style={{
                                                     position: "absolute",
-                                                    opacity: 0, // turns the HTML field invisible
-                                                    top: 0, // extends the field to cover entire visible Pressable container, so users can click anywhere to use. 
+                                                    // make field transparent to hide it
+                                                    opacity: 0,
+                                                    top: 0, 
                                                     left: 0,
                                                     right: 0,
                                                     bottom: 0,
+                                                    //stretch over full container to catch all clicks
                                                     width: '100%',
                                                     height: '100%',
                                                     padding: 0,
                                                     margin: 0,
-                                                }}
-                                            />
+                                                }}/>
                                         )}
                                     </Pressable>
 
-                                    <Pressable
-                                        style={DateStyles.dualDatePickerBox}
-                                        onPress={() => {
+                                    <Pressable style={DateStyles.dualDatePickerBox} onPress={() => {
                                             if (Platform.OS !== "web") {
                                                 setShowEndCalendar(true);
                                             }
-                                        }}
-                                    >
+                                        }}>
                                         <Text style={DateStyles.datePickerLabel}>End Date</Text>
                                         <Text style={[globalStyles.inputText, { color: tempEndDate ? colors.textInput : colors.placeholder, fontSize: 14 }]}>
                                             {formatDateLabel(tempEndDate)}
                                         </Text>
-                                        {/* Similar implementation to the start date, with invisible HTML field */}
+                                        {/* same invisible field like start date */}
                                         {Platform.OS === "web" && (
                                             <input
                                                 type="date"
@@ -382,27 +382,25 @@ export default function ListingsScreen() {
                                                     height: '100%',
                                                     opacity: 0,
                                                     cursor: 'pointer',
-                                                }}
-                                            />
+                                                }}/>
                                         )}
                                     </Pressable>
                                 </View>
-                                {/* Avoid showing for web which creates error. */}
+                                {/* on native expo go only, else web will crash */}
                                 {showStartCalendar && Platform.OS !== "web" && (
                                     <DateTimePicker
-                                        // default to current date as placeholder.
+                                        // fall back to today
                                         value={tempStartDate || new Date()}
                                         mode="date"
                                         display="default"
                                         onChange={pickStartDate}
-                                        maximumDate={tempEndDate || new Date()} // prevent selection of future dates
-                                    />
+                                        // stops selection of future date
+                                        maximumDate={tempEndDate || new Date()}/>
                                 )}
 
                                 {showStartCalendar && Platform.OS === 'ios' && (
                                     <Button title="Confirm Start Date" onPress={() => setShowStartCalendar(false)} />
                                 )}
-                                {/* Avoid showing for web which creates error. */}
                                 {showEndCalendar && Platform.OS !== "web" && (
                                     <DateTimePicker
                                         value={tempEndDate || new Date()}
@@ -410,8 +408,7 @@ export default function ListingsScreen() {
                                         display="default"
                                         minimumDate={tempStartDate || undefined}
                                         maximumDate={new Date()}
-                                        onChange={pickEndDate}
-                                    />
+                                        onChange={pickEndDate}/>
                                 )}
                                 {showEndCalendar && Platform.OS === 'ios' && (
                                     <Button title="Confirm End Date" onPress={() => setShowEndCalendar(false)} />
@@ -419,16 +416,10 @@ export default function ListingsScreen() {
                             </View>
 
                             <View style={PopupStyles.modalFooter}>
-                                <Pressable
-                                    style={[PopupStyles.actionButton, PopupStyles.resetButton]}
-                                    onPress={handleResetFilters}
-                                >
+                                <Pressable style={[PopupStyles.actionButton, PopupStyles.resetButton]} onPress={handleResetFilters}>
                                     <Text style={PopupStyles.resetButtonText}>Reset All</Text>
                                 </Pressable>
-                                <Pressable
-                                    style={[PopupStyles.actionButton, PopupStyles.applyButton]}
-                                    onPress={handleApplyFilters}
-                                >
+                                <Pressable style={[PopupStyles.actionButton, PopupStyles.applyButton]} onPress={handleApplyFilters}>
                                     <Text style={PopupStyles.applyButtonText}>Apply Filters</Text>
                                 </Pressable>
                             </View>

@@ -1,15 +1,18 @@
 import { Image } from "expo-image";
 import { Tabs } from "expo-router";
 import { Text } from "react-native";
+// used an external stylesheet for most of the styling here
 import { colors } from "../../styles/globalStyles";
 
+// tabs layout is used for home, reports and listings. 
 export default function TabLayout() {
     return (
         <Tabs
+            // defaults to home page.
             initialRouteName="index"
             screenOptions={{
                 headerTitleAlign: "center",
-
+                
                 tabBarStyle: {
                     backgroundColor: "#fffdf8",
                     borderTopWidth: 1,
@@ -23,8 +26,7 @@ export default function TabLayout() {
                     shadowRadius: 8,
                     elevation: 8,
                 },
-            }}
-        >
+            }}>
             <Tabs.Screen 
                 name="report" 
                 options={{ 
@@ -35,10 +37,11 @@ export default function TabLayout() {
                     ),
                     tabBarIcon: ({ focused, size }) => (
                         <Image
+                            //swap to filled icon when focused on
                             source={ focused ? require("../../../assets/images/add-circle.png") : require("../../../assets/images/add-circle-outline.png")}
+                            // use local png image assets because original Ionicons breaks web deployments. 
                             style={{ width: size, height: size}}
-                            tintColor={colors.logoSecondary}
-                        />
+                            tintColor={colors.logoSecondary}/>
                     ),
                 }} 
             />
@@ -54,8 +57,7 @@ export default function TabLayout() {
                         <Image
                             source={focused ? require("../../../assets/images/home.png") : require("../../../assets/images/home-outline.png")}
                             style={{ width: size, height: size}}
-                            tintColor={colors.logoMain}
-                        />
+                            tintColor={colors.logoMain}/>
                     ),
                 }} 
             />
@@ -71,8 +73,7 @@ export default function TabLayout() {
                         <Image
                             source={focused ? require("../../../assets/images/list-circle.png") : require("../../../assets/images/list-circle-outline.png")}
                             style={{ width: size, height: size}}
-                            tintColor={colors.logoAccent}
-                        />
+                            tintColor={colors.logoAccent}/>
                     ),
                 }} 
             />
