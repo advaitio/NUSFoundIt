@@ -8,25 +8,22 @@ const IGNORED_WORDS = new Set([
     "item", "items", "lost", "found", "near", "around",
 ])
 
-// normalizes a string before comparison
 function normalize(text: string): string {
     return text.toLowerCase().trim();
 }
 
-// takes a string and splits it into useful words
+// splitting str into useful words
 function getWords(text: string): string[] {
-    return normalize(text).split(/\s+/).filter((word) => word.length >= 3 && !IGNORED_WORDS.has(word));
+    return normalize(text).replace(/[^\p{L}\p{N}\s]/gu, " ").split(/\s+/).filter((word) => word.length >= 3 && !IGNORED_WORDS.has(word));
 }
 
-// counts shared words between two strings.
 function countSharedWords(textA: string, textB: string): number {
     // create sets of words for both texts
     const wordsA = new Set(getWords(textA));
     const wordsB = new Set(getWords(textB));
-    // num shared words is total unique words minus the unique words in each set
-    return wordsA.size + wordsB.size - new Set([...wordsA, ...wordsB]).size;
+    // num shared words is total unique words minus the unique words in each set (using the set formula)
+    return wordsA.size + wordsB.size - new Set([...wordsA, ...wordsB]).size; 
 }
-
 
 // parse date str in dd/mm//yyyy format to date object
 function parseDate(dateString: string): Date | null {
@@ -72,7 +69,6 @@ function getVenueCategory(location: string): string | null {
     return venueCategoryByName.get(normalize(location)) ?? null;
 }
 
-// 3pts for matching categories
 function scoreCategory(foundItem: FoundItem, lostItem: LostItem): MatchReason | null {
     if (foundItem.category && lostItem.category && foundItem.category === lostItem.category) {
         return { label: "Same category", points: 3 };
@@ -80,7 +76,6 @@ function scoreCategory(foundItem: FoundItem, lostItem: LostItem): MatchReason | 
     return null;
 }
 
-// 2pts for matching locations
 function scoreLocation(foundItem: FoundItem, lostItem: LostItem): MatchReason | null {
     const lostLocation = normalize(lostItem.locationLost);
     const foundLocation = normalize(foundItem.locationFound);
@@ -115,7 +110,7 @@ function scoreDate(foundItem: FoundItem, lostItem: LostItem): MatchReason | null
     }
 
     if (diffDays <= 3) {
-        return { label: "Found within 3 day of lost date", points: 2 };
+        return { label: "Found within 3 days of lost date", points: 2 };
     }
 
     if (diffDays <= 7) {
@@ -126,10 +121,9 @@ function scoreDate(foundItem: FoundItem, lostItem: LostItem): MatchReason | null
         return { label: "Found more than 2 weeks after lost date", points: -1 };
     }
 
-    return null; //no score for 1-2wks
+    return null; //no bonus/penalty for 1-2wks
 }
 
-// 2pts for each shared item name word
 function scoreItemName(foundItem: FoundItem, lostItem: LostItem): MatchReason | null {
     const sharedWords = countSharedWords(foundItem.itemName, lostItem.itemName);
     if (sharedWords > 0) {
@@ -138,7 +132,6 @@ function scoreItemName(foundItem: FoundItem, lostItem: LostItem): MatchReason | 
     return null;
 }
 
-// 1pt for each shared desc word
 function scoreDescription(foundItem: FoundItem, lostItem: LostItem): MatchReason | null {
     const sharedWords = countSharedWords(foundItem.description, lostItem.description);
     if (sharedWords > 0) {
@@ -164,7 +157,6 @@ export function getMatchScore(foundItem: FoundItem, lostItem: LostItem): number 
     return getMatchDetails(foundItem, lostItem).score;
 }
 
-// shows matching found items in lost item details page
 export function getPossibleFoundMatches(lostItem: LostItem, foundItems: FoundItem[]): MatchedFoundItem[] {
     return foundItems
         .filter((foundItem) => isMatchableStatus(foundItem.status))
@@ -180,7 +172,6 @@ export function getPossibleFoundMatches(lostItem: LostItem, foundItems: FoundIte
         .sort((a, b) => b.matchScore - a.matchScore);
 }
 
-// shows matching lost items in found item details page
 export function getPossibleLostMatches(foundItem: FoundItem, lostItems: LostItem[]): MatchedLostItem[] {
     return lostItems
         .filter((lostItem) => isMatchableStatus(lostItem.status))
