@@ -42,7 +42,3 @@ example
 /ios
 /android
 .vercel
-
-# Environment variables
-.env
-.env*.local
