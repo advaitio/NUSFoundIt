@@ -65,7 +65,7 @@ describe("Firestore integration", () => {
         });
 
         expect(documentSnapshot.data()?.createdAt).toBeDefined();
-        expect(documentSnapshot.data()?.expireAt).toBeDefined;
+        expect(documentSnapshot.data()?.expireAt).toBeDefined();
         const fetchedItems = await fetchFoundItems(database);
         expect(fetchedItems).toHaveLength(1);
 
