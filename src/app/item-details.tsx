@@ -7,9 +7,8 @@ import { colors, globalStyles, spacing } from "../styles/globalStyles";
 import { FoundItem, LostItem, MatchedFoundItem, MatchedLostItem } from "../types/items";
 import { getPossibleFoundMatches, getPossibleLostMatches } from "../utils/matching";
 
-// import {updateDoc} from "firebase/firestore"
-
 const getPlaceholderImage = (category: string) => {
+    // when no image is attached
     switch (category.toLowerCase()) {
         case "id card": 
             return require("../../assets/images/placeholder-id.png");
@@ -33,14 +32,13 @@ const getPlaceholderImage = (category: string) => {
 };
 
 export default function ItemDetails() {
-    // Get the type and id parameters from the URL using useLocalSearchParams
     const { type, id } = useLocalSearchParams<{ type: string; id: string }>();
 
-    // State variables for the item details, possible matches, loading state, and error message
     const [item, setItem] = useState<FoundItem | LostItem | null>(null);
     const [matches, setMatches] = useState<(MatchedFoundItem | MatchedLostItem)[]>([]);
     const [loading, setLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState("");
+    // so uploads don't get squished
     const [imageRatio, setImageRatio] = useState(1);
 
     const [telegramId, setTelegramId] = useState("");
@@ -49,9 +47,8 @@ export default function ItemDetails() {
     const [showAlertsDropdown, setShowAlertsDropdown] = useState(false);
     const [focusedField, setFocusedField] = useState<string | null>(null);
 
-    // Fetch item details and possible matches (if it's a lost item) when the component mounts
     useEffect(() => {
-        // Function to fetch item details from Firestore
+        // have to use async because useEffect creates errors otherwise
         async function fetchItemDetails() {
             try {
                 if (!id || !type) {
@@ -165,6 +162,7 @@ export default function ItemDetails() {
     const saveAlertSettings = async () => {
         if (!telegramId) {
             const message = "Please enter your Telegram account ID.";
+            //react native alert doesn't work on web so had to use normal browser type
             if (Platform.OS === "web") {
                 alert("Error\n" + message);
             } else {
@@ -188,7 +186,6 @@ export default function ItemDetails() {
             const collectionName = type === "lost" ? "lostItems" : "foundItems";
             await updateDoc(doc(db, collectionName, id), {[`telegramAlerts.${telegramId}`]: parseInt(threshold)});
             if (Platform.OS === "web") {
-                // Alert does not work on web interface, had to use the native alert() to implement deployment
                 alert("Success\nTelegram alerts enabled!");
             } else {
                 Alert.alert("Success\n", "Telegram alerts enabled!");
@@ -222,7 +219,6 @@ export default function ItemDetails() {
             setTelegramId("");
             setThreshold("");
             if (Platform.OS === "web") {
-                // Alert does not work on web interface, had to use the native alert() to implement deployment
                 alert("Success\nMatch Alerts have been successfully disabled for this item.");
             } else {
                 Alert.alert("Success\n", "Match Alerts have been successfully disabled for this item.");
@@ -238,7 +234,7 @@ export default function ItemDetails() {
         setShowAlertsDropdown(false);
     };
 
-    // Render loading state, error state, or item details with possible matches
+    // to show viewers while loading
     if (loading) {
         return (
             <View style={globalStyles.centeredScreen}>
@@ -249,7 +245,7 @@ export default function ItemDetails() {
         );
     }
 
-    // Render error message if there's an error or if the item is not found
+    // error handling for non existent data
     if (errorMessage || !item) {
         return (
             <View style={globalStyles.centeredScreen}>
@@ -259,19 +255,14 @@ export default function ItemDetails() {
         )
     }
 
-    // Determine if the item is a lost item or a found item based on the type parameter
+    // check if lost or found here to declutter elements
     const isLostItem = type === "lost";
     const location = isLostItem ? (item as LostItem).locationLost : (item as FoundItem).locationFound;
     const date = isLostItem ? (item as LostItem).dateLost : (item as FoundItem).dateFound;
 
-    // Render the item details and possible matches if it's a lost item
     return (
         <>
-            <Stack.Screen
-                options={{
-                    title: isLostItem ? "Lost Item Details" : "Found Item Details",
-                }}
-            />
+            <Stack.Screen options={{title: isLostItem ? "Lost Item Details" : "Found Item Details"}}/>
             <KeyboardAvoidingView
                 behavior={Platform.OS === "ios" ? "padding" : "height"}
                 keyboardVerticalOffset={focusedField ? 100 : 0}
@@ -394,11 +385,11 @@ export default function ItemDetails() {
                         )}
                     </View>
 
-                    {/* render possible matches for lost/found items */}
                     <View style={{paddingHorizontal: 8}}>
                         <Text style={styles.heading}>{isLostItem ? "Possible Found Item Matches" : "Possible Lost Item Matches"}</Text>
                         {matches.length === 0 ? (
                             <Text style={globalStyles.placeholderText}>
+                                {/* to show if matches list is empty */}
                                 {isLostItem
                                     ? "No matching found items yet. Check back later!"
                                     : "No matching lost item reports yet. Check back later!"}
@@ -406,17 +397,9 @@ export default function ItemDetails() {
                         ) : (
                             matches.map((match) => {
                                 const matchType = isLostItem ? "found" : "lost";
-
                                 return (
-                                    <Link
-                                        key={match.id}
-                                        push
-                                        href={{
-                                            pathname: "/item-details",
-                                            params: { type: matchType, id: match.id },
-                                        }}
-                                        asChild
-                                    >
+                                    <Link key={match.id} push href={{pathname: "/item-details", params: { type: matchType, id: match.id },}}
+                                        asChild>
                                         <Pressable style={styles.matchCard}>
                                             <View style={styles.matchHeader}>
                                                 <Text style={styles.matchName}>{match.itemName}</Text>
@@ -434,7 +417,6 @@ export default function ItemDetails() {
                                                     </Text>
                                                 ))}
                                             </View>
-
                                             <Text style={styles.viewDetailsText}>Tap to view full item details.</Text>
                                         </Pressable>
                                     </Link>
@@ -442,7 +424,6 @@ export default function ItemDetails() {
                             })
                         )}
                     </View>
-
                 </ScrollView>
             </KeyboardAvoidingView>
         </>

@@ -1,23 +1,13 @@
-import { Link } from "expo-router";
 import { fetchLostItems as fetchLostItemsFromFirestore } from "@/services/itemsService";
+import { Link } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
-import {
-    ActivityIndicator,
-    FlatList,
-    Image,
-    Pressable,
-    RefreshControl,
-    StyleSheet,
-    Text,
-    View
-} from "react-native";
+import { ActivityIndicator, FlatList, Image, Pressable, RefreshControl, StyleSheet, Text, View } from "react-native";
 import { db } from "../firebase/firebaseConfig";
 import { colors, globalStyles } from "../styles/globalStyles";
-
-import venuesData from "../constants/venues.json"; //file directly sourced from NUSMods public Github Repository. 
-
+//taken directly from NUSMods public Github Repository (see README)
+import venuesData from "../constants/venues.json";
 import { LostItem } from "../types/items";
-
+// cases when image is not uploaded
 const getPlaceholderImage = (category: string) => {
     switch (category.toLowerCase()) {
         case "id card": 
@@ -41,7 +31,6 @@ const getPlaceholderImage = (category: string) => {
     }
 };
 
-// screen component for listings page
 export default function LostItemsList({
     searchQuery,
     categoryFilter,
@@ -54,13 +43,12 @@ export default function LostItemsList({
     startDateFilter: Date | null;
     endDateFilter: Date | null;
 }) {
-    // state variables for lost items, loading state, refreshing state and error message
+    // facilitates pull-to-refresh
     const [items, setItems] = useState<LostItem[]>([]);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
 
-    // function to fetch lost items from Firestore
     async function fetchLostItems() {
         try {
             setErrorMessage("");
@@ -75,22 +63,20 @@ export default function LostItemsList({
         }
     }
 
-    // useEffect to fetch items on component mount
     useEffect(() => {
         fetchLostItems();
     }, []);
 
-    // function to handle pull-to-refresh action
     const onRefresh = useCallback(() => {
         setRefreshing(true);
         fetchLostItems();
     }, []);
-
+    // converts from string to js format to parse
     const parseDate = (dateStr: string): Date => {
         const parts = dateStr.split("/");
         return new Date(parseInt(parts[2], 10), parseInt(parts[1], 10) - 1, parseInt(parts[0], 10));
     };
-
+    // filtering here is better than overloading firestore
     const filteredItems = items.filter((item) => {
         const matchesSearch = item.itemName.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
             item.category.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
@@ -122,7 +108,7 @@ export default function LostItemsList({
         return matchesSearch && matchesCategory && matchesLocation && matchesDate;
     });
 
-    // conditional rendering based on loading state, error state and data availability
+    // removes unappealing blank page when loading
     if (loading) {
         return (
             <View style={globalStyles.centeredScreen}>
@@ -167,6 +153,7 @@ export default function LostItemsList({
                                         
                                         {!item.imageUrl && (
                                             <View style={styles.placeholderBadge}>
+                                                {/* uses placeholder if needed*/}
                                                 <Text style={styles.placeholderBadgeText}>NO PHOTO</Text>
                                             </View>
                                         )}

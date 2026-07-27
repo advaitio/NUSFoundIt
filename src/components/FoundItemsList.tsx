@@ -1,23 +1,14 @@
-import { Link } from "expo-router";
 import { fetchFoundItems as fetchFoundItemsFromFirestore } from "@/services/itemsService";
+import { Link } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
-import {
-    ActivityIndicator,
-    FlatList,
-    Image,
-    Pressable,
-    RefreshControl,
-    StyleSheet,
-    Text,
-    View
-} from "react-native";
+import { ActivityIndicator, FlatList, Image, Pressable, RefreshControl, StyleSheet, Text, View } from "react-native";
 import { db } from "../firebase/firebaseConfig";
 import { colors, globalStyles } from "../styles/globalStyles";
-
-import venuesData from "../constants/venues.json"; //file directly sourced from NUSMods public Github Repository. 
+//taken directly from NUSMods public Github Repository (see README)
+import venuesData from "../constants/venues.json";
 
 import { FoundItem } from "../types/items";
-
+// replaces images that don't exist
 const getPlaceholderImage = (category: string) => {
     switch (category.toLowerCase()) {
         case "id card": 
@@ -40,8 +31,6 @@ const getPlaceholderImage = (category: string) => {
             return require("../../assets/images/placeholder-other.png"); 
     }
 };
-
-// screen component for listings page
 export default function FoundItemsList({
     searchQuery,
     categoryFilter,
@@ -54,13 +43,12 @@ export default function FoundItemsList({
     startDateFilter: Date | null;
     endDateFilter: Date | null;
 }) {
-    // state variables for found items, loading state, refreshing state and error message
+    // helping with the pull-to-refresh feature
     const [items, setItems] = useState<FoundItem[]>([]);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
 
-    // function to fetch found items from Firestore
     async function fetchFoundItems() {
         try {
             setErrorMessage("");
@@ -75,22 +63,20 @@ export default function FoundItemsList({
         }
     }
 
-    // useEffect to fetch items on component mount
     useEffect(() => {
         fetchFoundItems();
     }, []);
 
-    // function to handle pull-to-refresh action
     const onRefresh = useCallback(() => {
         setRefreshing(true);
         fetchFoundItems();
     }, []);
-
+    // needs to convert from string to js format to parse properly
     const parseDate = (dateStr: string): Date => {
         const parts = dateStr.split("/");
         return new Date(parseInt(parts[2], 10), parseInt(parts[1], 10) - 1, parseInt(parts[0], 10));
     };
-
+    // running filtering here better than cluttering firestore
     const filteredItems = items.filter((item) => {
         const matchesSearch = item.itemName.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
             item.category.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
@@ -120,8 +106,7 @@ export default function FoundItemsList({
 
         return matchesSearch && matchesCategory && matchesLocation && matchesDate;
     });
-
-    // conditional rendering based on loading state, error state and data availability
+    // looks pleasant for user whilst loading
     if (loading) {
         return (
             <View style={globalStyles.centeredScreen}>
@@ -130,8 +115,6 @@ export default function FoundItemsList({
             </View>
         );
     }
-
-    // main render for listings page with FlatList to display found items
     return (
         <View style={globalStyles.screen}>
             {errorMessage ? (
@@ -154,9 +137,7 @@ export default function FoundItemsList({
                         </View>
                     }
                     renderItem={({ item }) => (
-                        <Link href={{
-                            pathname: "/item-details",
-                            params: { id: item.id, type: "found" },
+                        <Link href={{pathname: "/item-details", params: { id: item.id, type: "found" },
                         }} asChild>
                             <Pressable style={StyleSheet.flatten([globalStyles.card, styles.itemCard])}>
                                 <View style={styles.cardRow}>
@@ -167,6 +148,7 @@ export default function FoundItemsList({
                                         
                                         {!item.imageUrl && (
                                             <View style={styles.placeholderBadge}>
+                                                {/* extra info on lack of image */}
                                                 <Text style={styles.placeholderBadgeText}>NO PHOTO</Text>
                                             </View>
                                         )}

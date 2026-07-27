@@ -5,29 +5,29 @@ import { Alert, Button, Image, Keyboard, Linking, Platform, Pressable, StyleShee
 import { Dropdown } from "react-native-element-dropdown";
 import { colors, DateStyles, globalStyles, ImageStyles, Suggestions } from "../styles/globalStyles";
 
-//Importing of Firebase tools and firebaseConfig file.
 import { createFoundItem } from "@/services/itemsService";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { db, storage } from "../firebase/firebaseConfig";
-//file directly sourced from NUSMods public Github Repository. Refer to README for full reference.
+//taken directly from NUSMods public Github Repository (see README)
 import venuesData from "../constants/venues.json";
-//navigation functions
+
 export default function FoundItemForm() {
-    // state variables for the form fields
     const [itemName, setItemName] = useState("");
     const [category, setCategory] = useState<string | null>(null);
     const [description, setDescription] = useState("");
     const [locationFound, setLocationFound] = useState("");
     const [filteredVenues, setFilteredVenues] = useState<string[]>([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
-    const [dateFound, setDateFound] = useState<Date | null>(null); // initialise with null to force user to select a date, preventing possible user error.
-    const [showCalendar, setShowCalendar] = useState(false); // control of calendar popup visibility
+    // so users don't accidentally submit today's date
+    const [dateFound, setDateFound] = useState<Date | null>(null);
+    const [showCalendar, setShowCalendar] = useState(false);
     const [email, setEmail] = useState("");
     const [phoneNumber, setPhoneNumber] = useState("");
-    const [image, setImage] = useState<string | null>(null); //Optional field, might not implement yet.
+    const [image, setImage] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const [focusedField, setFocusedField] = useState<string | null>(null);
 
+    // helps to control hidden dropdown
     const [showAlertsDropdown, setShowAlertsDropdown] = useState(false);
     const [telegramId, setTelegramId] = useState("");
     const [threshold, setThreshold] = useState("");
@@ -44,13 +44,12 @@ export default function FoundItemForm() {
         { label: "Other", value: "other" },
     ];
 
-    // helper function to format date into dd/mm/yyyy format in input field. 
     const formatDateLabel = (date: Date) => {
         return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
     };
 
-    // helper function for date selection. 
     const pickDate = (event: DateTimePickerEvent, selectedDate?: Date) => {
+        // android closes straightaway, but ios stays open
         if (Platform.OS === "android") {
             setShowCalendar(false);
         }
@@ -63,7 +62,6 @@ export default function FoundItemForm() {
 
     const handleLocationSelect = (text: string) => {
         setLocationFound(text);
-
         if (text.trim().length > 0) {
             const query = text.toUpperCase();
 
@@ -91,6 +89,7 @@ export default function FoundItemForm() {
     const pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ["images"],
+            // important for saving bandwidth and avoiding costs
             quality: 0.3,
         });
 
@@ -99,14 +98,13 @@ export default function FoundItemForm() {
         }
     };
 
-    // function to handle form submission
     const handleSubmit = async () => {
         if (loading) {
             return;
         }
-        //validation for non-empty fields
+        // all below fields will be mandatory
         if (!itemName.trim() || !category || !description.trim() || !locationFound.trim() || !dateFound || !email.trim() || !phoneNumber) {
-            // Alert does not on web interface, had to use native alert() for deployment to work. 
+            // react native alert doesn't work for web, have to use original browser version
             if (Platform.OS === "web") {
                 alert("Error\nPlease fill in all required fields.");
             } else {
@@ -136,7 +134,6 @@ export default function FoundItemForm() {
                 return;
             }
         }
-        // send data to Firestore
         try {
             setLoading(true);
             let uploadLink = "";
@@ -157,6 +154,7 @@ export default function FoundItemForm() {
                 }
             }
 
+            // to improve data integrity and stop database cluttering
             const expirationDate = new Date();
             expirationDate.setDate(expirationDate.getDate() + 30);
 
@@ -180,13 +178,13 @@ export default function FoundItemForm() {
 
             // send user the success alert
             if (Platform.OS === "web") {
-                // Alert does not work on web interface, had to use the native alert() to implement deployment
+                // had to use the native alert() for web deployment to work
                 alert("Success\nYour report has been submitted successfully.");
             } else {
                 Alert.alert("Success\n", "Your report has been submitted successfully.");
             }
 
-            // reset form fields
+            //clear for next report
             setItemName("");
             setCategory(null);
             setDescription("");
@@ -199,7 +197,6 @@ export default function FoundItemForm() {
             setThreshold("");
             setShowAlertsDropdown(false);
 
-            // general error handling for issues during submission process.
         } catch (error) {
             console.error("Error adding document: ", error);
             Alert.alert("Error\n", "Something went wrong. Please try again.");
@@ -218,16 +215,15 @@ export default function FoundItemForm() {
                 placeholderTextColor={colors.placeholder}
                 value={itemName}
                 onChangeText={setItemName}
-                maxLength={30} // limit item name to 30 characters to prevent excessively long entries.
+                maxLength={30} // stops long names breaking UI
                 onFocus={() => { setShowSuggestions(false); setFocusedField("itemName"); }}
-                onBlur={() => setFocusedField(null)}
-            />
+                onBlur={() => setFocusedField(null)}/>
             <Dropdown
                 style={[globalStyles.dropdown, focusedField === "category" && { borderColor: colors.primary }]}
                 placeholderStyle={globalStyles.placeholderText}
                 selectedTextStyle={[
                     globalStyles.inputText,
-                    { color: category ? colors.textInput : colors.placeholder } // implement placeholder similar to other input fields.
+                    { color: category ? colors.textInput : colors.placeholder } // mimics text input to get same styling
                 ]}
                 containerStyle={{ backgroundColor: colors.logoCream }}
                 activeColor={colors.logoAccent}
@@ -242,10 +238,8 @@ export default function FoundItemForm() {
                     setShowSuggestions(false);
                 }}
                 onFocus={() => setFocusedField("category")}
-                onBlur={() => setFocusedField(null)}
-            />
+                onBlur={() => setFocusedField(null)}/>
             <TextInput
-                // multiline input to allow for more detailed descriptions of found items.
                 style={[globalStyles.input, globalStyles.multilineInput, focusedField === "description" && { borderColor: colors.primary }]}
                 placeholder="Description"
                 placeholderTextColor={colors.placeholder}
@@ -259,8 +253,7 @@ export default function FoundItemForm() {
                 multiline
                 numberOfLines={3}
                 onFocus={() => { setShowSuggestions(false); setFocusedField("description"); }}
-                onBlur={() => setFocusedField(null)}
-            />
+                onBlur={() => setFocusedField(null)}/>
             <View style={Suggestions.searchContainer}>
                 {showSuggestions && filteredVenues.length > 0 && (
                     <View style={[
@@ -296,14 +289,13 @@ export default function FoundItemForm() {
                     onFocus={() => { if (locationFound) setShowSuggestions(true); setFocusedField("location"); }}
                     onBlur={() => setFocusedField(null)}
                     onSubmitEditing={() => setShowSuggestions(false)}
-                    returnKeyType="done"
-                />
+                    returnKeyType="done"/>
             </View>
 
             <Pressable
                 style={[DateStyles.datePickerBox, focusedField === "date" && { borderColor: colors.primary }]}
                 onPress={() => {
-                    // separate condition handling for mobile to ensure its continuity. 
+                    // to prevent crashing on web
                     if (Platform.OS !== "web") {
                         setShowCalendar(true);
                         setShowSuggestions(false);
@@ -314,13 +306,11 @@ export default function FoundItemForm() {
                     globalStyles.inputText,
                     { color: dateFound ? colors.textInput : colors.placeholder }
                 ]}>
-                    {/* Made sure to implement placeholder similar to other input fields. */}
+                    {/* maintains uniformity even though not text input */}
                     {dateFound ? `Date Found: ${formatDateLabel(dateFound)}` : "Date Found (select date)"}
                 </Text>
 
-                {/* implement the raw HTML date input if the platform is web. 
-                Date Picker does not work on web, so maintained <Text> tag to easily transfer styles over, 
-                with raw HTML date input remaining invisible by intentionally setting opacity to 0 */}
+                {/* react native date picker doesn't work on web, had to place invisible date field*/}
                 {Platform.OS === "web" && (
                     <input
                         type="date"
@@ -333,8 +323,8 @@ export default function FoundItemForm() {
                         max={new Date().toISOString().split("T")[0]}
                         style={{
                             position: "absolute",
-                            opacity: 0, // makes HTML raw field invisible
-                            top: 0, // extends the field to cover the entire visible Pressable container, so users can click anywhere to use. 
+                            opacity: 0,
+                            top: 0,
                             left: 0,
                             right: 0,
                             bottom: 0,
@@ -346,15 +336,14 @@ export default function FoundItemForm() {
                     />
                 )}
             </Pressable>
-            {/* differentiate web to ensure popup only appears on mobile */}
+            {/* will only show on native to prevent breaking web */}
             {showCalendar && Platform.OS !== "web" && (
                 <DateTimePicker
-                    // default to current date as placeholder.
                     value={dateFound || new Date()}
                     mode="date"
                     display="default"
                     onChange={pickDate}
-                    maximumDate={new Date()} // prevent selection of future dates
+                    maximumDate={new Date()}
                 />
             )}
 
@@ -369,8 +358,7 @@ export default function FoundItemForm() {
                 onChangeText={setEmail}
                 keyboardType="email-address"
                 onFocus={() => { setShowSuggestions(false); setFocusedField("email"); }}
-                onBlur={() => setFocusedField(null)}
-            />
+                onBlur={() => setFocusedField(null)}/>
             <TextInput
                 style={[globalStyles.input, focusedField === "phone" && { borderColor: colors.primary }]}
                 placeholder="Contact Phone Number"
@@ -380,8 +368,7 @@ export default function FoundItemForm() {
                 keyboardType="phone-pad"
                 maxLength={8}
                 onFocus={() => { setShowSuggestions(false); setFocusedField("phone"); }}
-                onBlur={() => setFocusedField(null)}
-            />
+                onBlur={() => setFocusedField(null)}/>
 
             <View style={styles.alertsDropdown}>
                 <Pressable style={styles.alertsHeader} onPress={() => setShowAlertsDropdown(!showAlertsDropdown)}>
@@ -398,7 +385,7 @@ export default function FoundItemForm() {
                         style={{ width: 25, height: 25, transform: [{ rotate: showAlertsDropdown ? "-90deg" : "90deg" }] }}
                         tintColor={colors.logoMain} />
                 </Pressable>
-
+                {/* hiding improves visual appeal and declutters */}
                 {showAlertsDropdown && (
                     <View style={styles.alertsBody}>
                         <Text style={[styles.contactLabel, { fontStyle: "italic", marginBottom: 10 }]}>Get notified when new reports match this item.</Text>

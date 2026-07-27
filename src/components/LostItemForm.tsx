@@ -5,30 +5,27 @@ import { Alert, Button, Image, Keyboard, Linking, Platform, Pressable, StyleShee
 import { Dropdown } from "react-native-element-dropdown";
 import { colors, DateStyles, globalStyles, ImageStyles, Suggestions } from "../styles/globalStyles";
 
-//Importing of Firebase tools and firebaseConfig file.
 import { createLostItem } from "@/services/itemsService";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { db, storage } from "../firebase/firebaseConfig";
-//file directly sourced from NUSMods public Github Repository. Refer to README for full reference.
+//taken directly from NUSMods public Github Repository (see README)
 import venuesData from "../constants/venues.json";
 
-//navigation functions
 export default function LostItemForm() {
-    // state variables for the form fields
     const [itemName, setItemName] = useState("");
     const [category, setCategory] = useState<string | null>(null);
     const [description, setDescription] = useState("");
     const [locationLost, setLocationLost] = useState("");
     const [filteredVenues, setFilteredVenues] = useState<string[]>([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
-    const [dateLost, setDateLost] = useState<Date | null>(null); // initialise with null to force user to select a date, preventing possible user error.
-    const [showCalendar, setShowCalendar] = useState(false); // control of calendar popup visibility
+    const [dateLost, setDateLost] = useState<Date | null>(null); // stops users from accidentally submitting current date
+    const [showCalendar, setShowCalendar] = useState(false);
     const [email, setEmail] = useState("");
     const [phoneNumber, setPhoneNumber] = useState("");
     const [image, setImage] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const [focusedField, setFocusedField] = useState<string | null>(null);
-
+    // controls concealed dropdown
     const [showAlertsDropdown, setShowAlertsDropdown] = useState(false);
     const [telegramId, setTelegramId] = useState("");
     const [threshold, setThreshold] = useState("");
@@ -45,13 +42,12 @@ export default function LostItemForm() {
         { label: "Other", value: "other" },
     ];
 
-    // helper function to format date into dd/mm/yyyy format in input field. 
     const formatDateLabel = (date: Date) => {
         return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
     };
 
-    // helper function for date selection. 
     const pickDate = (event: DateTimePickerEvent, selectedDate?: Date) => {
+        // android closes instantly with ios remaining open
         if (Platform.OS === "android") {
             setShowCalendar(false);
         }
@@ -93,6 +89,7 @@ export default function LostItemForm() {
     const pickImage = async () => {
             let result = await ImagePicker.launchImageLibraryAsync({
                 mediaTypes: ["images"],
+                // crucial for saving data and preventing costs
                 quality: 0.3,
             });
     
@@ -101,13 +98,13 @@ export default function LostItemForm() {
             }
         };
 
-    // function to handle form submission
     const handleSubmit = async () => {
         if (loading) {
             return;
         }
-        //validation for non-empty fields
+        // fields required to submit the form
         if (!itemName.trim() || !category || !description.trim() || !locationLost.trim() || !dateLost || !email.trim() || !phoneNumber) {
+            // react native alerts dont work on web, fall back to normal browser alert.
             if (Platform.OS === "web") {
                 alert("Error\nPlease fill in all required fields.");
             } else {
@@ -138,7 +135,6 @@ export default function LostItemForm() {
             }
         }
 
-        // send data to Firestore
         try {
             setLoading(true);
             let uploadLink = "";
@@ -158,7 +154,7 @@ export default function LostItemForm() {
                     return;
                 }
             }
-
+            // cleans up stale data automatically
             const expirationDate = new Date();
             expirationDate.setDate(expirationDate.getDate() + 30);
 
@@ -180,15 +176,14 @@ export default function LostItemForm() {
                     } : {}),
             });
 
-            // show success message
             if (Platform.OS === "web") {
-                // Alert does not work on web interface, had to use the native alert() to implement deployment, emulated from Found item from. 
+                // had to use the native alert() for web deployment to work
                 alert("Success\nYour report has been submitted successfully.");
             } else {
                 Alert.alert("Success\n", "Your report has been submitted successfully.");
             }
 
-            // reset form fields
+            // cleared fields make form look pleasant after submitting
             setItemName("");
             setCategory(null);
             setDescription("");
@@ -201,7 +196,6 @@ export default function LostItemForm() {
             setThreshold("");
             setShowAlertsDropdown(false);
         
-        // general error handling for issues during submission process.
         } catch (error) {
             console.error("Error adding document: ", error);
             Alert.alert("Error\n", "Something went wrong. Please try again.");
@@ -220,16 +214,15 @@ export default function LostItemForm() {
                 placeholderTextColor={colors.placeholder}
                 value={itemName}
                 onChangeText={setItemName}
-                maxLength={30} // limit item name to 30 characters to prevent excessively long entries.
+                maxLength={30} // preventing long names breaking view containers
                 onFocus={() => {setShowSuggestions(false); setFocusedField("itemName");}}
-                onBlur={() => setFocusedField(null)}
-            />
+                onBlur={() => setFocusedField(null)}/>
             <Dropdown
                 style={[globalStyles.dropdown, focusedField === "category" && {borderColor: colors.logoSecondary}]}
                 placeholderStyle={globalStyles.placeholderText}
                 selectedTextStyle={[
                     globalStyles.inputText,
-                    { color: category ? colors.textInput : colors.placeholder} // implement placeholder similar to other input fields.
+                    { color: category ? colors.textInput : colors.placeholder} // to copy text input styling
                 ]}
                 containerStyle={{backgroundColor: colors.logoCream}}
                 activeColor={colors.logoAccent}
@@ -244,16 +237,15 @@ export default function LostItemForm() {
                     setShowSuggestions(false);
                 }}
                 onFocus={() => setFocusedField("category")}
-                onBlur={() => setFocusedField(null)}
-            />
+                onBlur={() => setFocusedField(null)}/>
             <TextInput
-            // multiline input to allow for more detailed descriptions of lost items.
                 style={[globalStyles.input, globalStyles.multilineInput, focusedField === "description" && {borderColor: colors.logoSecondary}]}
                 placeholder="Description"
                 placeholderTextColor={colors.placeholder}
                 value={description}
                 onChangeText={(text) => {
                     const lines = text.split('\n');
+                    // prevents clutter when viewing report
                     if (lines.length <= 3) {
                         setDescription(text);
                     }
@@ -261,8 +253,7 @@ export default function LostItemForm() {
                 multiline
                 numberOfLines={3}
                 onFocus={() => {setShowSuggestions(false); setFocusedField("description");}}
-                onBlur={() => setFocusedField(null)}
-            />
+                onBlur={() => setFocusedField(null)}/>
             <View style={Suggestions.searchContainer}>
                 {showSuggestions && filteredVenues.length > 0 && (
                     <View style={[
@@ -298,31 +289,27 @@ export default function LostItemForm() {
                     onFocus={() => { if(locationLost) setShowSuggestions(true); setFocusedField("location");}}
                     onBlur={() => setFocusedField(null)}
                     onSubmitEditing={() => setShowSuggestions(false)}
-                    returnKeyType="done"
-                />
+                    returnKeyType="done"/>
             </View>
 
             <Pressable
             style={[DateStyles.datePickerBox, focusedField === "date" && {borderColor: colors.logoSecondary}]}
             onPress={() => {
-                // separate condition handling for mobile to ensure its continuity. 
+                // to prevent rendering on web to stop crashes
                 if (Platform.OS !== "web") {
                     setShowCalendar(true);
                     setShowSuggestions(false);
                 }
-            }}
-            >
+            }}>
                 <Text style={[
                     globalStyles.inputText,
                     {color: dateLost ? colors.textInput : colors.placeholder} 
                 ]}>
-                    {/* Made sure to implement placeholder similar to other input fields. */}
+                    {/* to keep uniformity even though not text input */}
                     {dateLost ? `Date Lost: ${formatDateLabel(dateLost)}` : "Date Lost (select date)"}
                 </Text>
 
-                {/* implement the raw HTML date input if the platform is web. 
-                Date Picker does not work on web, so maintained <Text> tag to easily transfer styles over, 
-                with raw HTML date input remaining invisible by intentionally setting opacity to 0 */}
+                {/* invisible html date field because react native date picker doesn't work on web */}
                 {Platform.OS === "web" && (
                     <input
                         type="date"
@@ -335,8 +322,8 @@ export default function LostItemForm() {
                         max = {new Date().toISOString().split("T")[0]}
                         style={{
                             position: "absolute",
-                            opacity: 0, // makes HTML raw field invisible
-                            top: 0, // extends the field to cover the entire visible Pressable container, so users can click anywhere to use. 
+                            opacity: 0,
+                            top: 0, 
                             left: 0,
                             right: 0,
                             bottom: 0,
@@ -348,16 +335,14 @@ export default function LostItemForm() {
                     />
                 )}
             </Pressable>
-            {/* differentiate web to ensure popup only appears on mobile */}
+            {/* only showing on mobile to stop crashing web */}
             {showCalendar && Platform.OS !== "web" && (
                 <DateTimePicker
-                    // default to current date as placeholder.
                     value={dateLost || new Date()}
                     mode="date"
                     display="default"
                     onChange={pickDate}
-                    maximumDate={new Date()} // prevent selection of future dates
-                />
+                    maximumDate={new Date()}/>
             )}
 
             {showCalendar && Platform.OS === 'ios' && (
@@ -371,8 +356,7 @@ export default function LostItemForm() {
                 onChangeText={setEmail}
                 keyboardType="email-address"
                 onFocus={() => {setShowSuggestions(false); setFocusedField("email");}}
-                onBlur={() => setFocusedField(null)}
-            />
+                onBlur={() => setFocusedField(null)}/>
             <TextInput
                 style={[globalStyles.input, focusedField === "phone" && {borderColor: colors.logoSecondary}]}
                 placeholder="Contact Phone Number"
@@ -382,8 +366,7 @@ export default function LostItemForm() {
                 keyboardType="phone-pad"
                 maxLength={8}
                 onFocus={() => {setShowSuggestions(false); setFocusedField("phone");}}
-                onBlur={() => setFocusedField(null)}
-            />
+                onBlur={() => setFocusedField(null)}/>
 
             <View style={styles.alertsDropdown}>
                 <Pressable style={styles.alertsHeader} onPress={() => setShowAlertsDropdown(!showAlertsDropdown)}>
@@ -400,7 +383,7 @@ export default function LostItemForm() {
                         style={{width: 25, height: 25, transform: [{rotate: showAlertsDropdown ? "-90deg" : "90deg"}]}}
                         tintColor={colors.logoSecondary}/>
                 </Pressable>
-
+                {/* concealing decreases visual clutter */}
                 {showAlertsDropdown && (
                     <View style={styles.alertsBody}>
                         <Text style={[styles.contactLabel, {fontStyle: "italic", marginBottom: 10}]}>Get notified when new reports match this item.</Text>

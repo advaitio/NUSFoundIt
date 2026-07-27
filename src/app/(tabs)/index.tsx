@@ -7,34 +7,36 @@ import { colors, globalStyles, spacing } from "../../styles/globalStyles";
 
 
 export default function HomeScreen() {
-  const [activePopup, setActivePopup] = useState<"howItWorks" | "quickTips" | null>(null); //popup state
+  // helps to track which modal is open
+  const [activePopup, setActivePopup] = useState<"howItWorks" | "quickTips" | null>(null);
 
   return (
+    // padding from top of screen fixes ios notch
     <SafeAreaView edges={["top"]} style={globalStyles.safeArea}>
       <ScrollView
         style={styles.screen}
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        {/* Header */}
         <View style={styles.header}>
+          {/* nested text tags to make slogan multiple colours*/}
           <Text style={styles.greeting}>stop<Text style={{color:colors.logoSecondary}}> searching. </Text>start <Text style={{color:colors.logoAccent}}>finding. </Text></Text>
           <Text style={styles.headerSubtitle}>Report items, browse listings, and view possible matches all in one place.</Text>
         </View>
 
-        {/* logo and app name */}
         <View style={styles.logoContainer}>
+          {/* logo imported from local image assets. */}
           <Image source={require("../../../assets/images/NUSFoundIt logo 1 no text no bg.png")} style={globalStyles.logo} contentFit="contain"/>
           <Text style={globalStyles.title}>
-            <Text style={{ color: colors.logoMain }}>NUS</Text>
-            <Text style={{ color: colors.logoSecondary }}>Found</Text>
-            <Text style={{ color: colors.logoAccent }}>It</Text>
+            <Text style={{color: colors.logoMain}}>NUS</Text>
+            <Text style={{color: colors.logoSecondary}}>Found</Text>
+            <Text style={{color: colors.logoAccent}}>It</Text>
           </Text>
           <Text style={globalStyles.subtitle}>A student-friendly lost-and-found app for the NUS community.</Text>
         </View>
 
-        {/* actions container */}
         <View style={styles.actionsContainer}>
+          {/* putting as child lets pressable still work as nav trigger for Routers */}
           <Link href="/report" asChild>
             <Pressable style={StyleSheet.flatten([styles.actionCard, styles.reportCard1])}>
               <View style={styles.actionIconBox}>
@@ -48,7 +50,7 @@ export default function HomeScreen() {
               <View style={styles.actionTextContainer}>
                 <Text style={styles.actionTitle}>Report an Item</Text>
               </View>
-
+              {/* symbolises as button to users */}
               <Image
                 source={require("../../../assets/images/right-arrow.png")}
                 style={styles.arrowIcon}
@@ -80,7 +82,6 @@ export default function HomeScreen() {
           </Link>
         </View>
 
-        {/* info cards */}
         <View style={styles.infoCardsContainer}>
           <Pressable style={styles.infoCard} onPress={() => setActivePopup("howItWorks")}>
             <View style={styles.infoIconCircleBlue}>
@@ -111,12 +112,7 @@ export default function HomeScreen() {
         
       </ScrollView>
 
-      <Modal
-        visible={activePopup !== null}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setActivePopup(null)}
-      >
+      <Modal visible={activePopup !== null} transparent animationType="fade" onRequestClose={() => setActivePopup(null)}>
         <View style={styles.modalOverlay}>
           <View style={styles.modalCard}>
             {activePopup === "howItWorks" && (
@@ -137,14 +133,12 @@ export default function HomeScreen() {
                 <Text style={[styles.modalBody, {color: colors.logoAccent}]}>- Provide a reliable way to contact you (email & phone number).</Text>
               </>
             )}
-
             <Pressable style={[styles.modalButton, {backgroundColor: activePopup === "howItWorks" ? colors.logoMain : colors.logoAccent}]} onPress={() => setActivePopup(null)}>
               <Text style={styles.modalButtonText}>Got it</Text>
             </Pressable>
           </View>
         </View>
       </Modal>
-
     </SafeAreaView>
   )
 }
