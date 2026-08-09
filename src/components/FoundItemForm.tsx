@@ -142,13 +142,23 @@ export default function FoundItemForm() {
                 try {
                     const transform = await fetch(image);
                     const blob = await transform.blob();
+
+                    let extension = "jpg";
+                    if (Platform.OS === "web") {
+                        extension = image.split(".").pop() as string;
+                    }
                     const imageName = "item_" + Date.now() + "." + image.split(".").pop();
                     const imageRef = ref(storage, "images/" + imageName)
 
                     await uploadBytes(imageRef, blob)
                     uploadLink = await getDownloadURL(imageRef);
                 } catch {
-                    Alert.alert("Upload Error", "Failed to upload the image to the server.");
+                    const errorMessage = "Failed to upload the image to the server."
+                    if (Platform.OS === "web") {
+                        alert("Upload Error\n" + errorMessage);
+                    } else {
+                        Alert.alert("Upload Error", errorMessage);
+                    }
                     setLoading(false);
                     return;
                 }
