@@ -143,6 +143,8 @@ export default function FoundItemForm() {
                     const transform = await fetch(image);
                     const blob = await transform.blob();
 
+                    const metadata = {contentType: blob.type || 'image/jpeg', };
+
                     let extension = "jpg";
                     if (Platform.OS === "web") {
                         extension = image.split(".").pop() as string;
@@ -150,7 +152,7 @@ export default function FoundItemForm() {
                     const imageName = "item_" + Date.now() + "." + image.split(".").pop();
                     const imageRef = ref(storage, "images/" + imageName)
 
-                    await uploadBytes(imageRef, blob)
+                    await uploadBytes(imageRef, blob, metadata);
                     uploadLink = await getDownloadURL(imageRef);
                 } catch {
                     const errorMessage = "Failed to upload the image to the server."
