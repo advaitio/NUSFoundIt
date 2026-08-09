@@ -158,7 +158,7 @@ export default function FoundItemForm() {
                     } else {
                         const transform = await fetch(image);
                         const blob = await transform.blob();
-                        const metadata = {contentType: blob.type || 'image/jpeg', };
+                        const metadata = {contentType: blob.type || 'image/jpeg'};
                         await uploadBytes(imageRef, blob, metadata);
                     }
 
@@ -168,9 +168,9 @@ export default function FoundItemForm() {
                     const debugError = JSON.stringify(error) || "Unknown error";
                     const errorMessage = "Failed to upload the image to the server."
                     if (Platform.OS === "web") {
-                        alert("Upload Error\n" + debugError);
+                        alert("Upload Error\n" + errorMessage);
                     } else {
-                        Alert.alert("Upload Error", debugError);
+                        Alert.alert("Upload Error", errorMessage);
                     }
                     setLoading(false);
                     return;
