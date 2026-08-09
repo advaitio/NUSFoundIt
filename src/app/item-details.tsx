@@ -298,7 +298,7 @@ export default function ItemDetails() {
                     <View style={{flexDirection: "row", alignItems: "center", paddingHorizontal: 8, gap: 10}}>
                         <Text style={[styles.heading, {fontSize: 30}]}>{item.itemName}</Text>
 
-                        <View style={{flexDirection: "row", justifyContent: "space-between", alignItems: "center", gap: 5, marginBottom: 5}}>
+                        <View style={{flexDirection: "row", justifyContent: "space-between", alignItems: "center", gap: 5, marginBottom: 10}}>
                             <Image
                                 source={require("../../assets/images/pricetag.png")} 
                                 style={{width: 25, height: 25}}
