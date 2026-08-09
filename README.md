@@ -2,8 +2,6 @@
 
 Welcome to NUSFoundIt! This is a [React Native](https://reactnative.dev/) project created by Kevin Varghese and Advait Phadnis for CP2106 *Orbital* at NUS. It runs natively on [Expo Go](https://expo.dev) but its production web deployment can also be accessed on [Vercel](https://vercel.com) (which *only* works on **mobile web browsers**). 
 
-The full **README documentation** can be found [here](https://docs.google.com/document/d/1v8p8_UQTsjjsMEdLEcX-BPVSjyjZ8ZbgtYQxaLvzstQ/edit?usp=sharing).
-
 ## View on Expo Go
 
 ### Prerequisites
@@ -41,3 +39,6 @@ Before setting up, users/testers must ensure the following is installed on their
 A dedicated production web deployment can be accessed on Vercel [directly](https://nus-found-it.vercel.app/) or by scanning the QR code provided below.
 
 ![Vercel Web Deployment QR Code](/assets/images/vercel-qr-code.png)
+
+## Documentation
+For a comprehensive overview of the project, including system architecture, full feature documentation, and extensive testing, please refer to our [official project documentation](https://docs.google.com/document/d/1v8p8_UQTsjjsMEdLEcX-BPVSjyjZ8ZbgtYQxaLvzstQ/edit?usp=sharing). 
