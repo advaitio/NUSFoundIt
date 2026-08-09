@@ -1,9 +1,10 @@
 const {setGlobalOptions} = require("firebase-functions/v2");
-const {onDocumentCreated} = require("firebase-functions/v2/firestore");
+const {onDocumentCreated, onDocumentDeleted} = require("firebase-functions/v2/firestore");
 const {defineSecret} = require("firebase-functions/params");
 const logger = require("firebase-functions/logger");
 const admin = require("firebase-admin");
 const venuesData = require("./venuesCopy.json");
+const {getStorage} = require("firebase-admin/storage");
 
 admin.initializeApp();
 
@@ -215,5 +216,33 @@ Open the NUSFoundIt app to view more details and contact the owner! <i>(If you w
         }
     } catch (error) {
         logger.error("Error processing Telegram notifications:", error);
+    }
+});
+
+exports.deleteStorageOnFoundItemDelete = onDocumentDeleted("foundItems/{itemId}", async (event) => {
+    const deletedItem = event.data.data();
+
+    if (deletedItem && deletedItem.imagePath) {
+        try {
+            const bucket = getStorage().bucket();
+            await bucket.file(deletedItem.imagePath).delete();
+            logger.info("Deleted attached image. ")
+        } catch (error) {
+            logger.error("Error deleting attached image:", error);
+        }
+    }
+});
+
+exports.deleteStorageOnLostItemDelete = onDocumentDeleted("lostItems/{itemId}", async (event) => {
+    const deletedItem = event.data.data();
+
+    if (deletedItem && deletedItem.imagePath) {
+        try {
+            const bucket = getStorage().bucket();
+            await bucket.file(deletedItem.imagePath).delete();
+            logger.info("Deleted attached image. ")
+        } catch (error) {
+            logger.error("Error deleting attached image:", error);
+        }
     }
 });
