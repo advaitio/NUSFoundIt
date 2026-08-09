@@ -370,7 +370,7 @@ export default function LostItemForm() {
             )}
             <TextInput
                 style={[globalStyles.input, focusedField === "email" && {borderColor: colors.logoSecondary}]}
-                placeholder="Contact Email"
+                placeholder="Contact Email (@u.nus.edu)"
                 placeholderTextColor={colors.placeholder}
                 value={email}
                 onChangeText={setEmail}

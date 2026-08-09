@@ -372,7 +372,7 @@ export default function FoundItemForm() {
             )}
             <TextInput
                 style={[globalStyles.input, focusedField === "email" && { borderColor: colors.primary }]}
-                placeholder="Contact Email"
+                placeholder="Contact Email (@u.nus.edu)"
                 placeholderTextColor={colors.placeholder}
                 value={email}
                 onChangeText={setEmail}
