@@ -6,7 +6,7 @@ import { Dropdown } from "react-native-element-dropdown";
 import { colors, DateStyles, globalStyles, ImageStyles, Suggestions } from "../styles/globalStyles";
 
 import { createFoundItem } from "@/services/itemsService";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { getDownloadURL, ref, uploadBytes, uploadString } from "firebase/storage";
 import { db, storage } from "../firebase/firebaseConfig";
 //taken directly from NUSMods public Github Repository (see README)
 import venuesData from "../constants/venues.json";
@@ -24,6 +24,7 @@ export default function FoundItemForm() {
     const [email, setEmail] = useState("");
     const [phoneNumber, setPhoneNumber] = useState("");
     const [image, setImage] = useState<string | null>(null);
+    const [imageBase64, setImageBase64] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const [focusedField, setFocusedField] = useState<string | null>(null);
 
@@ -91,10 +92,14 @@ export default function FoundItemForm() {
             mediaTypes: ["images"],
             // important for saving bandwidth and avoiding costs
             quality: 0.3,
+            base64: Platform.OS === "web",
         });
 
         if (!result.canceled) {
             setImage(result.assets[0].uri);
+            if (Platform.OS === "web") {
+            setImageBase64(result.assets[0].base64 || null);
+            }
         }
     };
 
@@ -140,15 +145,33 @@ export default function FoundItemForm() {
 
             if (image) {
                 try {
-                    const transform = await fetch(image);
-                    const blob = await transform.blob();
-                    const imageName = "item_" + Date.now() + "." + image.split(".").pop();
+                    let extension = "jpg";
+                    if (Platform.OS !== "web" && image.includes(".")) {
+                        extension = image.split(".").pop() as string;
+                    }
+                    const imageName = "item_" + Date.now() + "." + extension;
                     const imageRef = ref(storage, "images/" + imageName)
 
-                    await uploadBytes(imageRef, blob)
+                    if (Platform.OS === "web") {
+                        const metadata = { contentType: "image/jpeg" };
+                        await uploadString(imageRef, imageBase64 as string, "base64", metadata);
+                    } else {
+                        const transform = await fetch(image);
+                        const blob = await transform.blob();
+                        const metadata = {contentType: blob.type || 'image/jpeg'};
+                        await uploadBytes(imageRef, blob, metadata);
+                    }
+
                     uploadLink = await getDownloadURL(imageRef);
-                } catch {
-                    Alert.alert("Upload Error", "Failed to upload the image to the server.");
+                } catch (error) {
+                    console.error("Error uploading image: ", error);
+                    const debugError = JSON.stringify(error) || "Unknown error";
+                    const errorMessage = "Failed to upload the image to the server."
+                    if (Platform.OS === "web") {
+                        alert("Upload Error\n" + errorMessage);
+                    } else {
+                        Alert.alert("Upload Error", errorMessage);
+                    }
                     setLoading(false);
                     return;
                 }
@@ -196,6 +219,7 @@ export default function FoundItemForm() {
             setTelegramId("");
             setThreshold("");
             setShowAlertsDropdown(false);
+            setImageBase64(null);
 
         } catch (error) {
             console.error("Error adding document: ", error);
