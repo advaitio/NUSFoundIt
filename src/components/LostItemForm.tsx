@@ -118,6 +118,26 @@ export default function LostItemForm() {
             return;
         }
 
+        if (!email.trim().toLowerCase().endsWith("@u.nus.edu")) {
+            const message = "Please enter a valid NUS student email ending in @u.nus.edu.";
+            if (Platform.OS === "web") {
+                alert("Error\n" + message);
+            } else {
+                Alert.alert("Error\n", message);
+            }
+            return;
+        }
+
+        if (phoneNumber.length !== 8) {
+            const message = "Contact phone number must be exactly 8 digits.";
+            if (Platform.OS === "web") {
+                alert("Error\n" + message);
+            } else {
+                Alert.alert("Error\n", message);
+            }
+            return;
+        }
+
         if (telegramId || threshold) {
             if (!telegramId) {
                 const message = "Please enter your Telegram Chat ID to receive alerts.";
@@ -375,7 +395,7 @@ export default function LostItemForm() {
             )}
             <TextInput
                 style={[globalStyles.input, focusedField === "email" && {borderColor: colors.logoSecondary}]}
-                placeholder="Contact Email"
+                placeholder="Contact Email (@u.nus.edu)"
                 placeholderTextColor={colors.placeholder}
                 value={email}
                 onChangeText={setEmail}
