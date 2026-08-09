@@ -1,56 +1,43 @@
-# Welcome to your Expo app 👋
+# NUSFoundIt
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Welcome to NUSFoundIt! This is a [React Native](https://reactnative.dev/) project created by Kevin Varghese and Advait Phadnis for CP2106 *Orbital* at NUS. It runs natively on [Expo Go](https://expo.dev) but its production web deployment can also be accessed on [Vercel](https://vercel.com) (which *only* works on **mobile web browsers**). 
 
-## Get started
+The full **README documentation** can be found [here](https://docs.google.com/document/d/1v8p8_UQTsjjsMEdLEcX-BPVSjyjZ8ZbgtYQxaLvzstQ/edit?usp=sharing).
 
-1. Install dependencies
+## View on Expo Go
+
+### Prerequisites
+Before setting up, users/testers must ensure the following is installed on their computer:
+- Node.js --> Version 20.x or 22.x LTS recommended
+- Git --> for cloning of repository
+- Expo Go App --> A compatible release is crucial, specifically SDK 55.x.x. Android users can download the .apk file directly from the [website](http://expo.dev/go), specifically choosing the SDK 55 release. iOS users can install the Expo Go SDK 55 beta through Apple TestFlight. First, install the TestFlight app from the App Store. Then, join the Expo Go beta using this [link](https://testflight.apple.com/join/GZJxxfUU).
+
+### Installation and Execution
+1. Clone the project by opening terminal/PowerShell and running the following command:
+
+   ```bash
+   git clone https://github.com/advaitio/NUSFoundIt.git
+   ```
+   ```bash
+   cd NUSFoundIt
+   ```
+
+2. Install dependencies:
 
    ```bash
    npm install
    ```
-
-2. Start the app
+3. Start the local server:
 
    ```bash
-   npx expo start
+   npx expo start -c
    ```
 
-In the output, you'll find options to open the app in a
+### Viewing
+1. Connect your smartphone to the same WiFi network as the computer hosting the server. 
+2. Open the Expo Go app and tap “Scan QR Code” to scan the provided QR image in the terminal. The app will launch NUSFoundIt instantly. 
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## Vercel Web Deployment
+A dedicated production web deployment can be accessed on Vercel [directly](https://nus-found-it.vercel.app/) or by scanning the QR code provided below.
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-### Other setup steps
-
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+![Vercel Web Deployment QR Code](/assets/images/vercel-qr-code.png)
