@@ -142,6 +142,7 @@ export default function FoundItemForm() {
         try {
             setLoading(true);
             let uploadLink = "";
+            let imagePathString = "";
 
             if (image) {
                 try {
@@ -151,6 +152,7 @@ export default function FoundItemForm() {
                     }
                     const imageName = "item_" + Date.now() + "." + extension;
                     const imageRef = ref(storage, "images/" + imageName)
+                    imagePathString = imageRef.fullPath;
 
                     if (Platform.OS === "web") {
                         const metadata = { contentType: "image/jpeg" };
@@ -190,6 +192,7 @@ export default function FoundItemForm() {
                 contactEmail: email,
                 contactPhoneNumber: phoneNumber,
                 imageUrl: uploadLink,
+                imagePath: imagePathString,
                 expireAt: expirationDate,
                 ...(telegramId && threshold
                     ? {

@@ -143,6 +143,7 @@ export default function LostItemForm() {
         try {
             setLoading(true);
             let uploadLink = "";
+            let imagePathString = "";
 
             if (image) {
                 try {
@@ -152,6 +153,7 @@ export default function LostItemForm() {
                     }
                     const imageName = "item_" + Date.now() + "." + extension;
                     const imageRef = ref(storage, "images/" + imageName)
+                    imagePathString = imageRef.fullPath;
 
                     if (Platform.OS === "web") {
                         const metadata = { contentType: "image/jpeg" };
@@ -188,6 +190,7 @@ export default function LostItemForm() {
                 contactEmail: email,
                 contactPhoneNumber: phoneNumber,
                 imageUrl: uploadLink,
+                imagePath: imagePathString,
                 expireAt: expirationDate,
                 ...(telegramId && threshold
                     ? {
