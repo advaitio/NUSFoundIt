@@ -6,7 +6,7 @@ import { Dropdown } from "react-native-element-dropdown";
 import { colors, DateStyles, globalStyles, ImageStyles, Suggestions } from "../styles/globalStyles";
 
 import { createFoundItem } from "@/services/itemsService";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { getDownloadURL, ref, uploadBytes, uploadString } from "firebase/storage";
 import { db, storage } from "../firebase/firebaseConfig";
 //taken directly from NUSMods public Github Repository (see README)
 import venuesData from "../constants/venues.json";
@@ -140,26 +140,31 @@ export default function FoundItemForm() {
 
             if (image) {
                 try {
-                    const transform = await fetch(image);
-                    const blob = await transform.blob();
-
-                    const metadata = {contentType: blob.type || 'image/jpeg', };
-
                     let extension = "jpg";
-                    if (Platform.OS === "web") {
+                    if (Platform.OS === "web" && image.includes(".")) {
                         extension = image.split(".").pop() as string;
                     }
-                    const imageName = "item_" + Date.now() + "." + image.split(".").pop();
+                    const imageName = "item_" + Date.now() + "." + extension;
                     const imageRef = ref(storage, "images/" + imageName)
 
-                    await uploadBytes(imageRef, blob, metadata);
+                    if (Platform.OS === "web") {
+                        await uploadString(imageRef, image, "data_url");
+                    } else {
+                        const transform = await fetch(image);
+                        const blob = await transform.blob();
+                        const metadata = {contentType: blob.type || 'image/jpeg', };
+                        await uploadBytes(imageRef, blob, metadata);
+                    }
+
                     uploadLink = await getDownloadURL(imageRef);
-                } catch {
+                } catch (error) {
+                    console.error("Error uploading image: ", error);
+                    const debugError = JSON.stringify(error) || "Unknown error";
                     const errorMessage = "Failed to upload the image to the server."
                     if (Platform.OS === "web") {
-                        alert("Upload Error\n" + errorMessage);
+                        alert("Upload Error\n" + debugError);
                     } else {
-                        Alert.alert("Upload Error", errorMessage);
+                        Alert.alert("Upload Error", debugError);
                     }
                     setLoading(false);
                     return;
