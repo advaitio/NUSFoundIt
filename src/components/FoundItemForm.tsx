@@ -146,7 +146,7 @@ export default function FoundItemForm() {
             if (image) {
                 try {
                     let extension = "jpg";
-                    if (Platform.OS === "web" && image.includes(".")) {
+                    if (Platform.OS !== "web" && image.includes(".")) {
                         extension = image.split(".").pop() as string;
                     }
                     const imageName = "item_" + Date.now() + "." + extension;
