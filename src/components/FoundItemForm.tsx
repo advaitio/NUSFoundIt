@@ -24,6 +24,7 @@ export default function FoundItemForm() {
     const [email, setEmail] = useState("");
     const [phoneNumber, setPhoneNumber] = useState("");
     const [image, setImage] = useState<string | null>(null);
+    const [imageBase64, setImageBase64] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const [focusedField, setFocusedField] = useState<string | null>(null);
 
@@ -91,10 +92,14 @@ export default function FoundItemForm() {
             mediaTypes: ["images"],
             // important for saving bandwidth and avoiding costs
             quality: 0.3,
+            base64: Platform.OS === "web",
         });
 
         if (!result.canceled) {
             setImage(result.assets[0].uri);
+            if (Platform.OS === "web") {
+            setImageBase64(result.assets[0].base64 || null);
+            }
         }
     };
 
@@ -148,7 +153,8 @@ export default function FoundItemForm() {
                     const imageRef = ref(storage, "images/" + imageName)
 
                     if (Platform.OS === "web") {
-                        await uploadString(imageRef, image, "data_url");
+                        const metadata = { contentType: "image/jpeg" };
+                        await uploadString(imageRef, imageBase64 as string, "base64", metadata);
                     } else {
                         const transform = await fetch(image);
                         const blob = await transform.blob();
@@ -213,6 +219,7 @@ export default function FoundItemForm() {
             setTelegramId("");
             setThreshold("");
             setShowAlertsDropdown(false);
+            setImageBase64(null);
 
         } catch (error) {
             console.error("Error adding document: ", error);
