@@ -19,6 +19,7 @@ type NewItemBase = {
     contactEmail: string;
     contactPhoneNumber: string;
     imageUrl?: string;
+    imagePath?: string;
     expireAt: Date;
     telegramAlerts?: TelegramAlerts;
 };
@@ -43,6 +44,7 @@ export async function createFoundItem(
         {
             ...item,
             imageUrl: item.imageUrl ?? "",
+            imagePath: item.imagePath ?? "",
             createdAt: serverTimestamp(),
         }
     );
@@ -59,6 +61,7 @@ export async function createLostItem(
         {
             ...item,
             imageUrl: item.imageUrl ?? "",
+            imagePath: item.imagePath ?? "",
             createdAt: serverTimestamp(),
         }
     );
