@@ -8,13 +8,12 @@ import { colors, globalStyles, spacing } from "../../styles/globalStyles";
 
 export default function ReportScreen() {
     const [selectedTab, setSelectedTab] = useState<"found" | "lost">("found");
-    // force clear fields if switching out
     const [resetKey, setResetKey] = useState(0);
     const scrollViewRef = useRef<ScrollView>(null);
 
     useFocusEffect(
         useCallback(() => {
-            // moves back to top when switching out
+            // clean view when switching back
             if (scrollViewRef.current) {
                 scrollViewRef.current.scrollTo({ y: 0, animated: false });
             }
@@ -56,7 +55,6 @@ export default function ReportScreen() {
                         </Pressable>
                     </View>
 
-                    {/* changes form when switching tabs */}
                     {selectedTab === "found" ? (
                         <FoundItemForm key={`found-${resetKey}`} />
                     ) : (

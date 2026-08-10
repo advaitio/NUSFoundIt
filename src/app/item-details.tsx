@@ -8,7 +8,7 @@ import { FoundItem, LostItem, MatchedFoundItem, MatchedLostItem } from "../types
 import { getPossibleFoundMatches, getPossibleLostMatches } from "../utils/matching";
 
 const getPlaceholderImage = (category: string) => {
-    // when no image is attached
+    // if no atached image
     switch (category.toLowerCase()) {
         case "id card": 
             return require("../../assets/images/placeholder-id.png");
@@ -38,7 +38,7 @@ export default function ItemDetails() {
     const [matches, setMatches] = useState<(MatchedFoundItem | MatchedLostItem)[]>([]);
     const [loading, setLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState("");
-    // so uploads don't get squished
+    // prevent image squishing
     const [imageRatio, setImageRatio] = useState(1);
 
     const [telegramId, setTelegramId] = useState("");
@@ -48,7 +48,6 @@ export default function ItemDetails() {
     const [focusedField, setFocusedField] = useState<string | null>(null);
 
     useEffect(() => {
-        // have to use async because useEffect creates errors otherwise
         async function fetchItemDetails() {
             try {
                 if (!id || !type) {
@@ -171,7 +170,7 @@ export default function ItemDetails() {
             return;
         }
 
-        if (!telegramId) {
+        if (!threshold) {
             const message = "Please enter your minimum Match Score.";
             if (Platform.OS === "web") {
                 alert("Error\n" + message);
@@ -234,7 +233,7 @@ export default function ItemDetails() {
         setShowAlertsDropdown(false);
     };
 
-    // to show viewers while loading
+    // look nice while loading
     if (loading) {
         return (
             <View style={globalStyles.centeredScreen}>
@@ -245,7 +244,7 @@ export default function ItemDetails() {
         );
     }
 
-    // error handling for non existent data
+    // if data non existent
     if (errorMessage || !item) {
         return (
             <View style={globalStyles.centeredScreen}>
@@ -255,7 +254,6 @@ export default function ItemDetails() {
         )
     }
 
-    // check if lost or found here to declutter elements
     const isLostItem = type === "lost";
     const location = isLostItem ? (item as LostItem).locationLost : (item as FoundItem).locationFound;
     const date = isLostItem ? (item as LostItem).dateLost : (item as FoundItem).dateFound;
@@ -389,7 +387,7 @@ export default function ItemDetails() {
                         <Text style={styles.heading}>{isLostItem ? "Possible Found Item Matches" : "Possible Lost Item Matches"}</Text>
                         {matches.length === 0 ? (
                             <Text style={globalStyles.placeholderText}>
-                                {/* to show if matches list is empty */}
+                                {/* emptiness looks pleasing to viewer */}
                                 {isLostItem
                                     ? "No matching found items yet. Check back later!"
                                     : "No matching lost item reports yet. Check back later!"}

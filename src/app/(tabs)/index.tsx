@@ -7,7 +7,6 @@ import { colors, globalStyles, spacing } from "../../styles/globalStyles";
 
 
 export default function HomeScreen() {
-  // helps to track which modal is open
   const [activePopup, setActivePopup] = useState<"howItWorks" | "quickTips" | null>(null);
 
   return (
@@ -19,13 +18,13 @@ export default function HomeScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.header}>
-          {/* nested text tags to make slogan multiple colours*/}
+          {/* to make slogan multiple colours*/}
           <Text style={styles.greeting}>stop<Text style={{color:colors.logoSecondary}}> searching. </Text>start <Text style={{color:colors.logoAccent}}>finding. </Text></Text>
           <Text style={styles.headerSubtitle}>Report items, browse listings, and view possible matches all in one place.</Text>
         </View>
 
         <View style={styles.logoContainer}>
-          {/* logo imported from local image assets. */}
+          {/* imported locally because ionicons break on web */}
           <Image source={require("../../../assets/images/NUSFoundIt logo 1 no text no bg.png")} style={globalStyles.logo} contentFit="contain"/>
           <Text style={globalStyles.title}>
             <Text style={{color: colors.logoMain}}>NUS</Text>
@@ -36,9 +35,8 @@ export default function HomeScreen() {
         </View>
 
         <View style={styles.actionsContainer}>
-          {/* putting as child lets pressable still work as nav trigger for Routers */}
           <Link href="/report" asChild>
-            <Pressable style={StyleSheet.flatten([styles.actionCard, styles.reportCard1])}>
+            <Pressable style={[styles.actionCard, styles.reportCard1]}>
               <View style={styles.actionIconBox}>
                 <Image
                   source={require("../../../assets/images/add-outline.png")}
@@ -50,7 +48,7 @@ export default function HomeScreen() {
               <View style={styles.actionTextContainer}>
                 <Text style={styles.actionTitle}>Report an Item</Text>
               </View>
-              {/* symbolises as button to users */}
+              {/* cue for users to know it's pressable */}
               <Image
                 source={require("../../../assets/images/right-arrow.png")}
                 style={styles.arrowIcon}
@@ -216,12 +214,6 @@ const styles = StyleSheet.create({
     fontSize: 21,
     fontWeight: "800",
     marginBottom: 4
-  },
-  actionSubtitle: {
-    color: "#ffffff",
-    opacity: 0.85,
-    fontSize: 13,
-    lineHeight: 18,
   },
   arrowIcon: {
     width: 22,

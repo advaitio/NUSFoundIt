@@ -9,13 +9,12 @@ import LostItemsList from "../../components/LostItemsList";
 import { colors, DateStyles, globalStyles, PopupStyles, spacing } from "../../styles/globalStyles";
 
 export default function ListingsScreen() {
-    // tracking if tab is on lost or found, for displaying info and styling. 
+    // for conditionally displaying items and styling 
     const [selectedTab, setSelectedTab] = useState<"found" | "lost">("found");
     const [searchQuery, setSearchQuery] = useState("");
     const [filterModalVisible, setFilterModalVisible] = useState(false);
 
     const [activeCategory, setActiveCategory] = useState<string | null>(null);
-    // for choosing filter options before its applied. 
     const [tempCategory, setTempCategory] = useState<string | null>(null);
     const [activeLocation, setActiveLocation] = useState<string | null>(null);
     const [tempLocation, setTempLocation] = useState<string | null>(null);
@@ -29,10 +28,8 @@ export default function ListingsScreen() {
     // keeps filter popup off the screen at the start
     const slideAnim = useRef(new Animated.Value(600)).current;
 
-    // lights up borders of field being used
     const [focusedField, setFocusedField] = useState<string | null>(null);
 
-    // keeps same values as report form input fields
     const categoryData = [
         { label: "ID Card / Matric Card", value: "ID card" },
         { label: "Wallet / Purse", value: "wallet" },
@@ -45,7 +42,7 @@ export default function ListingsScreen() {
         { label: "Other", value: "other" },
     ];
 
-    //to group venues dataset with new category key
+    //group venues with new category key
     const locationData = [
         { label: "Computing", value: "Computing" },
         { label: "UTown", value: "UTown" },
@@ -117,7 +114,7 @@ export default function ListingsScreen() {
             duration: 250,
             useNativeDriver: true,
         }).start(() => {
-            // actually applies the chosen filters to the active search
+            // mimic applying filters like other websites
             setActiveCategory(tempCategory === "All" ? null : tempCategory);
             setActiveLocation(tempLocation === "All" ? null : tempLocation);
             setFilterModalVisible(false);
@@ -132,7 +129,6 @@ export default function ListingsScreen() {
             duration: 250,
             useNativeDriver: true,
         }).start(() => {
-            // clear everything
             setTempCategory(null);
             setActiveCategory(null);
             setTempLocation(null);
@@ -148,7 +144,6 @@ export default function ListingsScreen() {
         <SafeAreaView edges={["top"]} style={globalStyles.safeArea}>
             <View style={styles.container}>
                 <View style={styles.customHeader}>
-                    {/* switch button between theme colours */}
                     <Text style={[styles.customHeaderTitle, {color: selectedTab === "found" ? colors.logoMain : colors.logoSecondary}]}>Listings</Text>
                 </View>
                 <View style={styles.content}>
@@ -156,7 +151,7 @@ export default function ListingsScreen() {
                         <Pressable
                             style={[styles.tabButton, selectedTab === "found" && styles.activeTabButton]}
                             onPress={() => {
-                                // resets everything when switching
+                                // keep view clean when switching back
                                 setSelectedTab("found");
                                 setSearchQuery("");
                                 setActiveCategory(null);
@@ -183,11 +178,10 @@ export default function ListingsScreen() {
                     </View>
 
                     <Text style={globalStyles.pageSubtitle}>Browse recently reported items.</Text>
-                    {/* search and filter put on same row together */}
                     <View style={styles.searchRowContainer}>
                         <View style={styles.searchBarContainer}>
                             <TextInput
-                                style={[globalStyles.input, {width: 'auto', flex: 1, marginBottom: 0}, focusedField === "search" && {borderColor: selectedTab === "found" ? colors.logoMain: colors.logoSecondary}]}
+                                style={[globalStyles.input, {width: "auto", flex: 1, marginBottom: 0}, focusedField === "search" && {borderColor: selectedTab === "found" ? colors.logoMain: colors.logoSecondary}]}
                                 placeholder={selectedTab === "found" ? "Search found items..." : "Search lost items..."}
                                 placeholderTextColor={colors.placeholder}
                                 value={searchQuery}
@@ -217,7 +211,7 @@ export default function ListingsScreen() {
                         </Pressable>
                     </View>
 
-                    {/* swap lists based on tab */}
+                    {/* which tab is active */}
                     {selectedTab === "found" ? (
                         <FoundItemsList
                             searchQuery={searchQuery}
@@ -306,7 +300,7 @@ export default function ListingsScreen() {
                                     activeColor={colors.logoAccent}
                                     placeholder="All Locations"
                                     value={tempLocation}
-                                    // put dropdown on top
+                                    //look better visually
                                     dropdownPosition="top"
                                     inverted={false}
                                     onFocus={() => setFocusedField("location")}
@@ -328,10 +322,11 @@ export default function ListingsScreen() {
                                         <Text style={[globalStyles.inputText, { color: tempStartDate ? colors.textInput : colors.placeholder, fontSize: 14 }]}>
                                             {formatDateLabel(tempStartDate)}
                                         </Text>
-                                        {/* web doesn't support native datepicker so had to use invisible html date input to handle clicks */}
+                                        {/* web doesn't support react native datepicker so must use invisible html date input to handle clicks */}
                                         {Platform.OS === "web" && (
                                             <input
                                                 type="date"
+                                                value={tempStartDate ? tempStartDate.toISOString().split("T")[0] : ""}
                                                 onChange={(e) => {
                                                     const val = e.target.value;
                                                     setTempStartDate(val ? new Date(val) : null);
@@ -339,15 +334,13 @@ export default function ListingsScreen() {
                                                 max={new Date().toISOString().split("T")[0]}
                                                 style={{
                                                     position: "absolute",
-                                                    // make field transparent to hide it
                                                     opacity: 0,
                                                     top: 0, 
                                                     left: 0,
                                                     right: 0,
                                                     bottom: 0,
-                                                    //stretch over full container to catch all clicks
-                                                    width: '100%',
-                                                    height: '100%',
+                                                    width: "100%",
+                                                    height: "100%",
                                                     padding: 0,
                                                     margin: 0,
                                                 }}/>
@@ -367,21 +360,21 @@ export default function ListingsScreen() {
                                         {Platform.OS === "web" && (
                                             <input
                                                 type="date"
-                                                value={tempEndDate ? tempEndDate.toISOString().split('T')[0] : ""}
+                                                value={tempEndDate ? tempEndDate.toISOString().split("T")[0] : ""}
                                                 onChange={(e) => {
                                                     const val = e.target.value;
                                                     setTempEndDate(val ? new Date(val) : null);
                                                 }}
-                                                min={tempStartDate ? tempStartDate.toISOString().split('T')[0] : undefined}
-                                                max={new Date().toISOString().split('T')[0]}
+                                                min={tempStartDate ? tempStartDate.toISOString().split("T")[0] : undefined}
+                                                max={new Date().toISOString().split("T")[0]}
                                                 style={{
-                                                    position: 'absolute',
+                                                    position: "absolute",
                                                     top: 0,
                                                     left: 0,
-                                                    width: '100%',
-                                                    height: '100%',
+                                                    width: "100%",
+                                                    height: "100%",
                                                     opacity: 0,
-                                                    cursor: 'pointer',
+                                                    cursor: "pointer",
                                                 }}/>
                                         )}
                                     </Pressable>
@@ -389,7 +382,6 @@ export default function ListingsScreen() {
                                 {/* on native expo go only, else web will crash */}
                                 {showStartCalendar && Platform.OS !== "web" && (
                                     <DateTimePicker
-                                        // fall back to today
                                         value={tempStartDate || new Date()}
                                         mode="date"
                                         display="default"
@@ -398,7 +390,7 @@ export default function ListingsScreen() {
                                         maximumDate={tempEndDate || new Date()}/>
                                 )}
 
-                                {showStartCalendar && Platform.OS === 'ios' && (
+                                {showStartCalendar && Platform.OS === "ios" && (
                                     <Button title="Confirm Start Date" onPress={() => setShowStartCalendar(false)} />
                                 )}
                                 {showEndCalendar && Platform.OS !== "web" && (
@@ -410,7 +402,7 @@ export default function ListingsScreen() {
                                         maximumDate={new Date()}
                                         onChange={pickEndDate}/>
                                 )}
-                                {showEndCalendar && Platform.OS === 'ios' && (
+                                {showEndCalendar && Platform.OS === "ios" && (
                                     <Button title="Confirm End Date" onPress={() => setShowEndCalendar(false)} />
                                 )}
                             </View>
