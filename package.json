@@ -60,7 +60,9 @@
   },
   "jest": {
     "preset": "jest-expo",
-    "testPathIgnorePatterns": ["/integration-tests/"]
+    "testPathIgnorePatterns": [
+      "/integration-tests/"
+    ]
   },
   "private": true
 }

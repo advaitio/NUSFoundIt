@@ -8,7 +8,7 @@ import { colors, globalStyles } from "../styles/globalStyles";
 import venuesData from "../constants/venues.json";
 
 import { FoundItem } from "../types/items";
-// replaces images that don't exist
+// when no images attached
 const getPlaceholderImage = (category: string) => {
     switch (category.toLowerCase()) {
         case "id card": 
@@ -43,7 +43,6 @@ export default function FoundItemsList({
     startDateFilter: Date | null;
     endDateFilter: Date | null;
 }) {
-    // helping with the pull-to-refresh feature
     const [items, setItems] = useState<FoundItem[]>([]);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
@@ -71,12 +70,11 @@ export default function FoundItemsList({
         setRefreshing(true);
         fetchFoundItems();
     }, []);
-    // needs to convert from string to js format to parse properly
+    // to be able to parse properly in correct format
     const parseDate = (dateStr: string): Date => {
         const parts = dateStr.split("/");
         return new Date(parseInt(parts[2], 10), parseInt(parts[1], 10) - 1, parseInt(parts[0], 10));
     };
-    // running filtering here better than cluttering firestore
     const filteredItems = items.filter((item) => {
         const matchesSearch = item.itemName.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
             item.category.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
@@ -106,7 +104,7 @@ export default function FoundItemsList({
 
         return matchesSearch && matchesCategory && matchesLocation && matchesDate;
     });
-    // looks pleasant for user whilst loading
+    // looks pleasant whilst loading
     if (loading) {
         return (
             <View style={globalStyles.centeredScreen}>
@@ -148,7 +146,7 @@ export default function FoundItemsList({
                                         
                                         {!item.imageUrl && (
                                             <View style={styles.placeholderBadge}>
-                                                {/* extra info on lack of image */}
+                                                {/* signals more info */}
                                                 <Text style={styles.placeholderBadgeText}>NO PHOTO</Text>
                                             </View>
                                         )}

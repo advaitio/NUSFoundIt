@@ -9,7 +9,7 @@ export type FoundItem = {
     contactPhoneNumber: string;
     imageUrl?: string; // Optional field
     status?: ItemStatus; // Optional field
-    createdAt: any; // Firestore timestamp
+    createdAt: any; // to determine expiry
 };
 
 export type LostItem = {
@@ -23,7 +23,7 @@ export type LostItem = {
     contactPhoneNumber: string;
     imageUrl?: string; // Optional field
     status?: ItemStatus; // Optional field
-    createdAt: any; // Firestore timestamp
+    createdAt: any; // to determine expiry
 };
 
 export type ItemStatus = "active" | "claimed" | "resolved" | "closed";

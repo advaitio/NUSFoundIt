@@ -18,7 +18,6 @@ export default function FoundItemForm() {
     const [locationFound, setLocationFound] = useState("");
     const [filteredVenues, setFilteredVenues] = useState<string[]>([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
-    // so users don't accidentally submit today's date
     const [dateFound, setDateFound] = useState<Date | null>(null);
     const [showCalendar, setShowCalendar] = useState(false);
     const [email, setEmail] = useState("");
@@ -28,7 +27,6 @@ export default function FoundItemForm() {
     const [loading, setLoading] = useState(false);
     const [focusedField, setFocusedField] = useState<string | null>(null);
 
-    // helps to control hidden dropdown
     const [showAlertsDropdown, setShowAlertsDropdown] = useState(false);
     const [telegramId, setTelegramId] = useState("");
     const [threshold, setThreshold] = useState("");
@@ -50,7 +48,7 @@ export default function FoundItemForm() {
     };
 
     const pickDate = (event: DateTimePickerEvent, selectedDate?: Date) => {
-        // android closes straightaway, but ios stays open
+        // ios native picker stays open unlike android
         if (Platform.OS === "android") {
             setShowCalendar(false);
         }
@@ -90,7 +88,7 @@ export default function FoundItemForm() {
     const pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ["images"],
-            // important for saving bandwidth and avoiding costs
+            // saving bandwidth and avoiding costs and web compatibility
             quality: 0.3,
             base64: Platform.OS === "web",
         });
@@ -107,7 +105,6 @@ export default function FoundItemForm() {
         if (loading) {
             return;
         }
-        // all below fields will be mandatory
         if (!itemName.trim() || !category || !description.trim() || !locationFound.trim() || !dateFound || !email.trim() || !phoneNumber) {
             // react native alert doesn't work for web, have to use original browser version
             if (Platform.OS === "web") {
@@ -199,7 +196,7 @@ export default function FoundItemForm() {
                 }
             }
 
-            // to improve data integrity and stop database cluttering
+            // stop database cluttering with stale data
             const expirationDate = new Date();
             expirationDate.setDate(expirationDate.getDate() + 30);
 
@@ -222,7 +219,6 @@ export default function FoundItemForm() {
                     } : {}),
             });
 
-            // send user the success alert
             if (Platform.OS === "web") {
                 // had to use the native alert() for web deployment to work
                 alert("Success\nYour report has been submitted successfully.");
@@ -230,7 +226,6 @@ export default function FoundItemForm() {
                 Alert.alert("Success\n", "Your report has been submitted successfully.");
             }
 
-            //clear for next report
             setItemName("");
             setCategory(null);
             setDescription("");
@@ -342,7 +337,7 @@ export default function FoundItemForm() {
             <Pressable
                 style={[DateStyles.datePickerBox, focusedField === "date" && { borderColor: colors.primary }]}
                 onPress={() => {
-                    // to prevent crashing on web
+                    //prevent crashing on web
                     if (Platform.OS !== "web") {
                         setShowCalendar(true);
                         setShowSuggestions(false);
@@ -353,7 +348,7 @@ export default function FoundItemForm() {
                     globalStyles.inputText,
                     { color: dateFound ? colors.textInput : colors.placeholder }
                 ]}>
-                    {/* maintains uniformity even though not text input */}
+                    {/* mimic other fields for visual effect */}
                     {dateFound ? `Date Found: ${formatDateLabel(dateFound)}` : "Date Found (select date)"}
                 </Text>
 
@@ -383,7 +378,7 @@ export default function FoundItemForm() {
                     />
                 )}
             </Pressable>
-            {/* will only show on native to prevent breaking web */}
+            {/* prevent breaking web */}
             {showCalendar && Platform.OS !== "web" && (
                 <DateTimePicker
                     value={dateFound || new Date()}
@@ -432,7 +427,7 @@ export default function FoundItemForm() {
                         style={{ width: 25, height: 25, transform: [{ rotate: showAlertsDropdown ? "-90deg" : "90deg" }] }}
                         tintColor={colors.logoMain} />
                 </Pressable>
-                {/* hiding improves visual appeal and declutters */}
+                {/* improves visual appeal and declutters */}
                 {showAlertsDropdown && (
                     <View style={styles.alertsBody}>
                         <Text style={[styles.contactLabel, { fontStyle: "italic", marginBottom: 10 }]}>Get notified when new reports match this item.</Text>

@@ -1,5 +1,5 @@
-import { FoundItem, LostItem, MatchedFoundItem, MatchedLostItem, MatchReason } from "../types/items";
 import venuesData from "../constants/venues.json";
+import { FoundItem, LostItem, MatchedFoundItem, MatchedLostItem, MatchReason } from "../types/items";
 
 const MIN_MATCH_SCORE = 4;
 
@@ -18,14 +18,13 @@ function getWords(text: string): string[] {
 }
 
 function countSharedWords(textA: string, textB: string): number {
-    // create sets of words for both texts
+    // need two sets for both texts
     const wordsA = new Set(getWords(textA));
     const wordsB = new Set(getWords(textB));
     // num shared words is total unique words minus the unique words in each set (using the set formula)
     return wordsA.size + wordsB.size - new Set([...wordsA, ...wordsB]).size; 
 }
 
-// parse date str in dd/mm//yyyy format to date object
 function parseDate(dateString: string): Date | null {
     if (!dateString) return null;
     const parts = dateString.split("/");
@@ -34,29 +33,28 @@ function parseDate(dateString: string): Date | null {
     const month = Number(parts[1]);
     const year = Number(parts[2]);
     if (!day || !month || !year) return null; //invalid
-    const date = new Date(year, month - 1, day); // javascript months are 0-indexed
-    date.setHours(0, 0, 0, 0); //normalize to midnight
+    const date = new Date(year, month - 1, day);
+    date.setHours(0, 0, 0, 0);
     return date;
 }
 
-// calculates the diff in days (+ve means found after lost)
 function getDateDifferenceInDays(lostDateStr: string, foundDateStr: string): number | null {
     const lostDate = parseDate(lostDateStr);
     const foundDate = parseDate(foundDateStr);
 
     if (!lostDate || !foundDate) return null; //invalid
 
-    const oneDayMs = 24 * 60 * 60 * 1000; // hrs*mins*secs*millisecs
-    return Math.round((foundDate.getTime() - lostDate.getTime()) / oneDayMs); // returns diff in days
+    const oneDayMs = 24 * 60 * 60 * 1000;
+    return Math.round((foundDate.getTime() - lostDate.getTime()) / oneDayMs); // negative means found before lost
 }
 
 // checks if item status is matchable (active/claimed)
 function isMatchableStatus(status?: string): boolean {
-    const normalizedStatus = status?.toLowerCase() ?? "active"; // default to active if status is undefined/null
+    const normalizedStatus = status?.toLowerCase() ?? "active"; // if status is undefined
     return normalizedStatus === "active" || normalizedStatus === "claimed";
 }
 
-// create case insensitive lookup from venue name to venue category
+//case insensitive lookup from venue name to venue category
 const venueCategoryByName = new Map<string, string | null>(
     Object.entries(venuesData).map(([name, venue]) => [
         normalize(name),
@@ -64,7 +62,7 @@ const venueCategoryByName = new Map<string, string | null>(
     ])
 );
 
-// gets category of venue based on location
+// search for venue category
 function getVenueCategory(location: string): string | null {
     return venueCategoryByName.get(normalize(location)) ?? null;
 }
@@ -80,7 +78,7 @@ function scoreLocation(foundItem: FoundItem, lostItem: LostItem): MatchReason | 
     const lostLocation = normalize(lostItem.locationLost);
     const foundLocation = normalize(foundItem.locationFound);
 
-    if (!lostLocation || !foundLocation) return null; //no score if either empty
+    if (!lostLocation || !foundLocation) return null;
 
     if (lostLocation.includes(foundLocation) || foundLocation.includes(lostLocation)) {
         return { label: "Similar location", points: 2 };
@@ -96,7 +94,7 @@ function scoreLocation(foundItem: FoundItem, lostItem: LostItem): MatchReason | 
     return null;
 }
 
-// scores depend on date proximity
+// depending on date proximity, award or penalise
 function scoreDate(foundItem: FoundItem, lostItem: LostItem): MatchReason | null {
     const diffDays = getDateDifferenceInDays(lostItem.dateLost, foundItem.dateFound);
     if (diffDays === null) return null; //invalid dates

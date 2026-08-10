@@ -1,7 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
-
+// unlike telegam API the firebase public key is not sensitive. 
 const firebaseConfig = {
   apiKey: "AIzaSyD6RfoW8ZOSfjCk3z6LaOvN9uLijfUgNxA",
   authDomain: "nusfoundit.firebaseapp.com",
@@ -12,6 +12,6 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-
+// to use in other app parts
 export const db = getFirestore(app);
-export const storage = getStorage(app); // export storage to assist in uploading and retrieving images from firebase storage. 
+export const storage = getStorage(app);
