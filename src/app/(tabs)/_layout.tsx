@@ -1,18 +1,16 @@
 import { Image } from "expo-image";
 import { Tabs } from "expo-router";
 import { Text } from "react-native";
-// used an external stylesheet for most of the styling here
+// external stylesheet for most styles
 import { colors } from "../../styles/globalStyles";
 
-// tabs layout is used for home, reports and listings. 
+// needed to separate home, report and listings
 export default function TabLayout() {
     return (
         <Tabs
-            // defaults to home page.
             initialRouteName="index"
             screenOptions={{
                 headerTitleAlign: "center",
-                
                 tabBarStyle: {
                     backgroundColor: "#fffdf8",
                     borderTopWidth: 1,
@@ -37,9 +35,9 @@ export default function TabLayout() {
                     ),
                     tabBarIcon: ({ focused, size }) => (
                         <Image
-                            //swap to filled icon when focused on
+                            //better visual effects
                             source={ focused ? require("../../../assets/images/add-circle.png") : require("../../../assets/images/add-circle-outline.png")}
-                            // use local png image assets because original Ionicons breaks web deployments. 
+                            // local png image assets because original Ionicons breaks on web
                             style={{ width: size, height: size}}
                             tintColor={colors.logoSecondary}/>
                     ),

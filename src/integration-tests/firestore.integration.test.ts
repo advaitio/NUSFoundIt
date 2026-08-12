@@ -1,9 +1,9 @@
-import {initializeTestEnvironment, type RulesTestEnvironment} from "@firebase/rules-unit-testing"
-import {doc, getDoc, type Firestore} from "firebase/firestore";
 import { createFoundItem, createLostItem, fetchFoundItems, fetchLostItems } from "@/services/itemsService";
 import { getPossibleFoundMatches } from "@/utils/matching";
+import { initializeTestEnvironment, type RulesTestEnvironment } from "@firebase/rules-unit-testing";
+import { doc, getDoc, type Firestore } from "firebase/firestore";
 
-// demo id so tests never connect to the app's real firebase project
+// keep away from app's real firebase project
 const TEST_PROJECT_ID = "demo-nusfoundit-integration"; 
 
 let testEnvironment: RulesTestEnvironment;
@@ -13,7 +13,6 @@ function getTestDatabase(): Firestore {
     return testEnvironment.unauthenticatedContext().firestore() as unknown as Firestore;
 }
 
-// creates firebase rules test env before any tests run
 beforeAll(async () => {
     testEnvironment = await initializeTestEnvironment({
         projectId: TEST_PROJECT_ID,
@@ -46,7 +45,7 @@ describe("Firestore integration", () => {
             },
         });
 
-        const documentSnapshot = await getDoc(doc(database, "foundItems", documentId)); // read doc directly from firestore
+        const documentSnapshot = await getDoc(doc(database, "foundItems", documentId));
 
         expect(documentSnapshot.exists()).toBe(true);
         
@@ -86,7 +85,7 @@ describe("Firestore integration", () => {
     test("creates and retreives a lost item report using dateLost", async () => {
         const database = getTestDatabase();
 
-        // create a lost item report
+        // manually creating test report
         const documentId = await createLostItem(database, {
             itemName: "Integration Test Laptop Charger",
             category: "electronics",
@@ -119,7 +118,7 @@ describe("Firestore integration", () => {
     test("matches reports retreived from firestore", async () => {
         const database = getTestDatabase();
 
-        // create strongly related found report
+        // intentionally strongly related report
         const foundDocumentId = await createFoundItem(database, {
             itemName: "Laptop Charger",
             category: "electronics",
@@ -132,7 +131,7 @@ describe("Firestore integration", () => {
             expireAt: new Date("2026-08-20T00:00:00Z"),
         });
 
-        // create lost report with matching details
+        // exact matching details to ensure match
         await createLostItem(database, {
             itemName: "Laptop Charger",
             category: "electronics",

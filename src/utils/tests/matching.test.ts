@@ -2,7 +2,7 @@ import {
     getMatchDetails,
     getMatchScore,
     getPossibleFoundMatches,
-} from "../matching"
+} from "../matching";
 
 import type { FoundItem, LostItem } from "@/types/items";
 
@@ -70,7 +70,7 @@ describe("matching utilities", () => {
 
         const matches = getPossibleFoundMatches(lostItem, [weakerMatch, foundItem]);
 
-        // both reports pass threshold, stronger comes first, descending scores
+        // because both pass threshold, stronger comes first, descending scores
         expect(matches).toHaveLength(2);
         expect(matches[0].id).toBe("found-1");
         expect(matches[0].matchScore).toBeGreaterThanOrEqual(matches[1].matchScore);

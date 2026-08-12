@@ -18,7 +18,7 @@ export default function LostItemForm() {
     const [locationLost, setLocationLost] = useState("");
     const [filteredVenues, setFilteredVenues] = useState<string[]>([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
-    const [dateLost, setDateLost] = useState<Date | null>(null); // stops users from accidentally submitting current date
+    const [dateLost, setDateLost] = useState<Date | null>(null);
     const [showCalendar, setShowCalendar] = useState(false);
     const [email, setEmail] = useState("");
     const [phoneNumber, setPhoneNumber] = useState("");
@@ -26,7 +26,6 @@ export default function LostItemForm() {
     const [imageBase64, setImageBase64] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const [focusedField, setFocusedField] = useState<string | null>(null);
-    // controls concealed dropdown
     const [showAlertsDropdown, setShowAlertsDropdown] = useState(false);
     const [telegramId, setTelegramId] = useState("");
     const [threshold, setThreshold] = useState("");
@@ -48,7 +47,7 @@ export default function LostItemForm() {
     };
 
     const pickDate = (event: DateTimePickerEvent, selectedDate?: Date) => {
-        // android closes instantly with ios remaining open
+        // ios native picker remains open unlike android
         if (Platform.OS === "android") {
             setShowCalendar(false);
         }
@@ -90,7 +89,7 @@ export default function LostItemForm() {
     const pickImage = async () => {
             let result = await ImagePicker.launchImageLibraryAsync({
                 mediaTypes: ["images"],
-                // crucial for saving data and preventing costs
+                // save data to prevent costs, also web compatible
                 quality: 0.3,
                 base64: Platform.OS === "web",
             });
@@ -107,7 +106,6 @@ export default function LostItemForm() {
         if (loading) {
             return;
         }
-        // fields required to submit the form
         if (!itemName.trim() || !category || !description.trim() || !locationLost.trim() || !dateLost || !email.trim() || !phoneNumber) {
             // react native alerts dont work on web, fall back to normal browser alert.
             if (Platform.OS === "web") {
@@ -197,7 +195,7 @@ export default function LostItemForm() {
                     return;
                 }
             }
-            // cleans up stale data automatically
+            // for unwanted and stale date
             const expirationDate = new Date();
             expirationDate.setDate(expirationDate.getDate() + 30);
 
@@ -227,7 +225,6 @@ export default function LostItemForm() {
                 Alert.alert("Success\n", "Your report has been submitted successfully.");
             }
 
-            // cleared fields make form look pleasant after submitting
             setItemName("");
             setCategory(null);
             setDescription("");
@@ -259,7 +256,7 @@ export default function LostItemForm() {
                 placeholderTextColor={colors.placeholder}
                 value={itemName}
                 onChangeText={setItemName}
-                maxLength={30} // preventing long names breaking view containers
+                maxLength={30} // stop long names breaking view containers
                 onFocus={() => {setShowSuggestions(false); setFocusedField("itemName");}}
                 onBlur={() => setFocusedField(null)}/>
             <Dropdown
@@ -267,7 +264,7 @@ export default function LostItemForm() {
                 placeholderStyle={globalStyles.placeholderText}
                 selectedTextStyle={[
                     globalStyles.inputText,
-                    { color: category ? colors.textInput : colors.placeholder} // to copy text input styling
+                    { color: category ? colors.textInput : colors.placeholder} // to mimic other input fields
                 ]}
                 containerStyle={{backgroundColor: colors.logoCream}}
                 activeColor={colors.logoAccent}
@@ -290,7 +287,6 @@ export default function LostItemForm() {
                 value={description}
                 onChangeText={(text) => {
                     const lines = text.split('\n');
-                    // prevents clutter when viewing report
                     if (lines.length <= 3) {
                         setDescription(text);
                     }
@@ -340,7 +336,7 @@ export default function LostItemForm() {
             <Pressable
             style={[DateStyles.datePickerBox, focusedField === "date" && {borderColor: colors.logoSecondary}]}
             onPress={() => {
-                // to prevent rendering on web to stop crashes
+                // web rendering crashes app
                 if (Platform.OS !== "web") {
                     setShowCalendar(true);
                     setShowSuggestions(false);
@@ -350,7 +346,7 @@ export default function LostItemForm() {
                     globalStyles.inputText,
                     {color: dateLost ? colors.textInput : colors.placeholder} 
                 ]}>
-                    {/* to keep uniformity even though not text input */}
+                    {/* mimics other input fields */}
                     {dateLost ? `Date Lost: ${formatDateLabel(dateLost)}` : "Date Lost (select date)"}
                 </Text>
 
@@ -380,7 +376,7 @@ export default function LostItemForm() {
                     />
                 )}
             </Pressable>
-            {/* only showing on mobile to stop crashing web */}
+            {/* prevent crashing on web */}
             {showCalendar && Platform.OS !== "web" && (
                 <DateTimePicker
                     value={dateLost || new Date()}
@@ -428,7 +424,6 @@ export default function LostItemForm() {
                         style={{width: 25, height: 25, transform: [{rotate: showAlertsDropdown ? "-90deg" : "90deg"}]}}
                         tintColor={colors.logoSecondary}/>
                 </Pressable>
-                {/* concealing decreases visual clutter */}
                 {showAlertsDropdown && (
                     <View style={styles.alertsBody}>
                         <Text style={[styles.contactLabel, {fontStyle: "italic", marginBottom: 10}]}>Get notified when new reports match this item.</Text>

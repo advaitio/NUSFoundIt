@@ -7,7 +7,7 @@ import { colors, globalStyles } from "../styles/globalStyles";
 //taken directly from NUSMods public Github Repository (see README)
 import venuesData from "../constants/venues.json";
 import { LostItem } from "../types/items";
-// cases when image is not uploaded
+// when image is not uploaded
 const getPlaceholderImage = (category: string) => {
     switch (category.toLowerCase()) {
         case "id card": 
@@ -43,7 +43,6 @@ export default function LostItemsList({
     startDateFilter: Date | null;
     endDateFilter: Date | null;
 }) {
-    // facilitates pull-to-refresh
     const [items, setItems] = useState<LostItem[]>([]);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
@@ -71,12 +70,11 @@ export default function LostItemsList({
         setRefreshing(true);
         fetchLostItems();
     }, []);
-    // converts from string to js format to parse
+    // for proper parsing in JS style
     const parseDate = (dateStr: string): Date => {
         const parts = dateStr.split("/");
         return new Date(parseInt(parts[2], 10), parseInt(parts[1], 10) - 1, parseInt(parts[0], 10));
     };
-    // filtering here is better than overloading firestore
     const filteredItems = items.filter((item) => {
         const matchesSearch = item.itemName.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
             item.category.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
@@ -108,7 +106,7 @@ export default function LostItemsList({
         return matchesSearch && matchesCategory && matchesLocation && matchesDate;
     });
 
-    // removes unappealing blank page when loading
+    // avoids unappealing blank page when loading
     if (loading) {
         return (
             <View style={globalStyles.centeredScreen}>
@@ -118,7 +116,6 @@ export default function LostItemsList({
         );
     }
 
-    // main render for listings page with FlatList to display lost items
     return (
         <View style={globalStyles.screen}>
             {errorMessage ? (
@@ -144,7 +141,7 @@ export default function LostItemsList({
                             pathname: "/item-details",
                             params: { id: item.id, type: "lost" },
                         }} asChild>
-                            <Pressable style={StyleSheet.flatten([globalStyles.card, styles.itemCard])}>
+                            <Pressable style={[globalStyles.card, styles.itemCard]}>
                                 <View style={styles.cardRow}>
                                     <View style={styles.imageWrapper}>
                                         <Image
@@ -153,7 +150,7 @@ export default function LostItemsList({
                                         
                                         {!item.imageUrl && (
                                             <View style={styles.placeholderBadge}>
-                                                {/* uses placeholder if needed*/}
+                                                {/* symbolises placeholder better */}
                                                 <Text style={styles.placeholderBadgeText}>NO PHOTO</Text>
                                             </View>
                                         )}

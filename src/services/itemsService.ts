@@ -34,7 +34,7 @@ export type NewLostItem = NewItemBase & {
     dateLost: string;
 }
 
-// creates found item report and returns its firestore doc id
+// returns its firestore doc id after creating item report
 export async function createFoundItem(
     database: Firestore,
     item: NewFoundItem,
@@ -51,7 +51,7 @@ export async function createFoundItem(
     return documentReference.id;
 }
 
-// creates lost item report and returns its firestore doc id
+// replicated for lost items
 export async function createLostItem(
     database: Firestore,
     item: NewLostItem,
@@ -68,7 +68,7 @@ export async function createLostItem(
     return documentReference.id;
 }
 
-// retreives all found item reports with newest first
+// specifically retrives items with newest first
 export async function fetchFoundItems(
     database: Firestore,
 ): Promise<FoundItem[]> {
