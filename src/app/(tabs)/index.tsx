@@ -36,7 +36,7 @@ export default function HomeScreen() {
 
         <View style={styles.actionsContainer}>
           <Link href="/report" asChild>
-            <Pressable style={[styles.actionCard, styles.reportCard1]}>
+            <Pressable style={StyleSheet.flatten([styles.actionCard, styles.reportCard1])}>
               <View style={styles.actionIconBox}>
                 <Image
                   source={require("../../../assets/images/add-outline.png")}
