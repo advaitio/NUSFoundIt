@@ -141,7 +141,7 @@ export default function LostItemsList({
                             pathname: "/item-details",
                             params: { id: item.id, type: "lost" },
                         }} asChild>
-                            <Pressable style={[globalStyles.card, styles.itemCard]}>
+                            <Pressable style={StyleSheet.flatten([globalStyles.card, styles.itemCard])}>
                                 <View style={styles.cardRow}>
                                     <View style={styles.imageWrapper}>
                                         <Image
